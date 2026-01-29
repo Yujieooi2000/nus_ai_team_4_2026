@@ -48,7 +48,8 @@ The expanded scope focuses on "Enterprise-Grade AI" practices:
 | :--- | :--- | :--- |
 | **Phase 1: Research & Design** | Literature review on XAI/Security, detailed architecture (LangGraph state), and prompt engineering strategy. | **100** |
 | **Phase 2: Core Development** | Developing the 7 agents, Orchestrator logic, and integration with Vector DB/APIs. | **220** |
-| **Phase 3: LLMOps & Infra** | Setting up CI/CD, automated evaluation frameworks (RAGAS), and monitoring dashboards. | **100** |
+| **Phase 3A: MLOps / LLMOps** | Establishing automated RAG evaluation using RAGAS, generating and maintaining synthetic datasets for regression testing, managing prompt versioning, and continuously monitoring model performance and quality. | **65** |
+| **Phase 3B: Infra** | CI/CD setup, secure vector database provisioning, centralized logging and telemetry, monitoring dashboards for observability, and environment separation across development, testing, and production. | **35** |
 | **Phase 4: Responsible AI & Security** | Implementing bias detection, XAI reporting, PII masking, and performing a security audit. | **80** |
 | **Phase 5: Testing & UI** | Integration testing, synthetic data generation, and building the 3-tier UI Prototype. | **50** |
 | **Phase 6: Final Docs & Wrap-up** | Technical Report, Individual Agent Reports, and Presentation preparation. | **50** |
