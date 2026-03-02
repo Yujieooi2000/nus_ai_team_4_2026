@@ -1,133 +1,166 @@
-class TriageAgent:
+import re
+from typing import Dict, Any
+from dataclasses import dataclass
+from textblob import TextBlob
+
+
+@dataclass
+class TriageResult:
+    category: str
+    priority: str
+    sentiment: str
+    confidence_score: float
+    risk_score: float
+    requires_human: bool
+    explanation: str
+
+
+class EnhancedTriageAgent:
+
     def __init__(self):
-        """
-        Initializes the Triage Agent.
-        This agent is responsible for the initial analysis of incoming customer requests.
-        """
-        pass
-
-    def validate_input(self, text):
-        """
-        Checks the input text for potential security risks like prompt injection.
-
-        Args:
-            text (str): The input text to validate.
-
-        Returns:
-            bool: True if the input is considered safe, False otherwise.
-        """
-        suspicious_phrases = [
-            "ignore previous instructions",
-            "forget your instructions",
-            "system prompt",
-            "you are now",
-            "override",
-            "bypass"
-        ]
+        self.billing_keywords = ['bill', 'payment', 'invoice', 'charge', 'refund']
+        self.tech_keywords = ['error', 'broken', 'bug', 'fail', 'crash', 'slow']
+        self.account_keywords = ['password', 'account', 'login', 'access']
+        self.urgent_keywords = ['urgent', 'immediate', 'emergency', 'asap', 'help']
         
-        for phrase in suspicious_phrases:
-            if phrase in text:
+        self.injection_patterns = [
+            r"ignore\s+previous\s+instructions",
+            r"forget\s+your\s+instructions",
+            r"system\s+prompt",
+            r"you\s+are\s+now",
+            r"override",
+            r"bypass",
+            r"act\s+as"
+        ]
+
+    # -----------------------------
+    # Security Layer
+    # -----------------------------
+    def validate_input(self, text: str) -> bool:
+        text_lower = text.lower()
+        for pattern in self.injection_patterns:
+            if re.search(pattern, text_lower):
                 return False
         return True
 
-    def analyze_request(self, request):
-        """
-        Analyzes an incoming customer request to determine its category, priority, and sentiment.
+    def compute_risk_score(self, text: str) -> float:
+        risk = 0.0
+        for pattern in self.injection_patterns:
+            if re.search(pattern, text.lower()):
+                risk += 0.3
+        if any(word in text.lower() for word in self.urgent_keywords):
+            risk += 0.2
+        return min(risk, 1.0)
 
-        Args:
-            request (dict): A dictionary containing the customer request details (e.g., 'subject', 'body', 'source').
-
-        Returns:
-            dict: A dictionary containing the analysis results (e.g., 'category', 'priority', 'sentiment', 'explanation').
-        """
-        text = request.get('body', '').lower()
-        
-        # Security Check
-        if not self.validate_input(text):
-            return {
-                'category': 'security_alert',
-                'priority': 'high',
-                'sentiment': 'negative',
-                'explanation': "Security alert: Potential prompt injection or malicious input detected."
-            }
-        
-        category = 'general_inquiry'
-        category_reason = "default classification"
-        priority = 'low'
-        priority_reason = "default priority"
-
-        # Determine Category
-        billing_keywords = ['bill', 'payment', 'invoice', 'charge', 'refund']
-        tech_keywords = ['error', 'broken', 'bug', 'fail', 'crash', 'slow']
-        account_keywords = ['password', 'account', 'login', 'access']
-        
-        for keyword in billing_keywords:
-            if keyword in text:
-                category = 'billing'
-                category_reason = f"keyword '{keyword}' found in text"
-                break
-        
-        if category == 'general_inquiry':
-            for keyword in tech_keywords:
-                if keyword in text:
-                    category = 'technical_support'
-                    category_reason = f"keyword '{keyword}' found in text"
-                    break
-        
-        if category == 'general_inquiry':
-            for keyword in account_keywords:
-                if keyword in text:
-                    category = 'account_issue'
-                    category_reason = f"keyword '{keyword}' found in text"
-                    break
-        
-        # Specific check for order status
-        if 'order status' in text or 'where is my order' in text:
-            category = 'order_status'
-            category_reason = "phrase 'order status' or 'where is my order' found in text"
-
-        # Determine Priority
-        urgent_keywords = ['urgent', 'immediate', 'emergency', 'help', 'crash']
-        for keyword in urgent_keywords:
-            if keyword in text:
-                priority = 'high'
-                priority_reason = f"keyword '{keyword}' found in text"
-                break
-
-        explanation = f"Categorized as {category} because {category_reason}. Priority set to {priority} because {priority_reason}."
-
-        analysis = {
-            'category': category,
-            'priority': priority,
-            'sentiment': 'neutral', # Placeholder for sentiment analysis
-            'explanation': explanation
-        }
-        return analysis
-
-    def route_request(self, request, analysis):
-        """
-        Routes the request to the appropriate agent based on the analysis.
-
-        Args:
-            request (dict): The original customer request.
-            analysis (dict): The analysis results from the analyze_request method.
-
-        Returns:
-            str: The name of the agent to which the request should be routed.
-        """
-        category = analysis.get('category')
-        priority = analysis.get('priority')
-
-        if category == 'security_alert':
-            return 'EscalationAgent'
-
-        # High priority items go straight to a human
-        if priority == 'high':
-            return 'EscalationAgent'
-
-        if category in ['billing', 'account_issue', 'order_status']:
-            return 'ResolutionAgent'
-        elif category in ['technical_support', 'general_inquiry']:
-            return 'InformationRetrievalAgent'
+    # -----------------------------
+    # Sentiment Analysis
+    # -----------------------------
+    def analyze_sentiment(self, text: str) -> str:
+        polarity = TextBlob(text).sentiment.polarity
+        if polarity > 0.2:
+            return "positive"
+        elif polarity < -0.2:
+            return "negative"
         else:
-            return 'EscalationAgent'
+            return "neutral"
+
+    # -----------------------------
+    # Core Analysis
+    # -----------------------------
+    def analyze_request(self, request: Dict[str, Any]) -> TriageResult:
+
+        text = request.get("body", "")
+        text_lower = text.lower()
+
+        decision_trace = []
+
+        # ---- Security Check ----
+        if not self.validate_input(text):
+            return TriageResult(
+                category="security_alert",
+                priority="high",
+                sentiment="negative",
+                confidence_score=0.99,
+                risk_score=1.0,
+                requires_human=True,
+                explanation="Prompt injection pattern detected."
+            )
+
+        # ---- Category Detection ----
+        category = "general_inquiry"
+        confidence = 0.5
+
+        def keyword_match(keywords, label):
+            for word in keywords:
+                if word in text_lower:
+                    return word
+            return None
+
+        if keyword := keyword_match(self.billing_keywords, "billing"):
+            category = "billing"
+            confidence = 0.85
+            decision_trace.append(f"Matched billing keyword '{keyword}'")
+
+        elif keyword := keyword_match(self.tech_keywords, "technical_support"):
+            category = "technical_support"
+            confidence = 0.85
+            decision_trace.append(f"Matched technical keyword '{keyword}'")
+
+        elif keyword := keyword_match(self.account_keywords, "account_issue"):
+            category = "account_issue"
+            confidence = 0.85
+            decision_trace.append(f"Matched account keyword '{keyword}'")
+
+        if "order status" in text_lower or "where is my order" in text_lower:
+            category = "order_status"
+            confidence = 0.9
+            decision_trace.append("Matched order status phrase")
+
+        # ---- Priority Detection ----
+        priority = "low"
+        if any(word in text_lower for word in self.urgent_keywords):
+            priority = "high"
+            decision_trace.append("Urgent keyword detected")
+
+        # ---- Sentiment ----
+        sentiment = self.analyze_sentiment(text)
+        decision_trace.append(f"Sentiment detected as {sentiment}")
+
+        # ---- Risk Score ----
+        risk_score = self.compute_risk_score(text)
+
+        # ---- Human Escalation Logic ----
+        requires_human = False
+        if priority == "high" or risk_score > 0.7 or sentiment == "negative":
+            requires_human = True
+
+        explanation = " | ".join(decision_trace)
+
+        return TriageResult(
+            category=category,
+            priority=priority,
+            sentiment=sentiment,
+            confidence_score=confidence,
+            risk_score=risk_score,
+            requires_human=requires_human,
+            explanation=explanation
+        )
+
+    # -----------------------------
+    # Routing Logic
+    # -----------------------------
+    def route_request(self, analysis: TriageResult) -> str:
+
+        if analysis.category == "security_alert":
+            return "EscalationAgent"
+
+        if analysis.requires_human:
+            return "EscalationAgent"
+
+        if analysis.category in ["billing", "account_issue", "order_status"]:
+            return "ResolutionAgent"
+
+        if analysis.category in ["technical_support", "general_inquiry"]:
+            return "InformationRetrievalAgent"
+
+        return "EscalationAgent"
