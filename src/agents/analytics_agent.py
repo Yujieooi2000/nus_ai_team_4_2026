@@ -1,43 +1,61 @@
+from collections import defaultdict
+from datetime import datetime
+import statistics
+
+
 class AnalyticsAgent:
     def __init__(self, analytics_database):
         """
-        Initializes the Analytics Agent.
-        This agent is responsible for monitoring the performance of the support system and identifying trends.
-
-        Args:
-            analytics_database: An object or connection to the analytics database.
+        Enhanced Enterprise Analytics Agent
+        Maintains backward compatibility while adding:
+        - Drift detection
+        - Hallucination tracking
+        - Retrieval confidence metrics
+        - Knowledge gap detection
+        - Sentiment trend tracking
         """
         self.analytics_database = analytics_database
 
+    # =================================================
+    # EXISTING FUNCTION (Enhanced Internally)
+    # =================================================
     def log_interaction(self, request, analysis, resolution, conversation_history):
         """
-        Logs the details of a customer interaction to the analytics database.
-
-        Args:
-            request (dict): The original customer request.
-            analysis (dict): The analysis from the Triage Agent.
-            resolution (dict): The resolution from the Resolution Agent or other agents.
-            conversation_history (list): The full conversation history.
+        Logs detailed interaction data.
         """
+
         log_entry = {
-            'timestamp': '2026-01-05T18:00:00', # Placeholder for actual timestamp
+            # Existing fields
+            'timestamp': datetime.utcnow().isoformat(),
             'request': request,
             'analysis': analysis,
             'resolution': resolution,
-            'history': conversation_history
+            'history': conversation_history,
+
+            # NEW Enterprise Fields
+            'category': analysis.get('category'),
+            'priority': analysis.get('priority'),
+            'sentiment': analysis.get('sentiment'),
+            'triage_confidence': analysis.get('confidence_score'),
+
+            'retrieval_confidence': resolution.get('retrieval_confidence'),
+            'verification_passed': resolution.get('verification_passed'),
+            'hallucination_detected': resolution.get('hallucination_detected', False),
+            'escalated': resolution.get('escalated', False),
+            'conversation_length': len(conversation_history)
         }
-        
-        # In this prototype, we assume analytics_database is a list acting as an in-memory store.
+
         if isinstance(self.analytics_database, list):
             self.analytics_database.append(log_entry)
 
+    # =================================================
+    # EXISTING FUNCTION (Enhanced Internally)
+    # =================================================
     def generate_insights(self):
         """
-        Analyzes the collected data to generate insights and identify trends.
-
-        Returns:
-            dict: A dictionary containing insights and trend data.
+        Generates business + AI performance insights.
         """
+
         if not isinstance(self.analytics_database, list) or not self.analytics_database:
             return {
                 'total_requests': 0,
@@ -47,21 +65,138 @@ class AnalyticsAgent:
             }
 
         total_requests = len(self.analytics_database)
-        resolved_count = sum(1 for entry in self.analytics_database 
-                             if entry.get('resolution', {}).get('status') == 'resolved')
-        
+
+        resolved_count = sum(
+            1 for entry in self.analytics_database
+            if entry.get('resolution', {}).get('status') == 'resolved'
+        )
+
         resolution_rate = (resolved_count / total_requests) * 100
 
-        # Calculate category breakdown
-        category_counts = {}
+        # Category breakdown
+        category_counts = defaultdict(int)
         for entry in self.analytics_database:
             category = entry.get('analysis', {}).get('category', 'unknown')
-            category_counts[category] = category_counts.get(category, 0) + 1
+            category_counts[category] += 1
+
+        # NEW Metrics
+        hallucination_count = sum(
+            1 for entry in self.analytics_database
+            if entry.get('hallucination_detected')
+        )
+
+        escalation_count = sum(
+            1 for entry in self.analytics_database
+            if entry.get('escalated')
+        )
+
+        retrieval_scores = [
+            entry.get('retrieval_confidence')
+            for entry in self.analytics_database
+            if entry.get('retrieval_confidence') is not None
+        ]
+
+        avg_retrieval_confidence = (
+            statistics.mean(retrieval_scores)
+            if retrieval_scores else 0
+        )
 
         insights = {
             'total_requests': total_requests,
             'resolved_count': resolved_count,
             'resolution_rate': f"{resolution_rate:.2f}%",
-            'category_breakdown': category_counts
+            'category_breakdown': dict(category_counts),
+
+            # NEW AI Metrics
+            'hallucination_rate': round(hallucination_count / total_requests, 3),
+            'escalation_rate': round(escalation_count / total_requests, 3),
+            'avg_retrieval_confidence': round(avg_retrieval_confidence, 3)
         }
+
         return insights
+
+    # =================================================
+    # NEW FUNCTION: Drift Detection
+    # =================================================
+    def detect_drift(self, confidence_threshold=0.6, escalation_threshold=0.3):
+        """
+        Detects system performance degradation.
+        """
+
+        insights = self.generate_insights()
+
+        drift_flags = []
+
+        if insights.get('avg_retrieval_confidence', 1) < confidence_threshold:
+            drift_flags.append("Retrieval confidence degraded")
+
+        if insights.get('escalation_rate', 0) > escalation_threshold:
+            drift_flags.append("Escalation rate increased")
+
+        if insights.get('hallucination_rate', 0) > 0.15:
+            drift_flags.append("Hallucination rate high")
+
+        return {
+            "drift_detected": len(drift_flags) > 0,
+            "issues": drift_flags
+        }
+
+    # =================================================
+    # NEW FUNCTION: Knowledge Gap Detection
+    # =================================================
+    def detect_knowledge_gaps(self, escalation_threshold=5):
+        """
+        Identifies categories frequently escalated.
+        """
+
+        category_escalations = defaultdict(int)
+
+        for entry in self.analytics_database:
+            if entry.get('escalated'):
+                category = entry.get('analysis', {}).get('category', 'unknown')
+                category_escalations[category] += 1
+
+        gaps = {
+            category: count
+            for category, count in category_escalations.items()
+            if count >= escalation_threshold
+        }
+
+        return gaps
+
+    # =================================================
+    # NEW FUNCTION: Sentiment Trend
+    # =================================================
+    def sentiment_trend(self):
+        """
+        Tracks customer sentiment distribution.
+        """
+
+        sentiment_counts = defaultdict(int)
+
+        for entry in self.analytics_database:
+            sentiment = entry.get('analysis', {}).get('sentiment', 'unknown')
+            sentiment_counts[sentiment] += 1
+
+        return dict(sentiment_counts)
+
+    # =================================================
+    # NEW FUNCTION: AI Risk Report
+    # =================================================
+    def generate_ai_risk_report(self):
+        """
+        Generates a Responsible AI compliance summary.
+        """
+
+        insights = self.generate_insights()
+        drift = self.detect_drift()
+
+        return {
+            "system_health": insights,
+            "drift_status": drift,
+            "recommendation": (
+                "Review prompt versions and retrain embeddings"
+                if drift["drift_detected"]
+                else "System operating within acceptable thresholds"
+            )
+        }
