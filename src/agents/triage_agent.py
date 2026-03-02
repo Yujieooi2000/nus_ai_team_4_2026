@@ -15,7 +15,7 @@ class TriageResult:
     explanation: str
 
 
-class EnhancedTriageAgent:
+class TriageAgent:
 
     def __init__(self):
         self.billing_keywords = ['bill', 'payment', 'invoice', 'charge', 'refund']
