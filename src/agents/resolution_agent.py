@@ -1,6 +1,6 @@
 from typing import Dict, List
 
-class ReflectionAgent:
+class ResolutionAgent:
 
     def __init__(self):
         self.bad_reply_keywords = [

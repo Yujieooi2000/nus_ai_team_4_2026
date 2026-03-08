@@ -3,10 +3,19 @@ from agents.information_retrieval_agent import InformationRetrievalAgent
 from agents.resolution_agent import ResolutionAgent
 from agents.escalation_agent import EscalationAgent
 from agents.analytics_agent import AnalyticsAgent
+from agents.security_compliance_agent import SecurityComplianceAgent
+from agents.verification_agent import VerificationAgent
+from agents.conversation_agent import ConversationAgent
+
 
 class Orchestrator:
-    def __init__(self):
-        # Initialize resources (simulated)
+
+    def __init__(self, api_key):
+
+        # ----------------------------
+        # Resources
+        # ----------------------------
+
         self.knowledge_base = [
             "Our operating hours are 9 AM to 5 PM, Monday to Friday.",
             "To reset your password, click on the 'Forgot Password' link on the login page.",
@@ -16,51 +25,183 @@ class Orchestrator:
             "Standard shipping takes 3-5 business days.",
             "You can contact our support team at support@example.com."
         ]
-        self.analytics_db = []
-        self.human_dashboard = self.MockDashboard()
 
-        # Initialize Agents
+        self.analytics_db = []
+
+        # ----------------------------
+        # Agents
+        # ----------------------------
+
+        self.security_agent = SecurityComplianceAgent()
         self.triage_agent = TriageAgent()
         self.info_agent = InformationRetrievalAgent(self.knowledge_base)
+        self.conversation_agent = ConversationAgent(api_key)
+        self.verification_agent = VerificationAgent(api_key)
         self.resolution_agent = ResolutionAgent()
-        self.escalation_agent = EscalationAgent(self.human_dashboard)
+        self.escalation_agent = EscalationAgent()
         self.analytics_agent = AnalyticsAgent(self.analytics_db)
 
-    class MockDashboard:
-        def create_ticket(self, request, history):
-            return {'success': True, 'ticket_id': 'TKT-12345'}
+    # --------------------------------------------------
+    # Main Pipeline
+    # --------------------------------------------------
 
-    def process_request(self, user_input):
-        """
-        Orchestrates the handling of a user request through the multi-agent system.
-        """
-        request = {'body': user_input}
-        conversation_history = [{'role': 'user', 'content': user_input}]
+    def process_request(self, user_input, history=None):
 
-        # Step 1: Triage
-        analysis = self.triage_agent.analyze_request(request)
-        target_agent_name = self.triage_agent.route_request(request, analysis)
+        if history is None:
+            history = []
 
-        # Step 2: Routing & Execution
-        response = {}
-        if target_agent_name == 'ResolutionAgent':
-            response = self.resolution_agent.resolve_issue(request)
-        elif target_agent_name == 'InformationRetrievalAgent':
-            # Info agent needs 2 steps: search then generate
-            search_results = self.info_agent.search_knowledge_base(user_input)
-            response_text = self.info_agent.generate_response(user_input, search_results)
-            response = {'status': 'info_provided', 'message': response_text}
-        elif target_agent_name == 'EscalationAgent':
-            response = self.escalation_agent.escalate_to_human(request, conversation_history)
-        
-        # Step 3: Analytics Logging
-        self.analytics_agent.log_interaction(request, analysis, response, conversation_history)
+        request = {"body": user_input}
 
-        return {
-            'agent': target_agent_name,
-            'analysis': analysis,
-            'response': response
+        state = {
+            "input": user_input,
+            "history": history
         }
 
+        # =================================================
+        # 1 SECURITY CHECK
+        # =================================================
+
+        security_result = self.security_agent.process(user_input)
+        state["security_result"] = security_result
+
+        if security_result["jailbreak_detected"]:
+            return {
+                "agent": "SecurityComplianceAgent",
+                "response": {
+                    "status": "blocked",
+                    "message": "Request blocked due to security policy."
+                }
+            }
+
+        # =================================================
+        # 2 TRIAGE
+        # =================================================
+
+        analysis = self.triage_agent.analyze_request(request)
+        route = self.triage_agent.route_request(analysis)
+
+        # =================================================
+        # 3 ESCALATE DIRECTLY IF TRIAGE REQUIRES
+        # =================================================
+
+        if route == "EscalationAgent":
+
+            escalation = self.escalation_agent.process(state)
+
+            response = {
+                "status": "escalated",
+                "queue": escalation["queue"],
+                "message": "Connecting you to a human agent."
+            }
+
+            self.analytics_agent.log_interaction(
+                request,
+                analysis.__dict__,
+                response,
+                history
+            )
+
+            return {
+                "agent": "EscalationAgent",
+                "analysis": analysis.__dict__,
+                "response": response
+            }
+
+        # =================================================
+        # 4 KNOWLEDGE RETRIEVAL
+        # =================================================
+
+        retrieval = self.info_agent.search_knowledge_base(user_input)
+
+        retrieval_response = self.info_agent.generate_response(
+            user_input,
+            retrieval
+        )
+
+        state["retrieved_docs"] = retrieval_response.get("retrieved_docs", [])
+        state["knowledge"] = retrieval_response.get("answer")
+
+        # =================================================
+        # 5 LLM CONVERSATION
+        # =================================================
+
+        conversation = self.conversation_agent.process(state)
+
+        reply = conversation["reply"]
+        state["reply"] = reply
+        state["history"] = conversation["history"]
+
+        # =================================================
+        # 6 VERIFICATION (FACT CHECK)
+        # =================================================
+
+        verification = self.verification_agent.verify(
+            user_query=user_input,
+            retrieved_docs=state["retrieved_docs"],
+            generated_answer=reply
+        )
+
+        state["verification_result"] = verification
+
+        # =================================================
+        # 7 RESPONSE QUALITY CHECK
+        # =================================================
+
+        resolution = self.resolution_agent.process(state)
+
+        state["resolution_result"] = resolution
+
+        # =================================================
+        # 8 ESCALATION DECISION
+        # =================================================
+
+        escalate = False
+
+        if verification.recommendation == "ESCALATE":
+            escalate = True
+
+        if resolution["reflection_action"] == "ESCALATE_OR_RETRY":
+            escalate = True
+
+        if escalate:
+
+            escalation = self.escalation_agent.process(state)
+
+            response = {
+                "status": "escalated",
+                "queue": escalation["queue"],
+                "message": "Your issue is being transferred to a support specialist."
+            }
+
+        else:
+
+            response = {
+                "status": "resolved",
+                "message": reply,
+                "confidence": verification.confidence_score
+            }
+
+        # =================================================
+        # 9 ANALYTICS LOGGING
+        # =================================================
+
+        self.analytics_agent.log_interaction(
+            request,
+            analysis.__dict__,
+            response,
+            state["history"]
+        )
+
+        return {
+            "agent": route,
+            "analysis": analysis.__dict__,
+            "response": response
+        }
+
+    # --------------------------------------------------
+    # SYSTEM INSIGHTS
+    # --------------------------------------------------
+
     def get_system_insights(self):
+
         return self.analytics_agent.generate_insights()
