@@ -8,10 +8,10 @@ class SecurityComplianceAgent:
         self.pii_patterns = {
             "email": r"[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+",
             "phone": r"\b(\+65)?[689]\d{7}\b",
-            "nric": r"\b[S|T|F|G]\d{7}[A-Z]\b",
+            r"\b[STFG]\d{7}[A-Z]\b",
             "passport": r"\b[A-Z]\d{7,8}\b",
             "credit_card": r"\b(?:\d[ -]*?){13,16}\b",
-            "cvv": r"\b\d{3,4}\b",
+            "cvv": r"\b(?:cvv|cvc)\s*[:\-]?\s*\d{3,4}\b",
             "bank_account": r"\b\d{8,16}\b",
             "dob": r"\b\d{2}/\d{2}/\d{4}\b"
         }
@@ -33,17 +33,17 @@ class SecurityComplianceAgent:
         ]
 
 
-        self.jailbreak_keywords = [
-            "ignore previous instructions",
-            "reveal system prompt",
+        self.jailbreak_patterns  = [
+            r"ignore\s+.*instructions",
+            r"reveal\s+system\s+prompt",
+            r"developer\s+mode",
+            r"bypass\s+security",
+            r"disable\s+filter",
+            r"override\s+policy",
             "show hidden prompt",
             "act as dan",
-            "developer mode",
-            "bypass security",
-            "disable filter",
             "pretend you are not bound",
-            "simulate system",
-            "override policy"
+            "simulate system"
         ]
 
 
@@ -68,8 +68,8 @@ class SecurityComplianceAgent:
 
     def detect_jailbreak(self, text: str) -> bool:
         lowered = text.lower()
-        for keyword in self.jailbreak_keywords:
-            if keyword in lowered:
+        for pattern in self.jailbreak_patterns:
+            if re.search(pattern, lowered):
                 return True
         return False
 
@@ -89,10 +89,13 @@ class SecurityComplianceAgent:
         elif pii_found:
             risk_level = "medium"
 
+        blocked = jailbreak_detected
+
         return {
             "cleaned_input": cleaned_input,
             "pii_found": pii_found,
             "telco_sensitive_detected": telco_risk,
             "jailbreak_detected": jailbreak_detected,
-            "risk_level": risk_level
+            "risk_level": risk_level,
+            "blocked": blocked
         }
