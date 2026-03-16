@@ -1,6 +1,6 @@
 import re
 import math
-from typing import List, Dict, Any
+from typing import List, Dict, Any, Optional
 from dataclasses import dataclass
 from collections import Counter
 
@@ -15,9 +15,32 @@ class RetrievalResult:
 
 class InformationRetrievalAgent:
 
-    def __init__(self, knowledge_base: List[str], top_k: int = 3):
-        self.knowledge_base = knowledge_base
+    def __init__(self, knowledge_base: List[str] = None, top_k: int = 3, use_vector_db: bool = False):
+        """
+        Initialize Information Retrieval Agent.
+        
+        Args:
+            knowledge_base: List of knowledge base documents (for keyword search fallback)
+            top_k: Number of top results to return
+            use_vector_db: If True, use ChromaDB for vector search; else use keyword matching
+        """
+        self.knowledge_base = knowledge_base or []
         self.top_k = top_k
+        self.use_vector_db = use_vector_db
+        
+        # Initialize vector database if requested
+        if use_vector_db:
+            try:
+                from vector_db import VectorDB
+                self.vector_db = VectorDB()
+                print(f"✓ Vector DB initialized with {self.vector_db.get_collection_stats()['total_documents']} documents")
+            except Exception as e:
+                print(f"⚠ Vector DB initialization failed: {e}")
+                print("  Falling back to keyword-based search")
+                self.use_vector_db = False
+                self.vector_db = None
+        else:
+            self.vector_db = None
 
     # ----------------------------------
     # Text Processing
@@ -48,10 +71,39 @@ class InformationRetrievalAgent:
         return numerator / (query_norm * doc_norm)
 
     # ----------------------------------
-    # Retrieval
+    # Retrieval (Vector or Keyword)
     # ----------------------------------
 
     def search_knowledge_base(self, query: str) -> RetrievalResult:
+        """
+        Search knowledge base using either vector embeddings or keyword matching.
+        """
+        
+        if self.use_vector_db and self.vector_db:
+            return self._vector_search(query)
+        else:
+            return self._keyword_search(query)
+    
+    def _vector_search(self, query: str) -> RetrievalResult:
+        """Search using vector similarity (ChromaDB)."""
+        
+        try:
+            results = self.vector_db.search(query, top_k=self.top_k)
+            
+            confidence = sum(results["similarities"]) / len(results["similarities"]) if results["similarities"] else 0.0
+            
+            return RetrievalResult(
+                retrieved_docs=results["documents"],
+                scores=results["similarities"],
+                confidence_score=confidence,
+                explanation=f"Retrieved {len(results['documents'])} documents using vector similarity search"
+            )
+        
+        except Exception as e:
+            print(f"⚠ Vector search failed: {e}. Falling back to keyword search.")
+            return self._keyword_search(query)
+    
+    def _keyword_search(self, query: str) -> RetrievalResult:
 
         query_tokens = self._tokenize(query)
         scored_docs = []
@@ -73,7 +125,7 @@ class InformationRetrievalAgent:
 
         explanation = (
             f"Retrieved top {len(retrieved_docs)} documents "
-            f"ranked by cosine similarity. "
+            f"ranked by keyword similarity. "
             f"Average similarity score: {confidence_score:.2f}"
         )
 
