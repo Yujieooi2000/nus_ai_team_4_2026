@@ -2,7 +2,7 @@
 ## AI-Powered Customer Support Triage and Resolution System
 **Author:** Jonas (UI Lead)
 **Date:** 2026-03-05
-**Status:** Planning
+**Status:** Complete (integration done — see `Jonas_Integration_Plan.md` and `QUICKSTART.md`)
 
 ---
 
@@ -271,10 +271,24 @@ Your UI code will live in a `ui/` folder in the project repo:
 
 ```
 nus_ai_team_4_2026/
-├── src/                    # Backend agents (team's code — your teammates' work)
-├── tests/                  # Backend automated tests
-├── docs/                   # Project documentation (XAI, Cybersecurity reports)
-├── ui/                     # YOUR FOLDER — everything frontend lives here
+├── src/                              # Backend Python code
+│   ├── agents/                       #   All 7 agent files (teammates' code)
+│   ├── orchestrator.py               #   Main pipeline — routes messages through agents
+│   ├── main.py                       #   Original CLI entry point
+│   └── api.py                        # ✅ Step L — NEW: FastAPI web server Jonas built.
+│                                     #            Wraps the Orchestrator as HTTP endpoints.
+│                                     #            Run: python -m uvicorn src.api:app --reload
+│
+├── tests/                            # Backend automated tests
+├── docs/                             # Project documentation (XAI, Cybersecurity reports)
+│
+├── requirements.txt                  # ✅ Step B — NEW: Python dependency list.
+│                                     #            Run `pip install -r requirements.txt` to
+│                                     #            install all backend libraries at once.
+│
+├── .env                              # ✅ Secured — OpenAI API key (gitignored — never committed).
+│
+├── ui/                               # YOUR FOLDER — everything frontend lives here
 │   │
 │   ├── index.html                    # ✅ Step 1 — The single HTML page the browser loads.
 │   │                                 #            It contains a <div id="root"> where React
@@ -289,8 +303,13 @@ nus_ai_team_4_2026/
 │   │                                 #            (dev, build, preview).
 │   │
 │   ├── .gitignore                    # ✅ Step 1 — Tells Git which folders/files to never commit.
-│   │                                 #            Mainly excludes node_modules (too large) and
+│   │                                 #            Excludes node_modules (too large) and
 │   │                                 #            .env files (contain secrets).
+│   │
+│   ├── .env.development              # ✅ Step L — NEW: Frontend environment config for local dev.
+│   │                                 #            Sets VITE_API_URL=http://localhost:8000 so
+│   │                                 #            Axios knows where the FastAPI server is.
+│   │                                 #            Gitignored — production URL set in Vercel dashboard.
 │   │
 │   └── src/                          #            All source code you write lives here.
 │       │
@@ -307,9 +326,15 @@ nus_ai_team_4_2026/
 │       │
 │       ├── pages/                    #            One file per dashboard. Each file is a full
 │       │   │                         #            page that React Router switches between.
-│       │   ├── CustomerChat.jsx      # ✅ Step 2 — Dashboard 1: the customer-facing chat portal.
-│       │   ├── AgentDashboard.jsx    # ✅ Step 2 — Dashboard 2: the human agent's ticket queue.
-│       │   └── AdminDashboard.jsx    # ✅ Step 2 — Dashboard 3: analytics and AI monitoring.
+│       │   ├── CustomerChat.jsx      # ✅ Step 4 — Dashboard 1: customer-facing chat portal.
+│       │   │                         #            Updated Step L: uses real API, session ID,
+│       │   │                         #            loading spinner while AI responds.
+│       │   ├── AgentDashboard.jsx    # ✅ Step 5 — Dashboard 2: human agent's ticket queue.
+│       │   │                         #            Updated Step L: loads real tickets on mount,
+│       │   │                         #            resolve/reply/close actions call the API.
+│       │   └── AdminDashboard.jsx    # ✅ Step 6 — Dashboard 3: analytics and AI monitoring.
+│       │                             #            Updated Step L: real stat cards, real pie chart
+│       │                             #            (category_breakdown), real XAI traces table.
 │       │
 │       ├── components/               #            Reusable UI building blocks shared across pages.
 │       │   │                         #            Think of these as LEGO bricks — built once,
@@ -317,17 +342,23 @@ nus_ai_team_4_2026/
 │       │   ├── NavBar.jsx            # ✅ Step 3 — The top navigation bar with links to all 3
 │       │   │                         #            dashboards. Wraps every page.
 │       │   ├── ChatWindow.jsx        # ✅ Step 4 — The chat bubble UI (message list + input box).
-│       │   │                         #            Used inside CustomerChat.jsx.
+│       │   │                         #            Updated Step L: calls POST /api/chat, manages
+│       │   │                         #            session ID, shows "AI is thinking..." spinner.
 │       │   └── TicketCard.jsx        # ✅ Step 5 — A single ticket summary card (ID, priority,
 │       │                             #            sentiment badge). Used in AgentDashboard.jsx.
 │       │
 │       └── services/                 #            Code that talks to the outside world (the API).
 │           │                         #            Kept separate so API logic never mixes with
 │           │                         #            visual/display code.
-│           └── api.js                # ⬜ Step 7 — All Axios API call functions in one place.
-│                                     #            e.g. sendMessage(), getTickets(), getAnalytics()
+│           └── api.js                # ✅ Step L — NEW: All 6 Axios API call functions.
+│                                     #            sendChatMessage(), getTickets(), resolveTicket(),
+│                                     #            getAnalyticsSummary(), getXaiTraces(), etc.
 │
-└── Jonas_Frontend_Plan.md            # This planning document
+├── Jonas_Frontend_Plan.md            # UI planning document (this file)
+├── Jonas_Integration_Plan.md         # Integration architecture, API contract, completion status
+├── Jonas_API_Plan.md                 # Step-by-step guide for building src/api.py
+├── Jonas_Design_Decisions.md         # ✅ NEW: Intentional design choices and known behaviours
+└── QUICKSTART.md                     # ✅ NEW: Step-by-step guide for running the project locally
 ```
 
 > **Legend:** ✅ Done &nbsp;|&nbsp; ⬜ Planned (step number shown)
@@ -358,13 +389,15 @@ Before you build, align with your teammates on:
 
 ---
 
-## 10. Summary — Your Next 3 Steps
+## 10. Summary — Current Status
 
-1. **Install Node.js** from https://nodejs.org (choose LTS version)
-2. **Create the React project** using the Vite command in Phase B above
-3. **Build a simple Customer Chat page** with a text input and hardcoded AI reply — just to see something on screen
+**UI development and API integration are complete.** All three dashboards are built and connected to the real Orchestrator backend.
 
-Start small, get something visible, then grow from there. You don't need to understand everything at once.
+**Remaining before final submission:**
+
+1. **Cloud deployment** — Deploy backend to Azure, frontend to Vercel. See `Jonas_Integration_Plan.md` Section 10 for options.
+2. **Security check** — Confirm `.env` files are git-ignored and the OpenAI API key is not committed. See `Jonas_Integration_Plan.md` Section 12.
+3. **Team testing** — Share `QUICKSTART.md` with all teammates so they can run the full system locally and verify end-to-end.
 
 ---
 

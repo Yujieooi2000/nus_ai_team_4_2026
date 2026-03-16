@@ -1,41 +1,35 @@
 import { useState, useRef, useEffect } from 'react'
-import { Input, Button, Tag, Typography, Space } from 'antd'
+import { Input, Button, Tag, Typography, Space, Spin } from 'antd'
+import { sendChatMessage } from '../services/api'
 
 const { Text } = Typography
 
-// Mock AI responses that cycle through on each message sent.
-// Each entry simulates a different agent handling the request.
-const MOCK_RESPONSES = [
-  {
-    text: "I can help you track your order! Order #ORD-78234 is currently in transit and estimated to arrive within 3–5 business days.",
-    agent: "Resolution Agent",
-    category: "Order Tracking",
-    priority: "Low",
-  },
-  {
-    text: "To reset your password, click 'Forgot Password' on the login page. You'll receive a reset email within 2 minutes.",
-    agent: "Information Retrieval Agent",
-    category: "Account Support",
-    priority: "Medium",
-  },
-  {
-    text: "I can see a duplicate charge on your account. I'm initiating a refund now — it should appear within 3–5 business days.",
-    agent: "Resolution Agent",
-    category: "Billing",
-    priority: "High",
-  },
-  {
-    text: "Our standard shipping takes 3–5 business days. Express (1–2 days) is available at checkout. We accept Visa, Mastercard, and PayPal.",
-    agent: "Information Retrieval Agent",
-    category: "General Inquiry",
-    priority: "Low",
-  },
-]
-
+// Colour map for priority tags
 const PRIORITY_COLORS = { High: 'red', Medium: 'orange', Low: 'green' }
 
-// Tracks which mock response to show next (cycles through the list)
-let responseIndex = 0
+// ── Helper: format agent name from API ("ResolutionAgent" → "Resolution Agent") ──
+const AGENT_DISPLAY_NAMES = {
+  ResolutionAgent:            'Resolution Agent',
+  InformationRetrievalAgent:  'Information Retrieval Agent',
+  EscalationAgent:            'Escalation Agent',
+  SecurityComplianceAgent:    'Security Agent',
+}
+function formatAgentName(name) {
+  return AGENT_DISPLAY_NAMES[name] || name || 'AI Agent'
+}
+
+// ── Helper: format category from API ("technical_support" → "Technical Support") ──
+function formatCategory(cat) {
+  if (!cat) return 'General'
+  return cat.replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase())
+}
+
+// ── Helper: capitalise first letter ("high" → "High") ──
+function capitalize(str) {
+  if (!str) return ''
+  return str.charAt(0).toUpperCase() + str.slice(1)
+}
+
 
 function ChatWindow() {
   const [messages, setMessages] = useState([
@@ -45,8 +39,13 @@ function ChatWindow() {
       agent: null,
     },
   ])
-  const [input, setInput] = useState('')
+  const [input, setInput]       = useState('')
+  const [loading, setLoading]   = useState(false)  // true while waiting for API response
   const [escalated, setEscalated] = useState(false)
+
+  // sessionId is generated once when the component mounts and never changes.
+  // Using useRef means it survives re-renders without triggering them.
+  const sessionId = useRef(`session_${Date.now()}_${Math.random().toString(36).slice(2)}`)
 
   // Ref to the bottom of the message list — used to auto-scroll on new messages
   const bottomRef = useRef(null)
@@ -54,37 +53,82 @@ function ChatWindow() {
     bottomRef.current?.scrollIntoView({ behavior: 'smooth' })
   }, [messages])
 
-  function sendMessage() {
-    if (!input.trim() || escalated) return
 
-    const userMsg = { role: 'user', text: input.trim() }
+  async function sendMessage() {
+    if (!input.trim() || escalated || loading) return
 
-    // Pick the next mock response in the cycle
-    const mock = MOCK_RESPONSES[responseIndex % MOCK_RESPONSES.length]
-    responseIndex++
-    const aiMsg = {
-      role: 'ai',
-      text: mock.text,
-      agent: mock.agent,
-      category: mock.category,
-      priority: mock.priority,
-    }
+    const userText = input.trim()
+    const userMsg  = { role: 'user', text: userText }
 
-    setMessages(prev => [...prev, userMsg, aiMsg])
+    // Show user message immediately, clear the input, show loading state
+    setMessages(prev => [...prev, userMsg])
     setInput('')
+    setLoading(true)
+
+    try {
+      // Call the FastAPI backend — this runs the full 7-agent pipeline
+      const result = await sendChatMessage(userText, sessionId.current)
+
+      const aiMsg = {
+        role:     'ai',
+        text:     result.message || 'I received your message.',
+        agent:    formatAgentName(result.agent),
+        category: formatCategory(result.analysis?.category),
+        priority: capitalize(result.analysis?.priority),
+      }
+
+      setMessages(prev => [...prev, aiMsg])
+
+      // If the Orchestrator decided to escalate, lock the chat
+      if (result.status === 'escalated') {
+        setEscalated(true)
+      }
+
+    } catch (err) {
+      // Show a friendly error if the backend is unreachable
+      setMessages(prev => [...prev, {
+        role: 'ai',
+        text: 'Sorry, I am having trouble connecting to the support system. Please try again in a moment.',
+        agent: null,
+      }])
+    } finally {
+      setLoading(false)
+    }
   }
 
-  function escalate() {
-    const escalationMsg = {
-      role: 'ai',
-      text: "I've escalated your case to a human support agent. Your ticket ID is TKT-12345. An agent will be with you shortly.",
-      agent: "Escalation Agent",
-      category: "Human Handoff",
-      priority: "High",
+
+  async function escalate() {
+    if (loading) return
+    // Send an explicit human-request message — the EscalationAgent detects this
+    // and triggers a proper escalation through the Orchestrator pipeline.
+    setLoading(true)
+    try {
+      const result = await sendChatMessage(
+        'I want to speak to a human agent.',
+        sessionId.current
+      )
+      const escalationMsg = {
+        role:     'ai',
+        text:     result.message || 'Connecting you to a human agent.',
+        agent:    formatAgentName(result.agent),
+        category: 'Human Handoff',
+        priority: 'High',
+      }
+      setMessages(prev => [...prev, escalationMsg])
+    } catch (err) {
+      setMessages(prev => [...prev, {
+        role: 'ai',
+        text: 'Your case has been escalated. A human agent will be with you shortly.',
+        agent: 'Escalation Agent',
+        category: 'Human Handoff',
+        priority: 'High',
+      }])
+    } finally {
+      setEscalated(true)
+      setLoading(false)
     }
-    setMessages(prev => [...prev, escalationMsg])
-    setEscalated(true)
   }
+
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
@@ -127,11 +171,23 @@ function ChatWindow() {
               <Space size={4} style={{ marginTop: 6 }}>
                 <Tag color="blue">{msg.agent}</Tag>
                 <Tag>{msg.category}</Tag>
-                <Tag color={PRIORITY_COLORS[msg.priority]}>{msg.priority} Priority</Tag>
+                {msg.priority && (
+                  <Tag color={PRIORITY_COLORS[msg.priority] || 'default'}>
+                    {msg.priority} Priority
+                  </Tag>
+                )}
               </Space>
             )}
           </div>
         ))}
+
+        {/* Loading indicator — shown while waiting for API response */}
+        {loading && (
+          <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+            <Spin size="small" />
+            <Text type="secondary" style={{ fontSize: 12 }}>AI is thinking...</Text>
+          </div>
+        )}
 
         {/* Invisible anchor at the bottom for auto-scroll */}
         <div ref={bottomRef} />
@@ -149,7 +205,7 @@ function ChatWindow() {
         <Button
           danger
           onClick={escalate}
-          disabled={escalated}
+          disabled={escalated || loading}
         >
           {escalated ? 'Escalated' : 'Escalate to Human'}
         </Button>
@@ -157,14 +213,21 @@ function ChatWindow() {
           value={input}
           onChange={e => setInput(e.target.value)}
           onPressEnter={sendMessage}
-          placeholder={escalated ? 'This chat has been escalated to a human agent.' : 'Type your message...'}
-          disabled={escalated}
+          placeholder={
+            escalated
+              ? 'This chat has been escalated to a human agent.'
+              : loading
+              ? 'Waiting for response...'
+              : 'Type your message...'
+          }
+          disabled={escalated || loading}
           style={{ flex: 1 }}
         />
         <Button
           type="primary"
           onClick={sendMessage}
-          disabled={escalated || !input.trim()}
+          disabled={escalated || loading || !input.trim()}
+          loading={loading}
         >
           Send
         </Button>

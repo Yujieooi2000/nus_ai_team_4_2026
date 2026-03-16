@@ -8,7 +8,7 @@ class SecurityComplianceAgent:
         self.pii_patterns = {
             "email": r"[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+",
             "phone": r"\b(\+65)?[689]\d{7}\b",
-            r"\b[STFG]\d{7}[A-Z]\b",
+            "nric": r"\b[STFG]\d{7}[A-Z]\b",
             "passport": r"\b[A-Z]\d{7,8}\b",
             "credit_card": r"\b(?:\d[ -]*?){13,16}\b",
             "cvv": r"\b(?:cvv|cvc)\s*[:\-]?\s*\d{3,4}\b",

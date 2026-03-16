@@ -1,94 +1,65 @@
-import { useState } from 'react'
-import { Typography, Tag, Button, Input, Alert, Empty, Space, Divider, Card } from 'antd'
+import { useState, useEffect } from 'react'
+import { Typography, Tag, Button, Input, Alert, Empty, Space, Divider, Card, Spin } from 'antd'
 import TicketCard from '../components/TicketCard'
+import { getTickets, resolveTicket } from '../services/api'
 
-const { Title, Text, Paragraph } = Typography
+const { Title, Text } = Typography
 const { TextArea } = Input
 
 // ── Colour maps ────────────────────────────────────────────────────────────────
-const PRIORITY_COLORS  = { High: 'red',      Medium: 'orange',  Low: 'green'     }
+const PRIORITY_COLORS  = { High: 'red', Medium: 'orange', Low: 'green' }
 const SENTIMENT_COLORS = { Frustrated: 'volcano', Neutral: 'default', Satisfied: 'green' }
 
-// ── Mock ticket data ───────────────────────────────────────────────────────────
-// This will be replaced by a real API call in Step 7.
-const INITIAL_TICKETS = [
-  {
-    id: 'TKT-12345',
-    customer: 'Jane Doe',
-    priority: 'High',
-    sentiment: 'Frustrated',
-    category: 'Billing',
-    timestamp: '2026-03-05  09:14',
-    status: 'Open',
-    preview: 'Charged twice for my subscription...',
-    aiSummary:
-      'Customer reports a duplicate charge on their account for the monthly subscription. AI confidence was low due to account access limitations — escalated for human review.',
-    conversation: [
-      { role: 'user', text: 'I was charged twice for my subscription this month!' },
-      { role: 'ai',   text: 'I understand your frustration. Let me look into this billing issue for you.' },
-      { role: 'user', text: 'This is really unacceptable. I need this fixed immediately.' },
-      { role: 'ai',   text: 'I can see your account details but need elevated access to process the refund. Escalating to a human agent now.' },
-    ],
-    aiResponse:
-      'I sincerely apologize for the duplicate charge. I have initiated a refund of $29.99 to your account. It will appear within 3–5 business days.',
-  },
-  {
-    id: 'TKT-12346',
-    customer: 'Marcus Tan',
-    priority: 'Medium',
-    sentiment: 'Neutral',
-    category: 'Technical',
-    timestamp: '2026-03-05  09:32',
-    status: 'Open',
-    preview: 'Unable to log in after password change...',
-    aiSummary:
-      'Customer is experiencing login issues after a recent password change. Standard reset flow was attempted but the customer reports the reset email is not arriving.',
-    conversation: [
-      { role: 'user', text: 'I cannot log in. I changed my password yesterday and now it does not work.' },
-      { role: 'ai',   text: 'I can help you regain access. I have sent a password reset link to your registered email.' },
-      { role: 'user', text: 'I have not received any email. I checked spam too.' },
-      { role: 'ai',   text: 'I am escalating this to a human agent who can manually verify your account.' },
-    ],
-    aiResponse:
-      'I have manually reset your account and sent a temporary password to your registered email. Please check your inbox within 5 minutes.',
-  },
-  {
-    id: 'TKT-12347',
-    customer: 'Priya Sharma',
-    priority: 'Low',
-    sentiment: 'Neutral',
-    category: 'General Inquiry',
-    timestamp: '2026-03-05  10:05',
-    status: 'Open',
-    preview: 'Return policy question for a gift item...',
-    aiSummary:
-      'Customer is asking about the return policy for a gifted item without an original receipt. AI was uncertain about the gift return exception clause and escalated for confirmation.',
-    conversation: [
-      { role: 'user', text: "I received a gift I'd like to return but I don't have the receipt. Is that possible?" },
-      { role: 'ai',   text: 'Our standard policy requires a receipt for returns. However, there may be exceptions for gifts. Let me connect you with an agent to confirm.' },
-    ],
-    aiResponse:
-      'Good news — we do accept gift returns without a receipt within 30 days of purchase. Please bring the item to any of our stores and our staff will assist you.',
-  },
-  {
-    id: 'TKT-12348',
-    customer: 'David Lim',
-    priority: 'High',
-    sentiment: 'Frustrated',
-    category: 'Order Tracking',
-    timestamp: '2026-03-05  10:22',
-    status: 'Open',
-    preview: 'Order marked delivered but not received...',
-    aiSummary:
-      "Customer's order is marked as delivered in the system but they report not receiving it. AI could not initiate a reshipment without manual verification from the logistics team.",
-    conversation: [
-      { role: 'user', text: 'My order says delivered but I never received anything. This is a $200 item!' },
-      { role: 'ai',   text: 'I am very sorry to hear this. I can see the delivery was logged at 2:15 PM yesterday. Let me escalate this for investigation.' },
-    ],
-    aiResponse:
-      'I have raised a missing parcel investigation with our courier partner. You will receive an update within 24 hours. If unresolved, we will reship your order at no additional cost.',
-  },
-]
+// ── Helper: map API ticket format to the shape the UI components expect ────────
+// The API returns field names like ticket_id, conversation_history, etc.
+// This function converts them to the names used by TicketCard and the detail panel.
+function mapTicket(t) {
+  return {
+    id:        t.ticket_id,
+    // The API doesn't store a customer name — show a short session reference instead
+    customer:  `Session ${String(t.session_id || '').slice(-8)}`,
+    priority:  capitalize(t.priority),
+    // Map API sentiment ("negative"/"neutral"/"positive") to display labels
+    sentiment: mapSentiment(t.sentiment),
+    category:  formatCategory(t.category),
+    timestamp: t.created_at
+      ? new Date(t.created_at).toLocaleString('en-SG', { dateStyle: 'short', timeStyle: 'short', timeZone: 'Asia/Singapore' })
+      : '',
+    status:    capitalize(t.status),
+    preview:   t.last_message || '',
+    // AI summary uses the triage explanation (the XAI trace for this ticket)
+    aiSummary: t.escalation_reason
+      ? `Escalation reason: ${t.escalation_reason}`
+      : 'Escalated for human review.',
+    // AI suggested response is always a placeholder — no per-ticket AI draft is stored in the API
+    aiResponse: 'Please review the conversation above and write a reply below.',
+    // If the ticket was already resolved with a custom reply, restore it from the API
+    agentReplySent: t.agent_reply || null,
+    // Map conversation history: API uses "assistant", UI uses "ai"
+    conversation: (t.conversation_history || []).map(m => ({
+      role: m.role === 'assistant' ? 'ai' : m.role,
+      text: m.content || '',
+    })),
+    // Keep the original ticket_id for API calls
+    _ticketId: t.ticket_id,
+  }
+}
+
+function capitalize(str) {
+  if (!str) return ''
+  return str.charAt(0).toUpperCase() + str.slice(1)
+}
+
+function formatCategory(cat) {
+  if (!cat) return 'General'
+  return cat.replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase())
+}
+
+function mapSentiment(sentiment) {
+  const map = { negative: 'Frustrated', neutral: 'Neutral', positive: 'Satisfied' }
+  return map[sentiment] || 'Neutral'
+}
+
 
 // ── Helper: read-only conversation bubbles (same style as CustomerChat) ────────
 function ConversationHistory({ conversation }) {
@@ -118,19 +89,38 @@ function ConversationHistory({ conversation }) {
   )
 }
 
+
 // ── Main page component ────────────────────────────────────────────────────────
 function AgentDashboard() {
-  const [tickets, setTickets]         = useState(INITIAL_TICKETS)
-  const [selectedId, setSelectedId]   = useState(null)
-  const [showReplyBox, setShowReplyBox] = useState(false)
-  const [customReply, setCustomReply] = useState('')
-  const [actionDone, setActionDone]   = useState(null) // 'approved' | 'replied' | 'closed'
+  const [tickets, setTickets]             = useState([])
+  const [loading, setLoading]             = useState(true)
+  const [error, setError]                 = useState(null)
+  const [selectedId, setSelectedId]       = useState(null)
+  const [showReplyBox, setShowReplyBox]   = useState(false)
+  const [customReply, setCustomReply]     = useState('')
+  const [actionDone, setActionDone]       = useState(null) // 'approved' | 'replied' | 'closed'
+  const [actionLoading, setActionLoading] = useState(false)
+
+  // Load tickets from the API when the page first loads
+  useEffect(() => {
+    async function fetchTickets() {
+      try {
+        const data = await getTickets()
+        setTickets(data.map(mapTicket))
+      } catch (err) {
+        setError('Could not load tickets. Is the API server running?')
+      } finally {
+        setLoading(false)
+      }
+    }
+    fetchTickets()
+  }, [])
 
   const selected = tickets.find(t => t.id === selectedId)
 
-  // Update a ticket's status in the array
-  function updateStatus(id, newStatus) {
-    setTickets(prev => prev.map(t => t.id === id ? { ...t, status: newStatus } : t))
+  // Update one or more fields on a ticket in local state after an action
+  function updateLocalTicket(id, updates) {
+    setTickets(prev => prev.map(t => t.id === id ? { ...t, ...updates } : t))
   }
 
   function handleSelectTicket(id) {
@@ -140,21 +130,68 @@ function AgentDashboard() {
     setActionDone(null)
   }
 
-  function handleApprove() {
-    updateStatus(selectedId, 'Resolved')
-    setActionDone('approved')
+  async function handleApprove() {
+    setActionLoading(true)
+    try {
+      await resolveTicket(selected._ticketId, 'approved')
+      updateLocalTicket(selectedId, { status: 'Resolved' })
+      setActionDone('approved')
+    } catch (err) {
+      setActionDone('error')
+    } finally {
+      setActionLoading(false)
+    }
   }
 
-  function handleSendReply() {
+  async function handleSendReply() {
     if (!customReply.trim()) return
-    updateStatus(selectedId, 'Resolved')
-    setActionDone('replied')
-    setShowReplyBox(false)
+    setActionLoading(true)
+    try {
+      await resolveTicket(selected._ticketId, 'custom_reply', customReply)
+      // Store the agent's reply in a separate field — aiResponse stays as the AI draft
+      updateLocalTicket(selectedId, { status: 'Resolved', agentReplySent: customReply })
+      setActionDone('replied')
+      setShowReplyBox(false)
+    } catch (err) {
+      setActionDone('error')
+    } finally {
+      setActionLoading(false)
+    }
   }
 
-  function handleClose() {
-    updateStatus(selectedId, 'Closed')
-    setActionDone('closed')
+  async function handleClose() {
+    setActionLoading(true)
+    try {
+      await resolveTicket(selected._ticketId, 'closed')
+      updateLocalTicket(selectedId, { status: 'Closed' })
+      setActionDone('closed')
+    } catch (err) {
+      setActionDone('error')
+    } finally {
+      setActionLoading(false)
+    }
+  }
+
+  // ── Loading state ──────────────────────────────────────────────────────────
+  if (loading) {
+    return (
+      <div style={{ height: '60vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+        <Spin size="large" tip="Loading tickets..." />
+      </div>
+    )
+  }
+
+  // ── Error state ────────────────────────────────────────────────────────────
+  if (error) {
+    return (
+      <Alert
+        type="error"
+        message="Could not load tickets"
+        description={error}
+        showIcon
+        style={{ margin: '40px auto', maxWidth: 600 }}
+      />
+    )
   }
 
   return (
@@ -169,14 +206,18 @@ function AgentDashboard() {
           </Tag>
         </Title>
         <div style={{ overflowY: 'auto', flex: 1 }}>
-          {tickets.map(ticket => (
-            <TicketCard
-              key={ticket.id}
-              ticket={ticket}
-              selected={ticket.id === selectedId}
-              onClick={() => handleSelectTicket(ticket.id)}
-            />
-          ))}
+          {tickets.length === 0 ? (
+            <Empty description="No escalated tickets yet" style={{ marginTop: 40 }} />
+          ) : (
+            tickets.map(ticket => (
+              <TicketCard
+                key={ticket.id}
+                ticket={ticket}
+                selected={ticket.id === selectedId}
+                onClick={() => handleSelectTicket(ticket.id)}
+              />
+            ))
+          )}
         </div>
       </div>
 
@@ -206,11 +247,14 @@ function AgentDashboard() {
 
             {/* Conversation history */}
             <Text strong style={{ display: 'block', marginBottom: 10 }}>Conversation History</Text>
-            <ConversationHistory conversation={selected.conversation} />
+            {selected.conversation.length > 0
+              ? <ConversationHistory conversation={selected.conversation} />
+              : <Text type="secondary">No conversation history recorded.</Text>
+            }
 
             <Divider style={{ margin: '16px 0' }} />
 
-            {/* AI Summary */}
+            {/* AI Summary (escalation reason from triage) */}
             <Alert
               message={<Text strong>AI Summary</Text>}
               description={selected.aiSummary}
@@ -225,22 +269,37 @@ function AgentDashboard() {
               description={selected.aiResponse}
               type="success"
               showIcon
-              style={{ marginBottom: 16 }}
+              style={{ marginBottom: 12 }}
             />
 
-            {/* Action result message */}
-            {actionDone === 'approved' && (
-              <Alert message="AI response approved and sent to customer. Ticket resolved." type="success" showIcon style={{ marginBottom: 12 }} />
-            )}
-            {actionDone === 'replied' && (
-              <Alert message="Custom reply sent to customer. Ticket resolved." type="success" showIcon style={{ marginBottom: 12 }} />
-            )}
-            {actionDone === 'closed' && (
-              <Alert message="Ticket closed without a reply." type="warning" showIcon style={{ marginBottom: 12 }} />
+            {/* Agent's custom reply — shown after human agent sends a custom response */}
+            {selected.agentReplySent && (
+              <Alert
+                message={<Text strong>Reply Sent to Customer</Text>}
+                description={selected.agentReplySent}
+                type="info"
+                showIcon
+                style={{ marginBottom: 16 }}
+              />
             )}
 
-            {/* Custom reply box */}
-            {showReplyBox && (
+            {/* Persistent status banner — shown whenever ticket is no longer Open.
+                This persists even after switching to another ticket and back,
+                because it reads from ticket.status (local state) not actionDone. */}
+            {selected.status === 'Resolved' && (
+              <Alert message="This ticket has been resolved." type="success" showIcon style={{ marginBottom: 12 }} />
+            )}
+            {selected.status === 'Closed' && (
+              <Alert message="This ticket has been closed." type="warning" showIcon style={{ marginBottom: 12 }} />
+            )}
+
+            {/* Transient error feedback (only visible immediately after a failed action) */}
+            {actionDone === 'error' && (
+              <Alert message="Action failed. Please check if the API server is running." type="error" showIcon style={{ marginBottom: 12 }} />
+            )}
+
+            {/* Custom reply box — only shown when Open and agent clicks Write Custom Reply */}
+            {selected.status === 'Open' && showReplyBox && (
               <div style={{ marginBottom: 12 }}>
                 <TextArea
                   rows={3}
@@ -250,7 +309,7 @@ function AgentDashboard() {
                   style={{ marginBottom: 8 }}
                 />
                 <Space>
-                  <Button type="primary" onClick={handleSendReply} disabled={!customReply.trim()}>
+                  <Button type="primary" onClick={handleSendReply} disabled={!customReply.trim()} loading={actionLoading}>
                     Send Reply
                   </Button>
                   <Button onClick={() => setShowReplyBox(false)}>Cancel</Button>
@@ -258,16 +317,18 @@ function AgentDashboard() {
               </div>
             )}
 
-            {/* Action buttons — hidden once an action is taken */}
-            {!actionDone && (
+            {/* Action buttons — only shown when ticket is still Open.
+                Gated on ticket.status (not actionDone) so they stay hidden
+                even after switching to another ticket and back. */}
+            {selected.status === 'Open' && (
               <Space>
-                <Button type="primary" onClick={handleApprove}>
+                <Button type="primary" onClick={handleApprove} loading={actionLoading}>
                   Approve AI Response
                 </Button>
-                <Button onClick={() => setShowReplyBox(true)} disabled={showReplyBox}>
+                <Button onClick={() => setShowReplyBox(true)} disabled={showReplyBox || actionLoading}>
                   Write Custom Reply
                 </Button>
-                <Button danger onClick={handleClose}>
+                <Button danger onClick={handleClose} loading={actionLoading}>
                   Close Ticket
                 </Button>
               </Space>
