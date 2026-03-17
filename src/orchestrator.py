@@ -34,7 +34,13 @@ class Orchestrator:
 
         self.security_agent = SecurityComplianceAgent()
         self.triage_agent = TriageAgent()
-        self.info_agent = InformationRetrievalAgent(self.knowledge_base)
+        
+        # Use vector database for retrieval if available
+        self.info_agent = InformationRetrievalAgent(
+            knowledge_base=self.knowledge_base,
+            use_vector_db=True  # Enable vector database search
+        )
+        
         self.conversation_agent = ConversationAgent(api_key)
         self.verification_agent = VerificationAgent(api_key)
         self.resolution_agent = ResolutionAgent()
