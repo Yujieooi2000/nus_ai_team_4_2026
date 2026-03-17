@@ -21,6 +21,7 @@
 10. [Cloud Deployment on Azure](#10-cloud-deployment-on-azure)
 11. [Environment Variables Reference](#11-environment-variables-reference)
 12. [Security Checklist](#12-security-checklist)
+13. [Vector Database (ChromaDB) Integration](#13-vector-database-chromadb-integration)
 
 ---
 
@@ -698,6 +699,74 @@ Before the final demo and submission, verify all of these:
 - [ ] CORS is configured to only allow your specific frontend URL in production (not all origins)
 - [ ] The backend validates user input length (prevent extremely long messages)
 - [ ] The bac![1773727153763](image/Jonas_Integration_Plan/1773727153763.png) a rate limit (prevent spamming the OpenAI API with cost)
+
+---
+
+## 13. Vector Database (ChromaDB) Integration
+
+### What Is a Vector Database and Why Does It Matter?
+
+The original Information Retrieval Agent used **keyword matching** — it would search the knowledge base by looking for exact word matches. If a customer wrote "my payment bounced", but the knowledge base entry used the word "billing", it might miss it.
+
+A **vector database** like ChromaDB uses AI embeddings to understand *meaning*, not just words. "Payment bounced", "charge failed", and "billing issue" would all match because they mean the same thing. This makes the AI's answers significantly more accurate and relevant.
+
+Think of it like this:
+- **Old way (keyword):** Like a library index — only finds exact matches
+- **New way (vector/semantic):** Like a smart librarian who understands what you're looking for even if you use different words
+
+### What Changed in the Codebase
+
+Your teammate built `src/vector_db.py` — a wrapper around ChromaDB. The changes are entirely in the backend. **No UI changes are required.**
+
+| File | What Changed |
+|------|-------------|
+| `src/vector_db.py` | **New file** — ChromaDB wrapper with `add_documents()`, `search()`, and `get_collection_stats()` methods |
+| `src/agents/information_retrieval_agent.py` | Updated — now accepts `use_vector_db=True` flag; falls back gracefully to keyword search if ChromaDB is unavailable |
+| `src/orchestrator.py` | Updated — passes `use_vector_db=True` when creating the Information Retrieval Agent |
+| `requirements.txt` | Updated — `chromadb` package already added |
+| `.gitignore` | Updated — `chroma_data/` folder already excluded from Git |
+
+### Where the Data Is Stored
+
+ChromaDB stores its data in a folder called `chroma_data/` in the project root. This folder:
+- Is created automatically the first time you run the initialisation script
+- Contains binary database files (too large for Git — hence it's in `.gitignore`)
+- **Must exist before starting the backend server**, otherwise the vector search falls back to keyword mode silently
+
+### Jonas's Setup Tasks (One-Time, Before Running the Server)
+
+After cloning the repo or pulling new changes, run the initialisation script **once**:
+
+```bash
+# From the project root:
+python src/vector_db.py
+```
+
+You should see output like:
+```
+✓ Vector DB initialized at ./chroma_data
+✓ Collection: customer_support_kb
+✓ Current documents in collection: 0
+✓ Successfully added 15 documents to vector database
+✓ VECTOR DATABASE INITIALIZATION COMPLETE
+```
+
+After this, every time you start the backend server normally (`python -m uvicorn src.api:app --reload`), it will automatically use the vector database.
+
+> **You only need to run this once.** The data persists in `chroma_data/` across server restarts. Re-run it only if you delete the `chroma_data/` folder or want to reset the knowledge base.
+
+### What Happens If the Vector DB Is Not Initialised?
+
+The system does **not crash**. The Information Retrieval Agent detects that ChromaDB is unavailable and automatically falls back to keyword-based search. You will see a warning in the terminal:
+```
+⚠ Vector DB initialization failed: ...
+  Falling back to keyword-based search
+```
+The AI will still answer questions — just with lower accuracy.
+
+### Cloud Deployment Consideration
+
+The `chroma_data/` folder only exists locally. When deployed to the cloud, the backend server starts fresh with no data. See `DEPLOYMENT.md` Section 4 for how to handle this.
 
 ---
 

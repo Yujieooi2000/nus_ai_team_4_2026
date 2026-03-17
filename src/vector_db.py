@@ -4,6 +4,7 @@ Initializes and manages vector embeddings for the customer support knowledge bas
 """
 
 import chromadb
+import json
 import os
 from typing import List, Dict, Optional
 
@@ -177,24 +178,10 @@ def initialize_sample_database():
     # Initialize database
     db = VectorDB(persist_dir="./chroma_data")
     
-    # Sample knowledge base (customize this with your actual content)
-    knowledge_base = [
-        "Our operating hours are 9 AM to 5 PM, Monday to Friday. We are closed on weekends and public holidays.",
-        "To reset your password, click on the 'Forgot Password' link on the login page and follow the email instructions.",
-        "We accept Visa, Mastercard, American Express, and PayPal for payment methods.",
-        "You can track your order status in the 'My Orders' section of your account dashboard.",
-        "We offer a 30-day return policy for all unused items in original packaging with receipt.",
-        "Standard shipping takes 3-5 business days from the order date.",
-        "Express shipping is available for 1-2 day delivery at an additional cost of $9.99.",
-        "You can contact our support team at support@example.com or call 1-800-SUPPORT.",
-        "Refunds are processed within 5-7 business days after we receive your returned item.",
-        "Our return deadline is 30 days from your original purchase date.",
-        "Free shipping is available on orders over $50 within the continental US.",
-        "We offer a 90-day warranty on all electronics purchased from our store.",
-        "Student discounts of 15% are available with valid student ID verification.",
-        "To update your account information, go to Settings > Account Details in your profile.",
-        "Password reset emails are usually sent within 2 minutes. Check your spam folder if not received."
-    ]
+    # Load knowledge base from the shared JSON file
+    _kb_path = os.path.join(os.path.dirname(__file__), "knowledge_base.json")
+    with open(_kb_path, "r", encoding="utf-8") as _f:
+        knowledge_base = json.load(_f)
     
     # Add documents to vector database
     db.add_documents(knowledge_base)

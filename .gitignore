@@ -1,3 +1,7 @@
 Jonas_Ref/
 .env
 image/
+__pycache__/
+*.pyc
+*.pyo
+chroma_data/

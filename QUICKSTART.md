@@ -25,7 +25,26 @@ python -m textblob.download_corpora
 
 ---
 
-## Step 2 — Set your OpenAI API key
+## Step 2 — Initialise the Vector Database (one-time setup)
+
+The AI uses ChromaDB to search the knowledge base semantically (by meaning, not just keywords). You need to load the knowledge base into it once before starting the server.
+
+```bash
+python src/vector_db.py
+```
+
+You should see:
+```
+✓ Vector DB initialized at ./chroma_data
+✓ Successfully added 15 documents to vector database
+✓ VECTOR DATABASE INITIALIZATION COMPLETE
+```
+
+> **Only do this once.** The data is saved in the `chroma_data/` folder and survives server restarts. If you see `⚠ Vector DB initialization failed` in the terminal later, just re-run this step.
+
+---
+
+## Step 3 — Set your OpenAI API key
 
 Create a file called **`.env`** in the project root (this file is git-ignored and must not be committed):
 
@@ -35,7 +54,7 @@ OPENAI_API_KEY=sk-...your-key-here...
 
 ---
 
-## Step 3 — Start the backend API server
+## Step 4 — Start the backend API server
 
 Run this from the project root:
 
@@ -53,7 +72,7 @@ Verify it works by opening **http://localhost:8000/docs** in your browser — yo
 
 ---
 
-## Step 4 — Start the React frontend
+## Step 5 — Start the React frontend
 
 Open a **second terminal**, then:
 
@@ -75,7 +94,7 @@ Open **http://localhost:5173** in your browser.
 
 ---
 
-## Step 5 — Test the full flow
+## Step 6 — Test the full flow
 
 1. **Customer Chat** — type a message and verify the AI responds. Send something frustrated or urgent (e.g. *"I am very frustrated, I want a refund NOW"*) to trigger an escalation.
 2. **Agent Dashboard** — the escalated ticket should appear in the queue. Click it to review the conversation, then try Approve / Custom Reply / Close.

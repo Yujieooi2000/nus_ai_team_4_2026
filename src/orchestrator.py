@@ -1,3 +1,5 @@
+import json
+import os
 from agents.triage_agent import TriageAgent
 from agents.information_retrieval_agent import InformationRetrievalAgent
 from agents.resolution_agent import ResolutionAgent
@@ -16,15 +18,9 @@ class Orchestrator:
         # Resources
         # ----------------------------
 
-        self.knowledge_base = [
-            "Our operating hours are 9 AM to 5 PM, Monday to Friday.",
-            "To reset your password, click on the 'Forgot Password' link on the login page.",
-            "We accept Visa, Mastercard, and PayPal.",
-            "You can track your order status in the 'My Orders' section.",
-            "We offer a 30-day return policy for all unused items.",
-            "Standard shipping takes 3-5 business days.",
-            "You can contact our support team at support@example.com."
-        ]
+        _kb_path = os.path.join(os.path.dirname(__file__), "knowledge_base.json")
+        with open(_kb_path, "r", encoding="utf-8") as f:
+            self.knowledge_base = json.load(f)
 
         self.analytics_db = []
 
