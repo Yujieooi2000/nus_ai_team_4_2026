@@ -158,10 +158,10 @@ function ChatWindow() {
               borderRadius: msg.role === 'user'
                 ? '18px 18px 4px 18px'
                 : '18px 18px 18px 4px',
-              background: msg.role === 'user' ? '#1677ff' : '#ffffff',
+              background: msg.role === 'user' ? '#1677ff' : 'var(--bubble-ai-bg)',
               boxShadow: '0 1px 3px rgba(0,0,0,0.1)',
             }}>
-              <Text style={{ color: msg.role === 'user' ? 'white' : '#222' }}>
+              <Text style={{ color: msg.role === 'user' ? 'white' : 'var(--bubble-ai-text)' }}>
                 {msg.text}
               </Text>
             </div>
@@ -196,19 +196,23 @@ function ChatWindow() {
       {/* ── Input area ─────────────────────────────────────────────── */}
       <div style={{
         padding: '12px 16px',
-        borderTop: '1px solid #e8e8e8',
-        background: '#fafafa',
+        borderTop: '1px solid var(--input-area-border)',
+        background: 'var(--input-area-bg)',
         display: 'flex',
         gap: 8,
         alignItems: 'center',
       }}>
-        <Button
-          danger
-          onClick={escalate}
-          disabled={escalated || loading}
-        >
-          {escalated ? 'Escalated' : 'Escalate to Human'}
-        </Button>
+        {/* Only show once the customer has sent at least one message */}
+        {messages.length > 1 && (
+          <Button
+            type="primary"
+            danger
+            onClick={escalate}
+            disabled={escalated || loading}
+          >
+            {escalated ? 'Escalated' : 'Escalate to Human'}
+          </Button>
+        )}
         <Input
           value={input}
           onChange={e => setInput(e.target.value)}

@@ -8,34 +8,11 @@ import { getAnalyticsSummary, getXaiTraces } from '../services/api'
 
 const { Title, Text } = Typography
 
-// ── Static mock data (no time-series endpoint exists yet) ──────────────────────
-// These sections stay as mock until a time-series API endpoint is built.
-
-const dailyInteractions = [
-  { day: 'Mon', interactions: 18 },
-  { day: 'Tue', interactions: 24 },
-  { day: 'Wed', interactions: 31 },
-  { day: 'Thu', interactions: 22 },
-  { day: 'Fri', interactions: 38 },
-  { day: 'Sat', interactions: 14 },
-  { day: 'Sun', interactions: 10 },
-]
-
-const routingData = [
-  { key: '1', agent: 'Resolution Agent',            share: '45%', count: 71 },
-  { key: '2', agent: 'Information Retrieval Agent', share: '30%', count: 47 },
-  { key: '3', agent: 'Escalation Agent',            share: '8%',  count: 13 },
-]
+// ── Table columns for agent routing (static config, data comes from API) ───────
 const routingColumns = [
   { title: 'Agent (post-Triage)', dataIndex: 'agent', key: 'agent' },
   { title: 'Share',               dataIndex: 'share', key: 'share', width: 80 },
   { title: 'Count',               dataIndex: 'count', key: 'count', width: 80 },
-]
-
-const knowledgeGaps = [
-  '"Refund timeline for international orders" — asked 12 times, no clear answer in knowledge base.',
-  '"API key rotation" — asked 8 times, documentation not indexed.',
-  '"Student discount eligibility" — asked 6 times, policy not available in system.',
 ]
 
 const backgroundAgents = [
@@ -132,6 +109,15 @@ function AdminDashboard() {
       }))
     : []
 
+  // Daily interactions line chart (real — last 7 days from analytics_db)
+  const dailyInteractions = summary?.daily_interactions ?? []
+
+  // Agent routing table (real — derived from analytics_db)
+  const routingData = (summary?.agent_routing ?? []).map((row, i) => ({ ...row, key: String(i) }))
+
+  // Knowledge gap alerts (real — from analytics_agent.detect_knowledge_gaps())
+  const knowledgeGaps = summary?.knowledge_gaps ?? []
+
   // XAI traces: map API format to table rows
   const xaiTableData = traces.map((t, i) => ({
     key:       String(i),
@@ -206,11 +192,11 @@ function AdminDashboard() {
       {/* ── Section 2: Charts ──────────────────────────────────────── */}
       <Row gutter={[16, 16]} style={{ marginTop: 16 }}>
 
-        {/* Line chart: daily interaction trend (static — no time-series API yet) */}
+        {/* Line chart: daily interaction trend (REAL — last 7 days from analytics_db) */}
         <Col span={16}>
           <Card
             title="Interactions This Week"
-            extra={<Text type="secondary" style={{ fontSize: 12 }}>Sample trend data</Text>}
+            extra={<Text type="secondary" style={{ fontSize: 12 }}>Last 7 days</Text>}
           >
             <ResponsiveContainer width="100%" height={240}>
               <LineChart data={dailyInteractions} margin={{ top: 5, right: 20, left: 0, bottom: 5 }}>
@@ -266,29 +252,37 @@ function AdminDashboard() {
       {/* ── Section 3: Agent routing + Knowledge gaps ──────────────── */}
       <Row gutter={[16, 16]} style={{ marginTop: 16 }}>
 
-        {/* Routing table (static) */}
+        {/* Routing table (REAL — derived from analytics_db) */}
         <Col span={12}>
           <Card
             title="Agent Routing (post-Triage)"
             extra={<Text type="secondary" style={{ fontSize: 12 }}>Triage Agent handles 100% of requests first</Text>}
           >
-            <Table
-              dataSource={routingData}
-              columns={routingColumns}
-              pagination={false}
-              size="small"
-            />
+            {routingData.length === 0 ? (
+              <Text type="secondary">No interactions recorded yet.</Text>
+            ) : (
+              <Table
+                dataSource={routingData}
+                columns={routingColumns}
+                pagination={false}
+                size="small"
+              />
+            )}
           </Card>
         </Col>
 
-        {/* Knowledge gaps (static) */}
+        {/* Knowledge gaps (REAL — from analytics_agent.detect_knowledge_gaps()) */}
         <Col span={12}>
           <Card title="Knowledge Gap Alerts">
-            <Space direction="vertical" style={{ width: '100%' }}>
-              {knowledgeGaps.map((gap, i) => (
-                <Alert key={i} message={gap} type="warning" showIcon />
-              ))}
-            </Space>
+            {knowledgeGaps.length === 0 ? (
+              <Text type="secondary">No knowledge gaps detected yet.</Text>
+            ) : (
+              <Space direction="vertical" style={{ width: '100%' }}>
+                {knowledgeGaps.map((gap, i) => (
+                  <Alert key={i} message={gap} type="warning" showIcon />
+                ))}
+              </Space>
+            )}
           </Card>
         </Col>
       </Row>

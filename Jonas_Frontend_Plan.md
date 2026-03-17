@@ -333,8 +333,9 @@ nus_ai_team_4_2026/
 │       │   │                         #            Updated Step L: loads real tickets on mount,
 │       │   │                         #            resolve/reply/close actions call the API.
 │       │   └── AdminDashboard.jsx    # ✅ Step 6 — Dashboard 3: analytics and AI monitoring.
-│       │                             #            Updated Step L: real stat cards, real pie chart
-│       │                             #            (category_breakdown), real XAI traces table.
+│       │                             #            Updated Step L: real stat cards, pie chart,
+│       │                             #            XAI traces, daily interactions chart, agent
+│       │                             #            routing table, knowledge gap alerts — all live.
 │       │
 │       ├── components/               #            Reusable UI building blocks shared across pages.
 │       │   │                         #            Think of these as LEGO bricks — built once,
@@ -393,11 +394,242 @@ Before you build, align with your teammates on:
 
 **UI development and API integration are complete.** All three dashboards are built and connected to the real Orchestrator backend.
 
+**In progress — Phase 2: UI Enhancement** (see Section 11 below).
+
 **Remaining before final submission:**
 
-1. **Cloud deployment** — Deploy backend to Azure, frontend to Vercel. See `Jonas_Integration_Plan.md` Section 10 for options.
-2. **Security check** — Confirm `.env` files are git-ignored and the OpenAI API key is not committed. See `Jonas_Integration_Plan.md` Section 12.
-3. **Team testing** — Share `QUICKSTART.md` with all teammates so they can run the full system locally and verify end-to-end.
+1. **Phase 2 UI enhancements** — Dark/Light mode, glass effect, Atkinson Hyperlegible Next font. See Section 11.
+2. **Cloud deployment** — Deploy backend to Azure, frontend to Vercel. See `Jonas_Integration_Plan.md` Section 10 for options.
+3. **Security check** — Confirm `.env` files are git-ignored and the OpenAI API key is not committed. See `Jonas_Integration_Plan.md` Section 12.
+4. **Team testing** — Share `QUICKSTART.md` with all teammates so they can run the full system locally and verify end-to-end.
+
+---
+
+## 11. Phase 2: UI Enhancements
+
+Three visual enhancements to be implemented after integration is complete.
+
+---
+
+### Enhancement 1 — Atkinson Hyperlegible Next Font
+
+**Goal:** Replace the default system font with Atkinson Hyperlegible Next for maximum legibility across all three dashboards.
+
+**What it is:** A typeface designed specifically for readers with low vision, developed by the Braille Institute. It maximises character distinction — every letter and number is designed to be unambiguous at any size.
+
+**How to implement:**
+
+**Step 1 — Load the font**
+
+Add to `ui/index.html` inside `<head>`:
+```html
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible+Next:ital,wght@0,200;0,300;0,400;0,500;0,600;0,700;0,800;1,200;1,300;1,400;1,500;1,600;1,700;1,800&display=swap" rel="stylesheet">
+```
+
+> **Note:** If "Atkinson Hyperlegible Next" is not yet available on Google Fonts, use `family=Atkinson+Hyperlegible` (the original version) as a fallback — it is confirmed available. The "Next" variant may need to be self-hosted if not on Google Fonts at time of implementation.
+
+**Step 2 — Apply globally via Ant Design token**
+
+In `App.jsx`, add `fontFamily` to the Ant Design theme token:
+```javascript
+token: {
+  fontFamily: "'Atkinson Hyperlegible Next', 'Atkinson Hyperlegible', sans-serif",
+}
+```
+
+**Step 3 — Apply as CSS fallback**
+
+In `ui/src/index.css`:
+```css
+body {
+  font-family: 'Atkinson Hyperlegible Next', 'Atkinson Hyperlegible', sans-serif;
+}
+```
+
+**Files changed:** `ui/index.html`, `ui/src/App.jsx`, `ui/src/index.css`
+
+---
+
+### Enhancement 2 — Dark Mode / Light Mode Toggle (OLED-compatible)
+
+**Goal:** Let users switch between a light theme and a dark theme. Dark mode uses a tiered near-black colour system designed for comfort on OLED screens — avoiding both the grey glow of standard dark modes and the harsh halation of pure black + white text.
+
+#### Why not pure black everywhere?
+
+Pure `#000000` background with pure `#ffffff` text creates a 21:1 contrast ratio — technically the highest possible, but *too high* for comfortable reading. People with astigmatism (very common) experience a "halation" effect where white text on pure black appears to bleed or glow at the edges. WCAG AAA only requires 7:1 for good reason.
+
+Apple, Google (Material Design), and Netflix all deliberately avoid pure black for content surfaces. The solution is to reduce contrast from **both ends simultaneously**: a near-black surface with off-white text.
+
+#### Tiered dark mode colour system
+
+| Surface | Colour | Purpose |
+|---------|--------|---------|
+| Page background (behind cards) | `#000000` | True OLED black — no content sits directly here; OLED pixels fully off in the gaps between cards |
+| Card / panel surfaces | `#0d0d0d` | Near-black — just enough to visually separate card from background; glass layer sits on this |
+| Elevated surfaces (modals, drawers) | `#1a1a1a` | Slightly lighter — creates depth hierarchy |
+| Primary text | `#f0f0f0` | Off-white — reduces glare from both ends; contrast ratio ~17:1 on `#0d0d0d` — excellent but not harsh |
+| Secondary / muted text | `#a0a0a0` | Comfortable for less important information |
+
+> The glass effect in Step O naturally softens contrast further — translucent layers mean text never sits on bare `#000000`.
+
+**How it works:**
+
+Ant Design 5's `ConfigProvider` accepts a `theme` prop. Switching between `theme.defaultAlgorithm` (light) and `theme.darkAlgorithm` (dark) instantly re-themes every component — no per-component changes needed.
+
+**Implementation steps:**
+
+**Step 1 — Dark mode state in `App.jsx`**
+```javascript
+const [isDark, setIsDark] = useState(
+  () => localStorage.getItem('theme') === 'dark'
+)
+```
+
+**Step 2 — Pass tiered theme tokens to ConfigProvider**
+```javascript
+<ConfigProvider theme={{
+  algorithm: isDark ? theme.darkAlgorithm : theme.defaultAlgorithm,
+  token: {
+    colorBgBase:       isDark ? '#000000' : '#ffffff',  // page background (behind cards)
+    colorBgContainer:  isDark ? '#0d0d0d' : '#ffffff',  // card / panel surfaces
+    colorBgElevated:   isDark ? '#1a1a1a' : '#ffffff',  // modals / drawers
+    colorText:         isDark ? '#f0f0f0' : '#1a1a1a',  // primary text (off-white in dark)
+    colorTextSecondary:isDark ? '#a0a0a0' : '#595959',  // secondary text
+    fontFamily: "'Atkinson Hyperlegible Next', 'Atkinson Hyperlegible', sans-serif",
+  }
+}}>
+```
+
+**Step 3 — Toggle button in `NavBar.jsx`**
+- Add a sun/moon icon button (use Ant Design's `<Button>` with `SunOutlined` / `MoonOutlined` icons)
+- On click: toggle `isDark` state and save to `localStorage`
+
+**Step 4 — Sync body and html background**
+
+In `index.css`, the area behind the app also needs to go true black (so no grey bleed at page edges):
+```css
+body {
+  background-color: #000000;
+  transition: background-color 0.3s ease;
+}
+```
+
+**Files changed:** `ui/src/App.jsx`, `ui/src/components/NavBar.jsx`, `ui/src/index.css`
+
+---
+
+### Enhancement 3 — Glass Effect (iOS 26 / macOS 26 "Liquid Glass" Design Language)
+
+**Goal:** Apply a frosted-glass visual treatment to cards, panels, and the navigation bar — consistent with Apple's 2026 design language (translucent backgrounds, backdrop blur, subtle borders).
+
+**How it works:**
+
+Glass effect is achieved with three CSS properties:
+- `backdrop-filter: blur(20px) saturate(180%)` — blurs whatever is behind the element
+- `background: rgba(...)` — translucent fill, not opaque
+- `border: 1px solid rgba(...)` — thin bright border that catches light
+
+The values change between light and dark mode via CSS custom properties (variables).
+
+**CSS variables (applied in `index.css`):**
+```css
+/* Light mode glass */
+:root {
+  --glass-bg:           rgba(255, 255, 255, 0.65);
+  --glass-border:       rgba(255, 255, 255, 0.55);
+  --glass-shadow:       0 8px 32px rgba(0, 0, 0, 0.08);
+  --glass-blur:         blur(20px) saturate(180%);
+}
+
+/* Dark / OLED mode glass */
+[data-theme='dark'] {
+  --glass-bg:           rgba(255, 255, 255, 0.05);
+  --glass-border:       rgba(255, 255, 255, 0.10);
+  --glass-shadow:       0 8px 32px rgba(0, 0, 0, 0.6);
+}
+```
+
+**Ant Design token overrides** — override Card background to use glass:
+```javascript
+components: {
+  Card: {
+    colorBgContainer: 'var(--glass-bg)',
+  },
+  Layout: {
+    headerBg: 'var(--glass-bg)',
+  },
+}
+```
+
+**Apply `data-theme` attribute** in `App.jsx` so CSS variables switch automatically:
+```javascript
+useEffect(() => {
+  document.documentElement.setAttribute('data-theme', isDark ? 'dark' : 'light')
+  localStorage.setItem('theme', isDark ? 'dark' : 'light')
+}, [isDark])
+```
+
+**Files changed:** `ui/src/App.jsx`, `ui/src/index.css`
+
+---
+
+### Phase 2 Implementation Order
+
+| Step | Enhancement | Files |
+|------|-------------|-------|
+| M | Atkinson Hyperlegible Next font | `index.html`, `App.jsx`, `index.css` |
+| N | Dark / Light mode toggle + OLED tokens | `App.jsx`, `NavBar.jsx`, `index.css` |
+| O | Glass effect CSS variables + token overrides | `App.jsx`, `index.css` |
+| P | Dark mode & visual polish (all components) | `index.css`, `App.jsx`, `ChatWindow.jsx`, `TicketCard.jsx`, `AgentDashboard.jsx` |
+| Q | True HITL + UX improvements | `src/orchestrator.py`, `src/api.py`, `AgentDashboard.jsx`, `ChatWindow.jsx` |
+
+> Steps M, N, and O build on each other — do them in order. Step N sets up the `isDark` state and `data-theme` attribute that Step O relies on. Step P is a follow-up polish pass applied after visual testing. Step Q adds true HITL (AI draft generation) and UX polish.
+
+---
+
+### Phase 2 Progress Tracker
+
+| Step | Description | Status |
+|------|-------------|--------|
+| M | Atkinson Hyperlegible Next font | ✅ Done |
+| N | Dark / Light mode toggle (OLED-compatible) | ✅ Done |
+| O | Glass effect (iOS/macOS 26 design language) | ✅ Done |
+| P | Dark mode & visual polish | ✅ Done |
+| Q | True HITL + UX improvements | ✅ Done |
+
+### Step P — Dark Mode & Visual Polish (Detail)
+
+After visual testing of Steps M–O, the following refinements were applied:
+
+| Area | Change |
+|------|--------|
+| Card opacity | Increased `Card.colorBgContainer` from `0.04` → `0.14` so sections are visible on OLED black |
+| Light mode background | Replaced flat `#f5f5f5` with pastel gradient so `backdrop-filter` has colour to blur |
+| Chat bubbles | Added CSS variables (`--bubble-ai-bg`, `--bubble-ai-text`) — light grey `#f0f0f0` on dark, matching Agent Dashboard style |
+| Input area | Added CSS variables (`--input-area-bg`, `--input-area-border`) for dark mode input/textarea |
+| Ticket queue | `TicketCard.jsx` now uses CSS variables for border/bg; non-selected cards inherit theme `colorBgContainer` (same as Admin Dashboard) |
+| Stat card titles | `html[data-theme='light']` → black; `html[data-theme='dark']` → near-white via `.ant-statistic-title` CSS override |
+| Default buttons | `.ant-btn-default:not(:disabled):not(.ant-btn-dangerous)` → brighter border + white text in dark mode |
+| Disabled inputs | `.ant-input[disabled]` → readable but muted style in dark mode |
+| Tags | All preset-coloured tags (red/green/blue etc.) → solid saturated bg + white text; default tags → slate grey `#4b5563` + white |
+| Danger buttons | "Close Ticket" and "Escalate to Human" → `type="primary" danger` (filled red, not just outlined) |
+| Table headers | `.ant-table-thead > tr > th` → `#e8edf5` bg + near-black text (light); `#2d3748` bg + white text (dark); `font-weight: 700` both |
+| Alert banners | `.ant-alert-info/success/warning/error` → tinted semi-transparent bg (`rgba(hue, 0.28)`) + matching border (`0.55`) + near-white text in dark mode |
+
+### Step Q — True HITL & UX Improvements (Detail)
+
+| Area | Change | Files |
+|------|--------|-------|
+| True HITL | Added `generate_suggested_response()` to Orchestrator — calls LLM on ticket creation to produce a real AI draft reply | `src/orchestrator.py` |
+| Ticket creation | `create_ticket()` now stores `suggested_response` (LLM draft) and `resolve_action` fields on every ticket | `src/api.py` |
+| Approve AI Response | When approved, backend copies `suggested_response` → `agent_reply` and sets `resolve_action: "approved"` | `src/api.py` |
+| AI Suggested Response UI | Now shows real LLM draft (green); falls back to honest warning (amber) if AI couldn't generate one | `AgentDashboard.jsx` |
+| Approve button disabled | "Approve AI Response" button is greyed out when no AI draft exists (`aiResponse` is null) | `AgentDashboard.jsx` |
+| Instant confirmation | After approving, local state updates `agentReplySent` and `resolveAction` immediately — no page reload needed | `AgentDashboard.jsx` |
+| Approval label | "AI Response Approved — Sent to Customer" (blue) shown with the AI text after approval; "Custom Reply Sent to Customer" for manual replies | `AgentDashboard.jsx` |
+| Escalate button hidden | "Escalate to Human" button is hidden until the customer has sent at least one message (`messages.length > 1`) | `ChatWindow.jsx` |
 
 ---
 

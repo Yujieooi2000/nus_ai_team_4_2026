@@ -19,7 +19,8 @@ Interactive docs available at:
 import os
 import sys
 import uuid
-from datetime import datetime, timezone
+from collections import defaultdict
+from datetime import datetime, timezone, timedelta
 
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
@@ -126,6 +127,7 @@ class ResolveRequest(BaseModel):
 def create_ticket(session_id: str, last_message: str, orchestrator_result: dict) -> str:
     """
     Creates an escalated ticket and saves it to the tickets store.
+    Also generates an AI suggested response for the human agent to review (HITL).
     Returns the new ticket_id (e.g. "TKT-00001").
     """
     global ticket_counter
@@ -135,20 +137,29 @@ def create_ticket(session_id: str, last_message: str, orchestrator_result: dict)
     analysis = orchestrator_result.get("analysis", {})
     response = orchestrator_result.get("response", {})
 
+    # Capture the full conversation history (including the current exchange)
+    conversation_history = sessions.get(session_id, [])
+
+    # Generate an AI-drafted suggested response for the human agent to review.
+    # This is the core of Human-in-the-Loop: the AI proposes, the human approves or edits.
+    suggested_response = orchestrator.generate_suggested_response(conversation_history)
+
     tickets[ticket_id] = {
-        "ticket_id":           ticket_id,
-        "session_id":          session_id,
-        "status":              "open",
-        "queue":               response.get("queue", "general_support"),
-        "category":            analysis.get("category", "general_inquiry"),
-        "priority":            analysis.get("priority", "low"),
-        "sentiment":           analysis.get("sentiment", "neutral"),
-        "last_message":        last_message,
-        "agent_reply":         None,
-        "created_at":          datetime.now(timezone.utc).isoformat(),
-        "resolved_at":         None,
-        "conversation_history": sessions.get(session_id, []),
-        "escalation_reason":   analysis.get("explanation", ""),
+        "ticket_id":            ticket_id,
+        "session_id":           session_id,
+        "status":               "open",
+        "queue":                response.get("queue", "general_support"),
+        "category":             analysis.get("category", "general_inquiry"),
+        "priority":             analysis.get("priority", "low"),
+        "sentiment":            analysis.get("sentiment", "neutral"),
+        "last_message":         last_message,
+        "suggested_response":   suggested_response,  # AI draft for human review
+        "agent_reply":          None,
+        "resolve_action":       None,
+        "created_at":           datetime.now(timezone.utc).isoformat(),
+        "resolved_at":          None,
+        "conversation_history": conversation_history,
+        "escalation_reason":    analysis.get("explanation", ""),
     }
 
     return ticket_id
@@ -295,9 +306,19 @@ def resolve_ticket(ticket_id: str, request: ResolveRequest):
         "closed":       "closed",
     }
 
-    ticket["status"]      = status_map.get(request.action, "resolved")
-    ticket["agent_reply"] = request.agent_reply or None
-    ticket["resolved_at"] = datetime.now(timezone.utc).isoformat()
+    ticket["status"]         = status_map.get(request.action, "resolved")
+    ticket["resolve_action"] = request.action
+    ticket["resolved_at"]    = datetime.now(timezone.utc).isoformat()
+
+    if request.action == "approved":
+        # Human agent approved the AI's suggested response.
+        # Store it as agent_reply so the UI can show what was sent to the customer.
+        ticket["agent_reply"] = ticket.get("suggested_response") or None
+    elif request.action == "custom_reply":
+        ticket["agent_reply"] = request.agent_reply or None
+    else:
+        # closed — no reply sent
+        ticket["agent_reply"] = None
 
     return ticket
 
@@ -311,8 +332,71 @@ def analytics_summary():
     """
     Returns system-wide statistics from the Analytics Agent.
     Used by the Admin Dashboard stat cards and charts.
+
+    In addition to the base insights (total_requests, resolution_rate, etc.),
+    this endpoint computes three extra fields directly from analytics_db:
+      - daily_interactions: interaction counts for each of the past 7 days
+      - agent_routing:      breakdown of how many requests went to each agent
+      - knowledge_gaps:     categories that have been escalated frequently
     """
     insights = orchestrator.get_system_insights()
+
+    # ── Daily interactions: count entries per calendar day for the past 7 days ──
+    # analytics_agent stores timestamps as UTC-naive ISO strings (no +00:00 suffix),
+    # so we parse them directly without timezone conversion.
+    today = datetime.now(timezone.utc).date()
+    day_counts: dict = defaultdict(int)
+    for entry in orchestrator.analytics_db:
+        ts = entry.get("timestamp")
+        if ts:
+            try:
+                dt = datetime.fromisoformat(ts)   # UTC-naive — safe to call .date()
+                if (today - dt.date()).days < 7:
+                    day_counts[dt.date()] += 1
+            except (ValueError, TypeError):
+                pass
+    insights["daily_interactions"] = [
+        {
+            "day":          (today - timedelta(days=6 - i)).strftime("%a"),
+            "interactions": day_counts.get(today - timedelta(days=6 - i), 0),
+        }
+        for i in range(7)
+    ]
+
+    # ── Agent routing: count how many requests each final agent handled ──
+    _path_to_agent = {
+        "Triage → Resolution":                     "Resolution Agent",
+        "Triage → IR → Verification → Resolution": "Information Retrieval Agent",
+        "Triage → Escalation":                     "Escalation Agent",
+        "Security → Blocked":                      "Security Agent",
+    }
+    agent_counts: dict = defaultdict(int)
+    total = len(orchestrator.analytics_db)
+    for entry in orchestrator.analytics_db:
+        resolution = entry.get("resolution", {})
+        analysis   = entry.get("analysis",   {})
+        path       = _build_agent_path(resolution.get("status"), analysis.get("category"))
+        agent_name = _path_to_agent.get(path, path)
+        agent_counts[agent_name] += 1
+    insights["agent_routing"] = [
+        {
+            "agent": agent,
+            "count": count,
+            "share": f"{round(count / total * 100)}%" if total > 0 else "0%",
+        }
+        for agent, count in sorted(agent_counts.items(), key=lambda x: -x[1])
+    ]
+
+    # ── Knowledge gaps: categories that keep getting escalated ──
+    # Threshold is set to 1 so that any escalated category appears during testing.
+    # Raise this to 5+ once there is enough real traffic for meaningful signal.
+    raw_gaps = orchestrator.analytics_agent.detect_knowledge_gaps(escalation_threshold=1)
+    insights["knowledge_gaps"] = [
+        f'"{cat.replace("_", " ").title()}" — escalated {count} time{"s" if count != 1 else ""}. '
+        f'May indicate a gap in the knowledge base.'
+        for cat, count in sorted(raw_gaps.items(), key=lambda x: -x[1])
+    ]
+
     return insights
 
 

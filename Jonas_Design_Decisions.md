@@ -72,19 +72,33 @@ const [messages, setMessages] = useState(savedMessages ? JSON.parse(savedMessage
 
 ---
 
-## 3. "Reply Sent to Customer" vs "AI Suggested Response" — Why Two Separate Boxes
+## 3. True Human-in-the-Loop (HITL) — How AI Suggested Response Works
 
 ### Behaviour
-The Agent Dashboard ticket detail panel shows two separately labelled boxes:
-- **"AI Suggested Response"** (green) — AI Orchestrator's draft reply
-- **"Reply Sent to Customer"** (blue) — appears only after the agent sends a custom reply
+The Agent Dashboard ticket detail panel implements genuine HITL:
+- **"AI Suggested Response"** (green) — a real LLM-generated draft reply, created automatically when the ticket is escalated
+- **"AI Response Approved — Sent to Customer"** (blue) — appears after the agent clicks "Approve AI Response", showing the approved AI text
+- **"Custom Reply Sent to Customer"** (blue) — appears after the agent writes and sends their own reply
 
-### Why They Are Kept Separate
-Early in development, sending a custom reply overwrote the `aiResponse` field — the green "AI Suggested Response" box then displayed the agent's own words under the "AI" label, which was misleading.
+### How the Draft Is Generated
+When `create_ticket()` runs in `src/api.py`, it immediately calls `orchestrator.generate_suggested_response(conversation_history)`. This sends the full conversation history to the LLM with a system prompt asking it to draft a concise, empathetic, customer-facing reply for the human agent to review. The draft is stored as `suggested_response` on the ticket.
 
-**Fix:** The agent's custom reply is stored in a separate field (`agentReplySent`) and rendered in its own clearly-labelled box. The `aiResponse` field and its label are never touched after the ticket is loaded.
+If the LLM call fails (API error, empty history, etc.), `suggested_response` is `None` and the UI shows a warning in place of the green box explaining that no draft is available.
 
-This keeps the **audit trail clear** — anyone reviewing the ticket can always see both what the AI suggested and what the human agent actually decided to send.
+### Why Two Separate Boxes Are Kept
+The agent's reply (whether approved AI draft or custom text) is stored in a separate field (`agentReplySent`) and rendered in its own labelled box. The `aiResponse` field (the original AI draft) is never overwritten — even after approval.
+
+This preserves a clear **audit trail**: anyone reviewing the ticket can always see both what the AI originally suggested and what was ultimately sent to the customer.
+
+### Approve AI Response Flow
+Clicking "Approve AI Response":
+1. Calls `POST /api/tickets/{id}/resolve` with `action: "approved"`
+2. Backend copies `suggested_response` → `agent_reply` and sets `resolve_action: "approved"`
+3. Frontend immediately updates local state with `agentReplySent` and `resolveAction`
+4. The "AI Response Approved — Sent to Customer" confirmation box appears instantly
+
+### "Approve AI Response" Button Disabled When No Draft
+If `suggested_response` is `None` (AI couldn't generate a draft), the "Approve AI Response" button is greyed out with a tooltip explaining why. The agent must write a custom reply instead.
 
 ---
 

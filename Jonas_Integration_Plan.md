@@ -32,7 +32,7 @@
 |------|--------|-------------|
 | React UI — Customer Chat Portal | ✅ Done | Real AI responses via `POST /api/chat`, session ID, loading spinner |
 | React UI — Agent Dashboard | ✅ Done | Real tickets from API, resolve/reply/close actions wired |
-| React UI — Admin Dashboard | ✅ Done | Real stat cards, pie chart, XAI traces from API |
+| React UI — Admin Dashboard | ✅ Done | Real stat cards, pie chart, XAI traces, daily interactions chart, agent routing table, knowledge gap alerts — all from API |
 | Python Orchestrator | ✅ Done (by teammates) | 7-agent pipeline, processes user messages |
 | FastAPI Layer (`src/api.py`) | ✅ Done (Jonas) | 6 endpoints wrapping the Orchestrator, CORS, session + ticket storage |
 | `ui/src/services/api.js` | ✅ Done (Jonas) | All 6 Axios call functions, base URL from env var |
@@ -45,9 +45,6 @@
 | Part | Who | Description |
 |------|-----|-------------|
 | **Cloud deployment** | Both | Deploy backend to Azure, frontend to Vercel or Azure |
-| **Daily interactions line chart** | Backend teammate | No time-series API endpoint yet — chart uses static mock data |
-| **Agent routing table** | Backend teammate | No per-agent count endpoint yet — table uses static mock data |
-| **Knowledge gap alerts** | Backend teammate | `detect_knowledge_gaps()` not yet exposed via API |
 
 ---
 
@@ -700,7 +697,7 @@ Before the final demo and submission, verify all of these:
 - [ ] If the current API key was ever committed to GitHub, revoke it and generate a new one
 - [ ] CORS is configured to only allow your specific frontend URL in production (not all origins)
 - [ ] The backend validates user input length (prevent extremely long messages)
-- [ ] The backend has a rate limit (prevent spamming the OpenAI API with cost)
+- [ ] The bac![1773727153763](image/Jonas_Integration_Plan/1773727153763.png) a rate limit (prevent spamming the OpenAI API with cost)
 
 ---
 
@@ -714,7 +711,7 @@ Before the final demo and submission, verify all of these:
 
 2. **Security checklist** — Verify `.env` and `.env.development` are git-ignored and API key is not hardcoded anywhere. See Section 12.
 
-3. **Static mock sections** (optional enhancements) — The daily interactions line chart, agent routing table, and knowledge gap alerts still use hardcoded data. These require additional backend endpoints if real data is needed for the submission.
+All Admin Dashboard sections now use real data — the daily interactions chart, agent routing table, and knowledge gap alerts were enhanced to pull live data from `analytics_db` via the `GET /api/analytics/summary` endpoint.
 
 ---
 

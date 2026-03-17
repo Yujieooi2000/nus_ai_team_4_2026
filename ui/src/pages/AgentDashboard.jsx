@@ -31,10 +31,12 @@ function mapTicket(t) {
     aiSummary: t.escalation_reason
       ? `Escalation reason: ${t.escalation_reason}`
       : 'Escalated for human review.',
-    // AI suggested response is always a placeholder — no per-ticket AI draft is stored in the API
-    aiResponse: 'Please review the conversation above and write a reply below.',
-    // If the ticket was already resolved with a custom reply, restore it from the API
+    // AI suggested response — LLM-generated draft for the human agent to review (HITL).
+    // null means the AI could not generate a draft for this ticket.
+    aiResponse: t.suggested_response || null,
+    // If the ticket was already resolved, restore the reply and action from the API
     agentReplySent: t.agent_reply || null,
+    resolveAction:  t.resolve_action || null,
     // Map conversation history: API uses "assistant", UI uses "ai"
     conversation: (t.conversation_history || []).map(m => ({
       role: m.role === 'assistant' ? 'ai' : m.role,
@@ -134,7 +136,11 @@ function AgentDashboard() {
     setActionLoading(true)
     try {
       await resolveTicket(selected._ticketId, 'approved')
-      updateLocalTicket(selectedId, { status: 'Resolved' })
+      updateLocalTicket(selectedId, {
+        status: 'Resolved',
+        agentReplySent: selected.aiResponse,
+        resolveAction: 'approved',
+      })
       setActionDone('approved')
     } catch (err) {
       setActionDone('error')
@@ -263,19 +269,30 @@ function AgentDashboard() {
               style={{ marginBottom: 12 }}
             />
 
-            {/* AI Suggested Response */}
+            {/* AI Suggested Response — real LLM draft for the agent to review (HITL).
+                If the AI could not generate a draft, show an honest fallback message. */}
             <Alert
               message={<Text strong>AI Suggested Response</Text>}
-              description={selected.aiResponse}
-              type="success"
+              description={
+                selected.aiResponse
+                  ? selected.aiResponse
+                  : 'The AI was unable to generate a suggested response for this ticket. Please review the conversation above and write a custom reply below.'
+              }
+              type={selected.aiResponse ? 'success' : 'warning'}
               showIcon
               style={{ marginBottom: 12 }}
             />
 
-            {/* Agent's custom reply — shown after human agent sends a custom response */}
+            {/* Reply sent to customer — shown after agent approves AI response or sends custom reply */}
             {selected.agentReplySent && (
               <Alert
-                message={<Text strong>Reply Sent to Customer</Text>}
+                message={
+                  <Text strong>
+                    {selected.resolveAction === 'approved'
+                      ? 'AI Response Approved — Sent to Customer'
+                      : 'Custom Reply Sent to Customer'}
+                  </Text>
+                }
                 description={selected.agentReplySent}
                 type="info"
                 showIcon
@@ -322,13 +339,19 @@ function AgentDashboard() {
                 even after switching to another ticket and back. */}
             {selected.status === 'Open' && (
               <Space>
-                <Button type="primary" onClick={handleApprove} loading={actionLoading}>
+                <Button
+                  type="primary"
+                  onClick={handleApprove}
+                  loading={actionLoading}
+                  disabled={!selected.aiResponse || actionLoading}
+                  title={!selected.aiResponse ? 'No AI draft available to approve' : undefined}
+                >
                   Approve AI Response
                 </Button>
                 <Button onClick={() => setShowReplyBox(true)} disabled={showReplyBox || actionLoading}>
                   Write Custom Reply
                 </Button>
-                <Button danger onClick={handleClose} loading={actionLoading}>
+                <Button type="primary" danger onClick={handleClose} loading={actionLoading}>
                   Close Ticket
                 </Button>
               </Space>

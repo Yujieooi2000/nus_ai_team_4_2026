@@ -1,4 +1,5 @@
-import { Layout, Menu, Typography } from 'antd'
+import { Layout, Menu, Typography, Button } from 'antd'
+import { SunOutlined, MoonOutlined } from '@ant-design/icons'
 import { useNavigate, useLocation } from 'react-router-dom'
 
 const { Header } = Layout
@@ -10,7 +11,7 @@ const navItems = [
   { key: '/admin', label: 'Admin Dashboard' },
 ]
 
-function NavBar() {
+function NavBar({ isDark, toggleTheme }) {
   const navigate = useNavigate()
   const location = useLocation()
 
@@ -26,6 +27,14 @@ function NavBar() {
         items={navItems}
         onClick={({ key }) => navigate(key)}
         style={{ flex: 1, minWidth: 0 }}
+      />
+      {/* Dark / Light mode toggle — sun icon in dark mode, moon icon in light mode */}
+      <Button
+        type="text"
+        icon={isDark ? <SunOutlined /> : <MoonOutlined />}
+        onClick={toggleTheme}
+        title={isDark ? 'Switch to light mode' : 'Switch to dark mode'}
+        style={{ color: 'white', marginLeft: 16, fontSize: 16 }}
       />
     </Header>
   )

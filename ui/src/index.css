@@ -5,8 +5,175 @@
 }
 
 body {
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen,
-    Ubuntu, Cantarell, 'Helvetica Neue', sans-serif;
+  /* Atkinson Hyperlegible Next — primary font for maximum legibility.
+     Falls back to the original Atkinson Hyperlegible if the Next variant
+     is not yet available on Google Fonts, then to the system sans-serif. */
+  font-family: 'Atkinson Hyperlegible Next', 'Atkinson Hyperlegible', sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  transition: background-color 0.3s ease;
+}
+
+/* ── Glass effect CSS variables ────────────────────────────────────────────────
+   These switch automatically when App.jsx sets data-theme on <html>.
+   :root = light mode defaults; html[data-theme='dark'] = dark mode overrides.  */
+
+:root {
+  --glass-border: rgba(209, 213, 219, 0.55);   /* subtle grey border on white/light bg */
+  --glass-shadow: 0 4px 24px rgba(0, 0, 0, 0.07);
+  /* Chat bubble colours — light mode */
+  --bubble-ai-bg:   #f0f0f0;
+  --bubble-ai-text: #222222;
+  --input-area-bg:  #fafafa;
+  --input-area-border: #e8e8e8;
+  /* Ticket card colours — light mode */
+  --ticket-card-bg:          #ffffff;
+  --ticket-card-bg-selected: #f0f7ff;
+  --ticket-card-border:      #e8e8e8;
+}
+
+html[data-theme='dark'] {
+  background-color: #000000;                    /* true OLED black behind the app shell */
+  --glass-border: rgba(255, 255, 255, 0.18);   /* more visible white border on near-black */
+  --glass-shadow: 0 4px 24px rgba(0, 0, 0, 0.55);
+  /* Chat bubble colours — dark mode: light grey on dark bg, same as AgentDashboard */
+  --bubble-ai-bg:   #f0f0f0;
+  --bubble-ai-text: #222222;
+  --input-area-bg:  #141414;
+  --input-area-border: rgba(255, 255, 255, 0.14);
+  /* Ticket card colours — dark mode */
+  --ticket-card-bg:          rgba(255, 255, 255, 0.08);
+  --ticket-card-bg-selected: rgba(22, 119, 255, 0.22);
+  --ticket-card-border:      rgba(255, 255, 255, 0.16);
+}
+
+/* ── Stat card titles: black in light mode, white in dark mode ─────────────────
+   Ant Design's default colorTextSecondary is grey in both modes — override to
+   full contrast so "Total Interactions" etc. are clearly legible in either theme. */
+html[data-theme='light'] .ant-statistic-title {
+  color: #1a1a1a !important;
+}
+html[data-theme='dark'] .ant-statistic-title {
+  color: rgba(255, 255, 255, 0.88) !important;
+}
+
+/* ── Dark mode: default (non-primary, non-danger) buttons → more visible ────────
+   Ant Design's dark default button blends into the card bg; increase border/text
+   contrast so buttons like "Write Custom Reply" and "Cancel" stand out.
+   Exclude .ant-btn-dangerous so red danger buttons keep their own colour.        */
+html[data-theme='dark'] .ant-btn-default:not(:disabled):not(.ant-btn-dangerous) {
+  border-color: rgba(255, 255, 255, 0.30) !important;
+  color:        rgba(255, 255, 255, 0.88) !important;
+}
+
+/* ── Dark mode: tags → solid saturated bg + white text ─────────────────────────
+   Ant Design dark mode uses very dark tinted backgrounds (e.g. #2a1215 for red)
+   with medium-brightness coloured text — both dark, creating poor contrast on
+   our dark cards. Solution: solid saturated background + white text, same hue
+   family, keeping the colour meaning (red=high, green=resolved, blue=open).     */
+html[data-theme='dark'] .ant-tag {
+  font-weight: 600;
+  opacity:     1 !important;
+  border-color: transparent !important;
+  color:        #ffffff !important;
+}
+html[data-theme='dark'] .ant-tag-red,
+html[data-theme='dark'] .ant-tag-volcano  { background: #b91c1c !important; }
+html[data-theme='dark'] .ant-tag-orange   { background: #c2540a !important; }
+html[data-theme='dark'] .ant-tag-gold     { background: #b45309 !important; }
+html[data-theme='dark'] .ant-tag-green    { background: #15803d !important; }
+html[data-theme='dark'] .ant-tag-cyan     { background: #0e7490 !important; }
+html[data-theme='dark'] .ant-tag-blue     { background: #1d4ed8 !important; }
+html[data-theme='dark'] .ant-tag-geekblue { background: #1e40af !important; }
+html[data-theme='dark'] .ant-tag-purple   { background: #7e22ce !important; }
+html[data-theme='dark'] .ant-tag-magenta,
+html[data-theme='dark'] .ant-tag-pink     { background: #9d174d !important; }
+/* Default/uncoloured tags ("Neutral", "Billing", "General") → solid mid-grey */
+html[data-theme='dark'] .ant-tag-default,
+html[data-theme='dark'] .ant-tag:not([class*='ant-tag-']) {
+  background:   #4b5563 !important;
+  border-color: transparent !important;
+  color:        #ffffff !important;
+}
+
+/* ── Dark mode: Alert banners → visible tinted bg + bright text ─────────────────
+   Ant Design dark mode Alert backgrounds are near-black, blending into the card.
+   Apply the same fix as tags: clearly tinted background that matches the type
+   hue, with a matching semi-transparent border, and near-white text.            */
+html[data-theme='dark'] .ant-alert-info {
+  background:   rgba(29,  78,  216, 0.28) !important;
+  border-color: rgba(29,  78,  216, 0.55) !important;
+}
+html[data-theme='dark'] .ant-alert-success {
+  background:   rgba(21,  128, 61,  0.28) !important;
+  border-color: rgba(21,  128, 61,  0.55) !important;
+}
+html[data-theme='dark'] .ant-alert-warning {
+  background:   rgba(194, 84,  10,  0.28) !important;
+  border-color: rgba(194, 84,  10,  0.55) !important;
+}
+html[data-theme='dark'] .ant-alert-error {
+  background:   rgba(185, 28,  28,  0.28) !important;
+  border-color: rgba(185, 28,  28,  0.55) !important;
+}
+html[data-theme='dark'] .ant-alert-message,
+html[data-theme='dark'] .ant-alert-description {
+  color: rgba(255, 255, 255, 0.92) !important;
+}
+
+/* ── Dark mode: disabled inputs & textareas → legible placeholder text ──────────
+   Disabled state opacity makes the "Type your message…" / "This chat has been
+   escalated…" placeholder almost invisible. Keep a visible (but muted) style.   */
+html[data-theme='dark'] .ant-input[disabled],
+html[data-theme='dark'] .ant-input-affix-wrapper-disabled,
+html[data-theme='dark'] .ant-input-affix-wrapper-disabled .ant-input {
+  background:   rgba(255, 255, 255, 0.05) !important;
+  border-color: rgba(255, 255, 255, 0.14) !important;
+  color:        rgba(255, 255, 255, 0.40) !important;
+  -webkit-text-fill-color: rgba(255, 255, 255, 0.40) !important;
+}
+
+/* ── Dark mode: textarea (custom reply box) → visible border ───────────────────
+   The TextArea in AgentDashboard inherits the dark algorithm but its border can
+   be too faint; a slightly brighter border helps locate the field.              */
+html[data-theme='dark'] .ant-input,
+html[data-theme='dark'] textarea.ant-input {
+  border-color: rgba(255, 255, 255, 0.22) !important;
+}
+
+/* ── Table column headers → distinct background + bold high-contrast text ───────
+   Target all possible Ant Design 5 header cell selectors with high specificity.
+   Give headers a tinted background so they're visually separate from data rows. */
+html[data-theme='light'] .ant-table-thead > tr > th,
+html[data-theme='light'] .ant-table-thead > tr > td,
+html[data-theme='light'] .ant-table-column-title {
+  background:  #e8edf5 !important;
+  color:       #0f172a !important;
+  font-weight: 700 !important;
+}
+html[data-theme='dark'] .ant-table-thead > tr > th,
+html[data-theme='dark'] .ant-table-thead > tr > td,
+html[data-theme='dark'] .ant-table-column-title {
+  background:  #2d3748 !important;
+  color:       #ffffff !important;
+  font-weight: 700 !important;
+}
+
+/* ── Backdrop blur on all Ant Design Card components ───────────────────────────
+   The translucent background colour is set via the Ant Design colorBgContainer
+   token in App.jsx — blur then softens whatever shows through it.              */
+.ant-card {
+  backdrop-filter: blur(16px) saturate(160%);
+  -webkit-backdrop-filter: blur(16px) saturate(160%);
+  border-color: var(--glass-border);
+  box-shadow: var(--glass-shadow) !important;
+  transition: background 0.3s ease, box-shadow 0.3s ease;
+}
+
+/* ── Backdrop blur on the navigation header ────────────────────────────────────
+   Keeps the existing dark background but adds a frosted blur layer.           */
+.ant-layout-header {
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  border-bottom: 1px solid var(--glass-border);
 }

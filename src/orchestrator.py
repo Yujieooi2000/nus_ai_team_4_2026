@@ -199,6 +199,52 @@ class Orchestrator:
         }
 
     # --------------------------------------------------
+    # HITL: Generate Suggested Response for Escalated Tickets
+    # --------------------------------------------------
+
+    def generate_suggested_response(self, conversation_history: list) -> str:
+        """
+        Given a conversation history, asks the LLM to draft a suggested reply
+        that a human support agent can review, approve, or modify.
+
+        Returns the draft string, or None if generation fails.
+        """
+        if not conversation_history:
+            return None
+
+        messages = [
+            {
+                "role": "system",
+                "content": (
+                    "You are a professional Telco Customer Support specialist. "
+                    "A customer conversation has been escalated for human agent review. "
+                    "Based on the conversation history below, draft a clear, empathetic, "
+                    "and actionable response that the human agent can send to the customer. "
+                    "Keep it concise (2-4 sentences). Write only the customer-facing reply — "
+                    "no internal notes, no prefixes like 'Draft:' or 'Suggested reply:'."
+                )
+            }
+        ]
+
+        # Include the full conversation history so the LLM has full context
+        for msg in conversation_history:
+            messages.append(msg)
+
+        # Final instruction to trigger the draft
+        messages.append({
+            "role": "user",
+            "content": (
+                "[INTERNAL — do not include in reply] "
+                "Please write a suggested response for the human agent to review."
+            )
+        })
+
+        try:
+            return self.conversation_agent.call_llm(messages)
+        except Exception:
+            return None
+
+    # --------------------------------------------------
     # SYSTEM INSIGHTS
     # --------------------------------------------------
 

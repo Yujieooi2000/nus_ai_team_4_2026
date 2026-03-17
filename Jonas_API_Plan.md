@@ -494,9 +494,9 @@ Once the API is working, you will update 4 files in the UI:
 | Admin stat cards | Real — `GET /api/analytics/summary` |
 | Admin pie chart (categories) | Real — derived from `category_breakdown` |
 | Admin XAI traces table | Real — `GET /api/analytics/xai-traces` |
-| Daily interactions line chart | Static mock — no time-series endpoint yet |
-| Agent routing table | Static mock — no per-agent count endpoint yet |
-| Knowledge gap alerts | Static mock — `detect_knowledge_gaps()` not yet exposed |
+| Daily interactions line chart | Real — `daily_interactions` field in `GET /api/analytics/summary`, computed from `analytics_db` |
+| Agent routing table | Real — `agent_routing` field in `GET /api/analytics/summary`, computed from `analytics_db` |
+| Knowledge gap alerts | Real — `knowledge_gaps` field in `GET /api/analytics/summary`, from `analytics_agent.detect_knowledge_gaps()` |
 
 ---
 

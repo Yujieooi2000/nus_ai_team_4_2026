@@ -20,8 +20,12 @@ function TicketCard({ ticket, selected, onClick }) {
         cursor: 'pointer',
         marginBottom: 8,
         borderRadius: 8,
-        border: selected ? '2px solid #1677ff' : '1px solid #e8e8e8',
-        background: selected ? '#f0f7ff' : 'white',
+        // Selected: blue border + tinted bg. Non-selected: let theme colorBgContainer
+        // and the global .ant-card CSS rule handle border + background (same as Admin Dashboard).
+        ...(selected && {
+          border: '2px solid #1677ff',
+          background: 'var(--ticket-card-bg-selected)',
+        }),
       }}
     >
       {/* Top row: ticket ID + status badge */}
