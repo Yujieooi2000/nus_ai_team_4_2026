@@ -2,7 +2,8 @@ import re
 from typing import Dict, Any
 from dataclasses import dataclass
 from textblob import TextBlob
-
+import joblib
+import os
 
 @dataclass
 class TriageResult:
@@ -18,6 +19,14 @@ class TriageResult:
 class TriageAgent:
 
     def __init__(self):
+        model_path = os.path.join(os.path.dirname(__file__), "..", "intent_model.joblib")
+        model_path = os.path.abspath(model_path)
+
+        if os.path.exists(model_path):
+            self.intent_model = joblib.load(model_path)
+        else:
+            self.intent_model = None
+        
         self.billing_keywords = ['bill', 'payment', 'invoice', 'charge', 'refund']
         self.tech_keywords = ['error', 'broken', 'bug', 'fail', 'crash', 'slow']
         self.account_keywords = ['password', 'account', 'login', 'access']
@@ -70,6 +79,7 @@ class TriageAgent:
     def analyze_request(self, request: Dict[str, Any]) -> TriageResult:
 
         text = request.get("body", "")
+        predicted_intent = self.predict_intent(text)
         text_lower = text.lower()
 
         decision_trace = []
@@ -87,8 +97,8 @@ class TriageAgent:
             )
 
         # ---- Category Detection ----
-        category = "general_inquiry"
-        confidence = 0.5
+        category = predicted_intent if predicted_intent else "general_inquiry"
+        confidence = 0.8 if predicted_intent else 0.5
 
         def keyword_match(keywords, label):
             for word in keywords:
@@ -164,3 +174,9 @@ class TriageAgent:
             return "InformationRetrievalAgent"
 
         return "EscalationAgent"
+    
+    #Model prediction method
+    def predict_intent(self, text: str):
+        if self.intent_model is None:
+            return None
+        return self.intent_model.predict([text])[0]
