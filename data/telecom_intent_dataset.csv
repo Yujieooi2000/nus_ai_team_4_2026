@@ -1,401 +1,1081 @@
 text,intent,priority,sentiment,needs_handoff
-My bill is higher than usual this month,billing,high,negative,yes
-I think I was charged too much,billing,high,negative,yes
-Why is my invoice so expensive this month,billing,medium,negative,yes
-I was billed twice for the same payment,billing,high,negative,yes
-My monthly charge looks wrong,billing,high,negative,yes
-Can you explain this extra charge on my bill,billing,high,negative,yes
-I do not understand the charges in my latest bill,billing,high,negative,yes
-There is an unknown fee in my statement,billing,medium,negative,yes
-My bill amount is not correct,billing,medium,negative,yes
-I need help checking my payment and bill,billing,high,negative,yes
-Why was I charged an extra fee,billing,high,negative,yes
-The amount on my bill does not make sense,billing,high,negative,yes
-I think there is a mistake in my bill,billing,high,negative,yes
-I was overcharged this month,billing,high,negative,yes
-My payment already went through but the bill still shows unpaid,billing,high,negative,yes
-Why is my bill different from last month,billing,high,negative,yes
-I need clarification on my latest invoice,billing,high,negative,yes
-There is a charge I do not recognize,billing,high,negative,yes
-My bill includes something I never subscribed to,billing,high,negative,yes
-Can you help me understand my statement,billing,high,negative,yes
-I want to know why my charges increased,billing,high,negative,yes
-The bill total is not what I expected,billing,high,negative,yes
-I paid already but my balance is still there,billing,high,negative,yes
-Why do I have late fees on my account,billing,high,negative,yes
-I think your system charged me twice,billing,high,negative,yes
-Can you verify whether this billing is correct,billing,high,negative,yes
-My invoice has an extra service fee,billing,high,negative,yes
-This month bill is wrong,billing,high,negative,yes
-I don't think these charges are correct,billing,high,negative,yes
-Please check the charges on my account,billing,high,negative,yes
-The bill is too high and I need help,billing,high,negative,yes
-I got charged for something I didn't use,billing,high,negative,yes
-Can someone explain my billing details,billing,high,negative,yes
-My statement has duplicate charges,billing,high,negative,yes
-The latest invoice amount seems inaccurate,billing,medium,negative,yes
-I need support for a billing issue,billing,high,negative,yes
-The charge on my account is unexpected,billing,high,negative,yes
-My bill includes an unknown add-on,billing,high,negative,yes
-Why am I paying more this cycle,billing,high,negative,yes
-My latest payment is not reflected correctly,billing,high,negative,yes
-There is a billing problem on my account,billing,high,negative,yes
-I need help with invoice correction,billing,high,negative,yes
-I think the billing amount is wrong,billing,high,negative,yes
-My account shows a charge I don't know,billing,high,negative,yes
-Please review my recent bill,billing,high,negative,yes
-The invoice contains an incorrect amount,billing,high,negative,yes
-Can you check if I was charged extra,billing,medium,negative,yes
-My bill went up without explanation,billing,high,negative,yes
-This charge looks suspicious on my statement,billing,high,negative,yes
-Help me resolve an issue with my bill,billing,high,negative,yes
-My mobile data is not working,technical_support,high,negative,yes
-My broadband is very slow today,technical_support,high,negative,yes
-I cannot connect to the internet,technical_support,high,negative,yes
-The network keeps disconnecting,technical_support,high,negative,yes
-I cannot make outgoing calls,technical_support,high,negative,yes
-My phone line has no signal,technical_support,high,negative,yes
-The internet speed is terrible,technical_support,medium,negative,yes
-I cannot receive SMS on my phone,technical_support,high,negative,yes
-My WiFi connection keeps dropping,technical_support,high,negative,yes
-The telco app is not loading properly,technical_support,high,negative,yes
-My signal is very weak in my area,technical_support,high,negative,yes
-The connection keeps cutting off,technical_support,high,negative,yes
-I cannot use mobile data outside,technical_support,high,negative,yes
-My home internet is down,technical_support,high,negative,yes
-The service stopped working suddenly,technical_support,high,negative,yes
-I can't browse anything on my phone,technical_support,high,negative,yes
-My line keeps going offline,technical_support,high,negative,yes
-Why is my internet unstable,technical_support,high,negative,yes
-Calls keep failing when I try to dial,technical_support,high,negative,yes
-My device says no network available,technical_support,high,negative,yes
-The app keeps crashing when I open it,technical_support,high,negative,yes
-My internet is too slow for normal use,technical_support,high,negative,yes
-I can’t send messages from my phone,technical_support,medium,negative,yes
-The network signal keeps disappearing,technical_support,high,negative,yes
-There is no connection on my broadband,technical_support,medium,negative,yes
-The service is down right now,technical_support,high,negative,yes
-I keep losing internet connection,technical_support,high,negative,yes
-The phone line doesn't work properly,technical_support,high,negative,yes
-I have no data connection at all,technical_support,high,negative,yes
-My coverage is poor today,technical_support,high,negative,yes
-The signal strength is very low,technical_support,high,negative,yes
-My router is connected but no internet,technical_support,high,negative,yes
-I cannot call anyone from my number,technical_support,high,negative,yes
-My messages are not going through,technical_support,high,negative,yes
-Internet service is unstable since morning,technical_support,high,negative,yes
-My device cannot detect the network,technical_support,high,negative,yes
-Everything is loading extremely slowly,technical_support,high,negative,yes
-I keep getting disconnected from the network,technical_support,high,negative,yes
-My phone cannot connect to the carrier,technical_support,medium,negative,yes
-The broadband keeps dropping every few minutes,technical_support,high,negative,yes
-Outgoing calls are not working,technical_support,high,negative,yes
-Incoming SMS are not reaching me,technical_support,high,negative,yes
-My service is interrupted,technical_support,high,negative,yes
-The connection quality is very bad,technical_support,medium,negative,yes
-Internet access is unavailable on my account,technical_support,high,negative,yes
-My mobile line is not functioning correctly,technical_support,high,negative,yes
-I can't use the telco service right now,technical_support,high,negative,yes
-The service quality is poor,technical_support,high,negative,yes
-My network is not stable,technical_support,medium,negative,yes
-Help me fix my internet issue,technical_support,high,negative,yes
-I forgot my password and cannot log in,account_issue,medium,negative,no
-I am unable to sign in to my account,account_issue,medium,negative,no
-My account is locked after too many attempts,account_issue,medium,negative,no
-I want to reset my password,account_issue,medium,negative,no
-I cannot access my telco account,account_issue,medium,negative,no
-The login page says my credentials are invalid,account_issue,medium,negative,no
-I need help updating my account details,account_issue,medium,negative,no
-My email address for the account needs to be changed,account_issue,medium,negative,no
-I want to update my phone number in the profile,account_issue,medium,neutral,no
-I think someone accessed my account,account_issue,medium,negative,no
-I can’t log in to my customer portal,account_issue,medium,negative,no
-Please help me unlock my account,account_issue,medium,negative,no
-My username or password is not accepted,account_issue,medium,negative,no
-I need to change my profile information,account_issue,medium,negative,no
-I forgot the email linked to my account,account_issue,medium,negative,no
-My account access is blocked,account_issue,medium,negative,no
-I need help changing my login details,account_issue,medium,negative,no
-Someone may have logged into my account,account_issue,medium,negative,no
-I cannot update my personal details,account_issue,medium,negative,no
-My account page is not accessible,account_issue,medium,negative,no
-I want to recover my account access,account_issue,medium,negative,no
-The app is not letting me sign in,account_issue,medium,negative,no
-I need to change the contact details on my account,account_issue,medium,negative,no
-My login keeps failing,account_issue,medium,negative,no
-Please help me verify my account,account_issue,medium,negative,no
-I need assistance with my account settings,account_issue,medium,negative,no
-I can’t access my profile,account_issue,medium,neutral,no
-My account appears to be compromised,account_issue,medium,negative,no
-I want to update my registered email,account_issue,medium,negative,no
-The system says my account does not exist,account_issue,medium,neutral,no
-I cannot complete login to my account,account_issue,medium,neutral,no
-My password reset link is not working,account_issue,medium,neutral,no
-I need to secure my account,account_issue,medium,negative,no
-I want to change the mobile number on file,account_issue,medium,neutral,no
-The portal won't let me sign in,account_issue,medium,negative,no
-How do I regain access to my account,account_issue,medium,negative,no
-My login details seem wrong even though they are correct,account_issue,medium,negative,no
-Please check why my account is locked,account_issue,medium,negative,no
-I need help recovering my password,account_issue,medium,negative,no
-There is an issue with my account access,account_issue,medium,negative,no
-I want to update my personal information,account_issue,medium,negative,no
-I cannot manage my account online,account_issue,medium,negative,no
-The account credentials are not working,account_issue,medium,neutral,no
-My account may have unauthorized access,account_issue,medium,negative,no
-I need help with account verification,account_issue,medium,negative,no
-I forgot my account login details,account_issue,medium,negative,no
-Please help me update my profile,account_issue,medium,negative,no
-I can no longer access my account,account_issue,medium,neutral,no
-There seems to be a login issue with my account,account_issue,medium,negative,no
-My customer account has a problem,account_issue,medium,negative,no
-How do I activate roaming for Malaysia,roaming,medium,neutral,no
-My roaming is not working overseas,roaming,medium,negative,no
-Can I use my plan data while traveling,roaming,medium,neutral,no
-I am overseas and cannot connect to any network,roaming,medium,neutral,no
-How much are the roaming charges,roaming,medium,neutral,no
-I want to enable international roaming,roaming,medium,neutral,no
-Why is my roaming service unavailable,roaming,medium,neutral,no
-Can I use roaming in Thailand with my current plan,roaming,medium,neutral,no
-My phone cannot connect when I am abroad,roaming,medium,neutral,no
-I need help setting up roaming before my trip,roaming,medium,neutral,no
-Roaming is not active on my line,roaming,medium,neutral,no
-How do I turn on roaming service,roaming,medium,neutral,no
-Can I use my mobile overseas,roaming,medium,negative,no
-I am traveling and my line does not work,roaming,medium,neutral,no
-Please help me prepare roaming before departure,roaming,medium,neutral,no
-Do I need to activate data roaming manually,roaming,medium,neutral,no
-My phone has no service while overseas,roaming,medium,neutral,no
-What countries are covered under roaming,roaming,medium,neutral,no
-Is roaming included in my plan,roaming,medium,neutral,no
-I can’t use my number outside Singapore,roaming,medium,neutral,no
-How much will I pay for overseas usage,roaming,medium,neutral,no
-I need to know the roaming rates,roaming,medium,neutral,no
-International roaming is not available on my account,roaming,medium,neutral,no
-How can I make sure roaming works abroad,roaming,medium,neutral,no
-My roaming settings are not working,roaming,medium,neutral,no
-Can I receive SMS while overseas,roaming,medium,neutral,no
-Will my current plan work in Japan,roaming,medium,negative,no
-I am overseas and cannot use mobile data,roaming,medium,neutral,no
-Please explain roaming charges,roaming,medium,neutral,no
-I need help with overseas network connection,roaming,medium,neutral,no
-Roaming is not functioning during travel,roaming,medium,neutral,no
-Can I activate roaming from the app,roaming,medium,negative,no
-My line is not connecting abroad,roaming,medium,neutral,no
-How do I use data overseas,roaming,medium,neutral,no
-Does my package include international roaming,roaming,medium,neutral,no
-I need support for roaming activation,roaming,medium,neutral,no
-My roaming network cannot be found,roaming,medium,neutral,no
-I will travel soon and need roaming setup,roaming,medium,neutral,no
-Why can't I use my mobile overseas,roaming,medium,neutral,no
-I need help with international usage,roaming,medium,neutral,no
-Can you help me enable overseas service,roaming,medium,neutral,no
-My data roaming is not working,roaming,medium,neutral,no
-I cannot call when I am overseas,roaming,medium,neutral,no
-Roaming service seems blocked,roaming,medium,neutral,no
-How do I check if roaming is activated,roaming,medium,neutral,no
-My service does not work outside the country,roaming,medium,neutral,no
-I need guidance on roaming before traveling,roaming,medium,neutral,no
-Can I use my number in Indonesia,roaming,medium,negative,no
-The overseas connection is not working,roaming,medium,negative,no
-Help me fix my roaming issue,roaming,medium,negative,no
-My SIM card shows no service,sim_issue,high,negative,yes
-I lost my SIM card and need a replacement,sim_issue,high,negative,yes
-My new SIM card is not activated,sim_issue,high,negative,yes
-How can I replace a damaged SIM card,sim_issue,medium,negative,yes
-My SIM is not detected by the phone,sim_issue,medium,negative,yes
-I need help with eSIM activation,sim_issue,high,negative,yes
-The QR code for my eSIM is not working,sim_issue,high,negative,yes
-My SIM suddenly stopped working,sim_issue,high,negative,yes
-I want to transfer to eSIM,sim_issue,high,negative,yes
-Can I get a new SIM for my number,sim_issue,high,negative,yes
-My phone says there is no SIM,sim_issue,high,negative,yes
-I need to replace my SIM immediately,sim_issue,high,negative,yes
-The eSIM activation failed,sim_issue,high,negative,yes
-My SIM tray works but the card is not read,sim_issue,high,negative,yes
-Can you help me change to eSIM,sim_issue,high,negative,yes
-The SIM card is damaged,sim_issue,high,negative,yes
-I need a replacement SIM card,sim_issue,medium,negative,yes
-My SIM cannot connect to the network,sim_issue,high,negative,yes
-The eSIM setup code is invalid,sim_issue,high,negative,yes
-I lost access because my SIM is lost,sim_issue,high,negative,yes
-How do I activate my new SIM,sim_issue,high,negative,yes
-My SIM is not functioning,sim_issue,high,negative,yes
-The phone does not detect my SIM anymore,sim_issue,high,negative,yes
-I need support for SIM replacement,sim_issue,high,negative,yes
-My current SIM has stopped working,sim_issue,high,negative,yes
-The new SIM card is still inactive,sim_issue,high,negative,yes
-I want to switch from physical SIM to eSIM,sim_issue,high,negative,yes
-Please help me activate my eSIM,sim_issue,high,negative,yes
-There is a problem with my SIM card,sim_issue,high,negative,yes
-My number is not working after SIM change,sim_issue,high,negative,yes
-Can I replace a broken SIM card,sim_issue,high,negative,yes
-The eSIM QR code cannot be scanned,sim_issue,high,negative,yes
-I need a new SIM because mine is faulty,sim_issue,high,negative,yes
-The SIM has no network connection,sim_issue,high,negative,yes
-How do I request a SIM replacement,sim_issue,high,negative,yes
-My SIM card appears invalid,sim_issue,high,negative,yes
-I need a SIM issue resolved,sim_issue,medium,negative,yes
-My mobile service stopped after inserting new SIM,sim_issue,high,negative,yes
-Can you activate my replacement SIM,sim_issue,high,negative,yes
-My eSIM cannot be installed,sim_issue,medium,negative,yes
-The physical SIM is not recognized,sim_issue,high,negative,yes
-Help me change to an eSIM,sim_issue,high,negative,yes
-My line is inactive after SIM replacement,sim_issue,medium,negative,yes
-The SIM card may be corrupted,sim_issue,high,negative,yes
-I need help restoring service on my SIM,sim_issue,high,negative,yes
-I think my SIM is damaged,sim_issue,high,negative,yes
-My eSIM registration is unsuccessful,sim_issue,high,negative,yes
-Can I get another SIM with the same number,sim_issue,high,negative,yes
-The device keeps saying invalid SIM,sim_issue,medium,negative,yes
-Help me fix this SIM problem,sim_issue,high,negative,yes
-I want to upgrade to a bigger data plan,plan_change,medium,neutral,no
-Can I switch to a cheaper plan,plan_change,medium,neutral,no
-I need to change my mobile plan,plan_change,medium,neutral,no
-I want to move from prepaid to postpaid,plan_change,medium,neutral,no
-How do I downgrade my subscription,plan_change,medium,neutral,no
-I am looking for a better plan with more data,plan_change,medium,neutral,no
-Can I change my broadband package,plan_change,medium,neutral,no
-I want to upgrade my current package,plan_change,medium,neutral,no
-Please help me switch plans,plan_change,medium,neutral,no
-Is it possible to change my plan this month,plan_change,medium,neutral,no
-I need a plan with more data,plan_change,medium,negative,no
-Can I reduce the cost of my current plan,plan_change,medium,neutral,no
-I want to move to another package,plan_change,medium,neutral,no
-How do I change my subscription package,plan_change,medium,neutral,no
-Please recommend a better mobile plan,plan_change,medium,neutral,no
-I want to downgrade to save money,plan_change,medium,neutral,no
-Can I upgrade my line today,plan_change,medium,neutral,no
-I need to switch from one plan to another,plan_change,medium,neutral,no
-Is plan change available immediately,plan_change,medium,neutral,no
-I want a package with better benefits,plan_change,medium,negative,no
-Can I move to a lower monthly plan,plan_change,medium,neutral,no
-I need help changing my service plan,plan_change,medium,neutral,no
-I want to convert my prepaid line,plan_change,medium,neutral,no
-Can you assist me with a plan upgrade,plan_change,medium,neutral,no
-I want to compare and change my package,plan_change,medium,neutral,no
-Please change my current plan,plan_change,medium,neutral,no
-I need a new plan option,plan_change,medium,negative,no
-How can I update my subscription plan,plan_change,medium,neutral,no
-I want a broadband package change,plan_change,medium,neutral,no
-Can I change my plan without penalty,plan_change,medium,neutral,no
-I want to move to a higher tier package,plan_change,medium,neutral,no
-Please help me pick a cheaper package,plan_change,medium,neutral,no
-I need more data on my plan,plan_change,medium,negative,no
-Can my current line be upgraded,plan_change,medium,negative,no
-I want to revise my subscription,plan_change,medium,negative,no
-My current package no longer suits me,plan_change,medium,neutral,no
-Can I downgrade after this billing cycle,plan_change,medium,neutral,no
-I need assistance switching plans,plan_change,medium,neutral,no
-I want a different data package,plan_change,medium,neutral,no
-Please update my mobile package,plan_change,medium,neutral,no
-How do I go from prepaid to postpaid,plan_change,medium,neutral,no
-I want a lower cost subscription,plan_change,medium,neutral,no
-Can I increase my data allowance,plan_change,medium,neutral,no
-My current plan is too expensive,plan_change,medium,neutral,no
-I want to change my telco package,plan_change,medium,negative,no
-Please help with my plan selection,plan_change,medium,neutral,no
-I am interested in another plan,plan_change,medium,neutral,no
-Can I modify my plan online,plan_change,medium,negative,no
-I need to switch to a new package,plan_change,medium,neutral,no
-Help me change my service plan,plan_change,medium,neutral,no
-I want to cancel my mobile line,cancellation,high,neutral,yes
-Please terminate my broadband subscription,cancellation,high,neutral,yes
-How do I close my telco account,cancellation,high,neutral,yes
-I want to stop this service permanently,cancellation,high,neutral,yes
-I need to terminate my number,cancellation,high,neutral,yes
-Can you help me cancel my plan,cancellation,high,neutral,yes
-I no longer want this line and want it removed,cancellation,high,neutral,yes
-Please end my subscription,cancellation,high,neutral,yes
-I want to discontinue this service,cancellation,high,neutral,yes
-What is the process to cancel my line,cancellation,high,neutral,yes
-I need to close my account,cancellation,high,neutral,yes
-Please cancel my broadband service,cancellation,high,neutral,yes
-I don’t want this subscription anymore,cancellation,high,neutral,yes
-How can I terminate my mobile service,cancellation,high,neutral,yes
-I want to remove this line from my account,cancellation,high,neutral,yes
-Please help me end my contract,cancellation,high,neutral,yes
-I want to stop using this telco service,cancellation,high,neutral,yes
-Can I terminate the account today,cancellation,high,neutral,yes
-I need cancellation support,cancellation,high,neutral,yes
-Please process my service termination,cancellation,high,neutral,yes
-I want to deactivate my line permanently,cancellation,high,neutral,yes
-How do I cancel this number,cancellation,high,neutral,yes
-I want to end my current package,cancellation,high,neutral,yes
-Please close this subscription,cancellation,high,neutral,yes
-I need to stop my service,cancellation,high,neutral,yes
-Can you guide me through account termination,cancellation,high,neutral,yes
-I want my line disconnected,cancellation,high,neutral,yes
-Please cancel this account,cancellation,high,neutral,yes
-I need to shut down my service,cancellation,high,neutral,yes
-I want to withdraw from this plan,cancellation,high,neutral,yes
-How do I end my broadband line,cancellation,high,neutral,yes
-Please remove my current service,cancellation,high,neutral,yes
-I no longer need this account,cancellation,high,neutral,yes
-I want to terminate the subscription now,cancellation,high,neutral,yes
-Can I cancel before the next billing cycle,cancellation,high,neutral,yes
-Please end this service for me,cancellation,high,neutral,yes
-I need my line cancelled,cancellation,high,neutral,yes
-I want to stop the package immediately,cancellation,high,neutral,yes
-Can I discontinue my telco account,cancellation,high,neutral,yes
-I am looking to close my service,cancellation,high,neutral,yes
-Please help me cancel the subscription,cancellation,high,neutral,yes
-I want this line deactivated,cancellation,high,neutral,yes
-I need to terminate my service package,cancellation,high,neutral,yes
-How can I stop this account completely,cancellation,high,neutral,yes
-I want to cancel this telco plan,cancellation,high,neutral,yes
-Please process my cancellation request,cancellation,high,neutral,yes
-I don’t need this line anymore,cancellation,high,neutral,yes
-Can I close the account online,cancellation,high,neutral,yes
-I want to end the service now,cancellation,high,neutral,yes
-Help me cancel my line,cancellation,high,neutral,yes
-I want to complain about the service,complaint,high,negative,yes
-Your support team did not solve my issue,complaint,high,negative,yes
-I am very unhappy with the customer service,complaint,high,negative,yes
-This is the third time I have contacted support,complaint,high,negative,yes
-The service quality is very disappointing,complaint,high,negative,yes
-I want to file an official complaint,complaint,high,negative,yes
-No one has helped me properly,complaint,high,negative,yes
-I am frustrated with how this was handled,complaint,high,negative,yes
-The response from your staff was very poor,complaint,high,negative,yes
-I need to escalate my complaint,complaint,high,negative,yes
-I am not satisfied with the support provided,complaint,high,negative,yes
-The service has been terrible,complaint,high,negative,yes
-I want to raise a complaint about this matter,complaint,high,negative,yes
-Your team keeps giving me the same answer,complaint,high,negative,yes
-This issue has not been resolved for days,complaint,high,negative,yes
-I am disappointed with your service,complaint,high,negative,yes
-The handling of my case was unacceptable,complaint,high,negative,yes
-Nobody followed up on my issue,complaint,high,negative,yes
-The support experience was very bad,complaint,high,negative,yes
-I would like to report poor customer service,complaint,high,negative,yes
-I am upset with the way this was managed,complaint,high,negative,yes
-The service standard is not acceptable,complaint,medium,negative,yes
-I need this complaint to be escalated,complaint,high,negative,yes
-I have had a very bad experience,complaint,medium,negative,yes
-No one seems to care about my issue,complaint,medium,negative,yes
-The staff response was unhelpful,complaint,high,negative,yes
-This has been handled badly,complaint,high,negative,yes
-I want to complain about repeated problems,complaint,high,negative,yes
-The customer service is extremely poor,complaint,high,negative,yes
-I am tired of contacting support,complaint,high,negative,yes
-My issue has been ignored,complaint,high,negative,yes
-This is unacceptable service,complaint,high,negative,yes
-I want someone senior to review this complaint,complaint,high,negative,yes
-The support provided was disappointing,complaint,high,negative,yes
-I am unhappy with the outcome,complaint,medium,negative,yes
-There has been no proper resolution,complaint,high,negative,yes
-Your staff did not assist me properly,complaint,high,negative,yes
-I want to submit a service complaint,complaint,high,negative,yes
-This issue keeps happening and nobody fixes it,complaint,high,negative,yes
-I am frustrated with the support team,complaint,high,negative,yes
-The case was not handled professionally,complaint,medium,negative,yes
-I am making a complaint about this experience,complaint,high,negative,yes
-I expected better service than this,complaint,medium,negative,yes
-There has been poor follow-up from your team,complaint,high,negative,yes
-The whole support process was bad,complaint,high,negative,yes
-I am dissatisfied with how this was resolved,complaint,high,negative,yes
-I need to report a bad service experience,complaint,high,negative,yes
-The support response was not helpful at all,complaint,high,negative,yes
-This problem has been handled very poorly,complaint,high,negative,yes
-Help me escalate this complaint,complaint,high,negative,yes
+I can't log into my account,account_issue,medium,negative,no
+"Hi, Why can't I access my telecom account",account_issue,low,negative,yes
+"Please, My account is locked and I need help",account_issue,medium,neutral,no
+I forgot my password and cannot sign in right now,account_issue,high,negative,yes
+"Please, I can't log into my account",account_issue,low,negative,yes
+"Please, My account access stopped working today right now",account_issue,high,negative,yes
+"Hello, I can't log into my account right now",account_issue,high,negative,yes
+"Can you help, I am unable to update my profile details as soon as possible",account_issue,high,neutral,no
+"Hello, My account is locked and I need help urgently",account_issue,high,negative,yes
+"Hello, I am unable to update my profile details",account_issue,medium,neutral,no
+"Can you help, The app says my account credentials are invalid urgently",account_issue,high,negative,no
+The app says my account credentials are invalid as soon as possible,account_issue,high,negative,yes
+"Please, I am unable to update my profile details",account_issue,low,neutral,no
+"Hi, Please help me reset my account login urgently",account_issue,high,neutral,no
+"Can you help, Please help me reset my account login today",account_issue,high,negative,yes
+"Hello, I am unable to update my profile details right now",account_issue,high,neutral,yes
+"Hello, My account is locked and I need help",account_issue,medium,neutral,yes
+"Hi, Why can't I access my telecom account today",account_issue,high,negative,no
+"Hello, The app says my account credentials are invalid right now",account_issue,high,negative,yes
+"Hello, I can't log into my account right now",account_issue,high,negative,yes
+"Hello, My account access stopped working today as soon as possible",account_issue,high,neutral,no
+"Hi, I cannot verify my account on the portal",account_issue,medium,negative,no
+"Can you help, My account access stopped working today",account_issue,high,negative,yes
+"Hello, Why can't I access my telecom account right now",account_issue,high,negative,yes
+"Please, The app says my account credentials are invalid as soon as possible",account_issue,high,negative,yes
+"Please, My account access stopped working today",account_issue,high,negative,no
+"Hi, Why can't I access my telecom account",account_issue,medium,negative,no
+My account is locked and I need help right now,account_issue,high,neutral,yes
+"Can you help, I cannot verify my account on the portal urgently",account_issue,high,negative,no
+"Can you help, I cannot verify my account on the portal today",account_issue,high,negative,yes
+"Hello, The app says my account credentials are invalid urgently",account_issue,high,negative,yes
+The app says my account credentials are invalid as soon as possible,account_issue,high,negative,yes
+"Hello, My account is locked and I need help as soon as possible",account_issue,high,negative,yes
+"Can you help, I can't log into my account",account_issue,medium,negative,no
+"Please, Why can't I access my telecom account",account_issue,low,negative,yes
+"Hello, The app says my account credentials are invalid",account_issue,low,negative,no
+"Hello, Why can't I access my telecom account",account_issue,medium,negative,no
+"Please, I am unable to update my profile details today",account_issue,high,neutral,no
+"Hello, Please help me reset my account login right now",account_issue,high,neutral,no
+"Please, My account is locked and I need help urgently",account_issue,high,negative,yes
+"Please, Why can't I access my telecom account right now",account_issue,high,negative,yes
+"Can you help, The app says my account credentials are invalid right now",account_issue,high,negative,no
+"Please, I cannot verify my account on the portal today",account_issue,high,negative,yes
+"Please, I forgot my password and cannot sign in",account_issue,medium,negative,no
+"Hello, I need help recovering my online account",account_issue,medium,neutral,no
+"Hi, My account is locked and I need help as soon as possible",account_issue,high,neutral,yes
+"Please, I forgot my password and cannot sign in",account_issue,low,negative,no
+I can't log into my account right now,account_issue,high,negative,yes
+I am unable to update my profile details urgently,account_issue,high,neutral,yes
+"Hi, Please help me reset my account login",account_issue,medium,neutral,yes
+"Hi, I cannot verify my account on the portal",account_issue,medium,negative,no
+"Can you help, My account access stopped working today right now",account_issue,high,neutral,no
+"Can you help, I am unable to update my profile details today",account_issue,high,negative,no
+My account is locked and I need help urgently,account_issue,high,negative,yes
+"Hello, My account is locked and I need help right now",account_issue,high,neutral,no
+"Please, I need help recovering my online account right now",account_issue,high,negative,yes
+"Hello, I need help recovering my online account right now",account_issue,high,neutral,no
+"Please, My account is locked and I need help urgently",account_issue,high,neutral,no
+"Hi, Why can't I access my telecom account today",account_issue,high,negative,no
+"Can you help, I forgot my password and cannot sign in today",account_issue,high,negative,yes
+"Hi, My account access stopped working today urgently",account_issue,high,neutral,no
+"Hello, I need help recovering my online account as soon as possible",account_issue,high,negative,yes
+"Please, I need help recovering my online account right now",account_issue,high,neutral,no
+"Hi, I can't log into my account",account_issue,medium,negative,yes
+I am unable to update my profile details urgently,account_issue,high,neutral,no
+"Please, I need help recovering my online account",account_issue,medium,neutral,no
+"Please, My account is locked and I need help right now",account_issue,high,neutral,yes
+I forgot my password and cannot sign in today,account_issue,high,negative,yes
+"Please, I forgot my password and cannot sign in",account_issue,medium,negative,no
+"Please, My account is locked and I need help today",account_issue,high,negative,no
+"Hi, I am unable to update my profile details right now",account_issue,high,neutral,no
+"Can you help, Why can't I access my telecom account",account_issue,medium,negative,no
+"Can you help, I am unable to update my profile details urgently",account_issue,high,neutral,no
+"Please, I cannot verify my account on the portal urgently",account_issue,high,negative,yes
+"Please, I forgot my password and cannot sign in",account_issue,medium,negative,no
+"Hello, My account is locked and I need help right now",account_issue,high,negative,no
+"Hi, I need help recovering my online account",account_issue,medium,negative,yes
+"Please, I can't log into my account",account_issue,medium,negative,no
+Why can't I access my telecom account as soon as possible,account_issue,high,negative,yes
+The app says my account credentials are invalid right now,account_issue,high,negative,no
+"Hello, I cannot verify my account on the portal right now",account_issue,high,negative,yes
+"Hello, I forgot my password and cannot sign in",account_issue,medium,negative,no
+"Please, I need help recovering my online account as soon as possible",account_issue,high,neutral,no
+"Can you help, Please help me reset my account login urgently",account_issue,high,neutral,no
+"Hi, Please help me reset my account login right now",account_issue,high,negative,yes
+"Can you help, The app says my account credentials are invalid urgently",account_issue,high,negative,yes
+Why can't I access my telecom account,account_issue,low,negative,no
+"Please, The app says my account credentials are invalid right now",account_issue,high,negative,no
+"Hi, I can't log into my account as soon as possible",account_issue,high,negative,no
+I am unable to update my profile details right now,account_issue,high,neutral,yes
+"Hi, My account is locked and I need help as soon as possible",account_issue,high,negative,yes
+"Hi, I forgot my password and cannot sign in right now",account_issue,high,negative,yes
+"Can you help, I can't log into my account right now",account_issue,high,negative,yes
+"Hello, My account access stopped working today",account_issue,high,neutral,yes
+"Hi, Please help me reset my account login right now",account_issue,high,neutral,no
+I need help recovering my online account right now,account_issue,high,neutral,no
+"Hello, Please help me reset my account login right now",account_issue,high,neutral,no
+"Hi, My account access stopped working today as soon as possible",account_issue,high,neutral,no
+Please help me reset my account login as soon as possible,account_issue,high,negative,yes
+"Please, I am unable to update my profile details urgently",account_issue,high,neutral,no
+"Hi, I cannot verify my account on the portal as soon as possible",account_issue,high,negative,yes
+I cannot verify my account on the portal today,account_issue,high,negative,no
+"Hello, My account access stopped working today",account_issue,high,neutral,yes
+My account access stopped working today,account_issue,high,neutral,no
+"Hello, I can't log into my account",account_issue,medium,negative,no
+"Please, The app says my account credentials are invalid",account_issue,medium,negative,yes
+"Hi, I am unable to update my profile details today",account_issue,high,neutral,no
+"Hello, I cannot verify my account on the portal as soon as possible",account_issue,high,negative,yes
+Please help me reset my account login,account_issue,medium,negative,no
+"Can you help, Please help me reset my account login",account_issue,low,neutral,no
+"Can you help, Why can't I access my telecom account",account_issue,medium,negative,no
+"Can you help, The app says my account credentials are invalid urgently",account_issue,high,negative,no
+"Hello, I forgot my password and cannot sign in today",account_issue,high,negative,yes
+"Please, I am unable to update my profile details today",account_issue,high,negative,no
+"Hi, The app says my account credentials are invalid today",account_issue,high,negative,yes
+"Hi, My account is locked and I need help as soon as possible",account_issue,high,negative,yes
+"Hi, Please help me reset my account login right now",account_issue,high,neutral,no
+I can't log into my account right now,account_issue,high,negative,no
+"Please, My account is locked and I need help today",account_issue,high,negative,yes
+"Please, I forgot my password and cannot sign in",account_issue,medium,negative,no
+"Can you help, My account access stopped working today right now",account_issue,high,neutral,yes
+My account is locked and I need help today,account_issue,high,neutral,no
+"Please, I need help recovering my online account urgently",account_issue,high,neutral,no
+"Can you help, Why can't I access my telecom account today",account_issue,high,negative,yes
+"Please, The app says my account credentials are invalid",account_issue,medium,negative,no
+"Please, Please check my overdue bill status today",billing,high,negative,yes
+"Can you help, The invoice amount looks wrong as soon as possible",billing,high,negative,yes
+"Hello, Please check my overdue bill status today",billing,high,neutral,yes
+"Can you help, I was charged twice for my mobile bill",billing,high,negative,yes
+"Hello, There is an unknown charge on my account as soon as possible",billing,high,neutral,no
+Can you explain the extra charge on my invoice right now,billing,high,neutral,yes
+"Can you help, Can you explain the extra charge on my invoice",billing,medium,neutral,yes
+"Can you help, There is an unknown charge on my account",billing,high,negative,yes
+"Hi, I want a refund for the incorrect bill amount today",billing,high,neutral,no
+Why did I get charged after making payment today,billing,high,negative,yes
+There is an unknown charge on my account as soon as possible,billing,high,neutral,yes
+"Can you help, Please check my overdue bill status",billing,medium,neutral,yes
+"Hi, My payment went through but the bill still shows unpaid today",billing,high,neutral,yes
+I want a refund for the incorrect bill amount as soon as possible,billing,high,neutral,no
+"Can you help, Can you explain the extra charge on my invoice today",billing,high,neutral,no
+"Please, Why is my bill higher than usual this month today",billing,high,neutral,yes
+"Can you help, Can you explain the extra charge on my invoice today",billing,high,neutral,yes
+"Hello, I want a refund for the incorrect bill amount as soon as possible",billing,high,neutral,yes
+"Can you help, There is an unknown charge on my account as soon as possible",billing,high,negative,yes
+"Can you help, My payment went through but the bill still shows unpaid urgently",billing,high,negative,yes
+"Please, Why is my bill higher than usual this month as soon as possible",billing,high,neutral,no
+Why is my bill higher than usual this month urgently,billing,high,neutral,yes
+"Hi, Why is my bill higher than usual this month",billing,medium,neutral,yes
+"Hi, The invoice amount looks wrong",billing,medium,negative,no
+"Hi, The invoice amount looks wrong",billing,high,negative,yes
+"Hi, Why did I get charged after making payment",billing,medium,negative,no
+Can you explain the extra charge on my invoice as soon as possible,billing,high,neutral,yes
+"Please, Why is my bill higher than usual this month as soon as possible",billing,high,negative,yes
+"Hi, I was charged twice for my mobile bill",billing,medium,negative,no
+"Hi, I was charged twice for my mobile bill",billing,high,negative,no
+"Please, I was charged twice for my mobile bill",billing,medium,negative,yes
+"Please, I want a refund for the incorrect bill amount",billing,high,neutral,no
+"Hello, Why is my bill higher than usual this month today",billing,high,neutral,yes
+I want a refund for the incorrect bill amount as soon as possible,billing,high,neutral,no
+"Can you help, Can you explain the extra charge on my invoice today",billing,high,neutral,no
+"Please, My payment went through but the bill still shows unpaid",billing,medium,negative,yes
+"Can you help, Why did I get charged after making payment as soon as possible",billing,high,negative,yes
+"Hi, I was charged twice for my mobile bill as soon as possible",billing,high,negative,yes
+"Hi, The invoice amount looks wrong",billing,medium,negative,no
+"Can you help, There is an unknown charge on my account urgently",billing,high,negative,yes
+"Hi, The invoice amount looks wrong right now",billing,high,negative,yes
+"Hello, There is an unknown charge on my account as soon as possible",billing,high,neutral,no
+"Hello, Please check my overdue bill status urgently",billing,high,neutral,yes
+"Hi, I want a refund for the incorrect bill amount today",billing,high,neutral,no
+"Hi, The invoice amount looks wrong",billing,medium,negative,yes
+"Can you help, Why is my bill higher than usual this month urgently",billing,high,negative,yes
+"Can you help, I need help with a billing error as soon as possible",billing,high,negative,yes
+"Please, Please check my overdue bill status as soon as possible",billing,high,negative,no
+"Please, There is an unknown charge on my account as soon as possible",billing,high,negative,yes
+"Hello, My payment went through but the bill still shows unpaid right now",billing,high,neutral,yes
+"Hi, There is an unknown charge on my account urgently",billing,high,neutral,no
+"Please, Can you explain the extra charge on my invoice right now",billing,high,neutral,no
+"Can you help, My payment went through but the bill still shows unpaid",billing,medium,negative,yes
+"Hi, My payment went through but the bill still shows unpaid right now",billing,high,neutral,yes
+"Hi, My payment went through but the bill still shows unpaid urgently",billing,high,neutral,no
+"Please, Can you explain the extra charge on my invoice as soon as possible",billing,high,neutral,yes
+"Please, My payment went through but the bill still shows unpaid",billing,medium,negative,yes
+Why did I get charged after making payment as soon as possible,billing,high,negative,yes
+"Can you help, The invoice amount looks wrong as soon as possible",billing,high,negative,yes
+My payment went through but the bill still shows unpaid today,billing,high,neutral,yes
+I want a refund for the incorrect bill amount today,billing,high,neutral,yes
+"Please, Why is my bill higher than usual this month right now",billing,high,neutral,no
+"Hello, I was charged twice for my mobile bill right now",billing,high,negative,yes
+"Please, I want a refund for the incorrect bill amount",billing,medium,neutral,no
+"Can you help, The invoice amount looks wrong today",billing,high,negative,yes
+"Please, I want a refund for the incorrect bill amount as soon as possible",billing,high,neutral,no
+I need help with a billing error,billing,medium,negative,no
+Can you explain the extra charge on my invoice right now,billing,high,neutral,yes
+"Please, I was charged twice for my mobile bill right now",billing,high,negative,yes
+"Can you help, The invoice amount looks wrong",billing,medium,negative,yes
+"Hello, Why is my bill higher than usual this month right now",billing,high,neutral,yes
+"Hello, The invoice amount looks wrong urgently",billing,high,negative,no
+"Hi, My payment went through but the bill still shows unpaid",billing,medium,neutral,no
+"Hi, I want a refund for the incorrect bill amount urgently",billing,high,neutral,no
+"Hi, Can you explain the extra charge on my invoice as soon as possible",billing,high,neutral,yes
+Why is my bill higher than usual this month right now,billing,high,neutral,yes
+"Please, Why did I get charged after making payment as soon as possible",billing,high,negative,yes
+The invoice amount looks wrong,billing,high,negative,no
+"Can you help, My payment went through but the bill still shows unpaid",billing,medium,negative,yes
+Why did I get charged after making payment urgently,billing,high,negative,yes
+"Hello, Why did I get charged after making payment as soon as possible",billing,high,negative,yes
+I need help with a billing error,billing,medium,neutral,no
+"Hello, Why did I get charged after making payment urgently",billing,high,negative,yes
+"Can you help, Please check my overdue bill status",billing,high,negative,yes
+"Please, I want a refund for the incorrect bill amount",billing,high,neutral,yes
+"Hello, I want a refund for the incorrect bill amount as soon as possible",billing,high,neutral,yes
+Can you explain the extra charge on my invoice as soon as possible,billing,high,neutral,yes
+"Can you help, My payment went through but the bill still shows unpaid",billing,high,neutral,yes
+There is an unknown charge on my account as soon as possible,billing,high,neutral,yes
+I want a refund for the incorrect bill amount,billing,medium,neutral,no
+"Please, The invoice amount looks wrong today",billing,high,negative,yes
+"Hi, Please check my overdue bill status as soon as possible",billing,high,negative,no
+"Can you help, Why is my bill higher than usual this month right now",billing,high,negative,no
+"Hi, My payment went through but the bill still shows unpaid today",billing,high,neutral,no
+"Can you help, I was charged twice for my mobile bill urgently",billing,high,negative,no
+"Please, I need help with a billing error",billing,medium,negative,no
+Please check my overdue bill status today,billing,high,neutral,yes
+The invoice amount looks wrong urgently,billing,high,negative,no
+"Hi, The invoice amount looks wrong",billing,high,negative,no
+"Hello, I want a refund for the incorrect bill amount today",billing,high,neutral,yes
+"Hi, The invoice amount looks wrong",billing,medium,negative,yes
+"Hi, Why did I get charged after making payment",billing,medium,negative,yes
+My payment went through but the bill still shows unpaid today,billing,high,neutral,yes
+"Please, My payment went through but the bill still shows unpaid urgently",billing,high,negative,no
+"Hello, Why did I get charged after making payment",billing,medium,negative,yes
+"Hi, The invoice amount looks wrong",billing,high,negative,yes
+"Hello, Please check my overdue bill status",billing,high,negative,yes
+"Hi, I need help with a billing error",billing,high,neutral,yes
+There is an unknown charge on my account,billing,high,neutral,no
+"Can you help, I want a refund for the incorrect bill amount",billing,medium,neutral,yes
+Can you explain the extra charge on my invoice,billing,medium,neutral,yes
+The invoice amount looks wrong urgently,billing,high,negative,no
+"Can you help, Why is my bill higher than usual this month",billing,medium,negative,no
+"Hi, I was charged twice for my mobile bill today",billing,high,negative,yes
+"Hello, Why did I get charged after making payment",billing,high,negative,no
+There is an unknown charge on my account,billing,medium,neutral,yes
+"Hello, The invoice amount looks wrong",billing,medium,negative,no
+I need help with a billing error,billing,medium,negative,yes
+I want a refund for the incorrect bill amount urgently,billing,high,neutral,no
+The invoice amount looks wrong right now,billing,high,negative,no
+"Hello, Why is my bill higher than usual this month urgently",billing,high,neutral,yes
+My payment went through but the bill still shows unpaid as soon as possible,billing,high,neutral,yes
+"Can you help, Can you explain the extra charge on my invoice right now",billing,high,negative,no
+"Hi, Can you explain the extra charge on my invoice right now",billing,high,neutral,yes
+"Please, I want a refund for the incorrect bill amount",billing,medium,neutral,yes
+"Please, How can I close my account and stop the plan right now",cancellation,high,negative,no
+"Hello, I want to stop my current plan as soon as possible",cancellation,high,neutral,no
+I want to stop my current plan as soon as possible,cancellation,high,neutral,no
+"Please, How can I close my account and stop the plan urgently",cancellation,high,negative,yes
+"Please, Help me end my broadband contract",cancellation,high,negative,yes
+"Hello, I need to cancel my subscription immediately today",cancellation,high,neutral,yes
+I need to cancel my subscription immediately today,cancellation,high,neutral,no
+"Hello, I need to discontinue this service as soon as possible",cancellation,high,neutral,no
+"Hello, I want to cancel my mobile line",cancellation,high,neutral,yes
+I need to discontinue this service,cancellation,medium,neutral,yes
+"Please, I want to stop my current plan as soon as possible",cancellation,high,neutral,no
+"Hello, I need to cancel my subscription immediately",cancellation,high,neutral,yes
+"Please, Help me end my broadband contract",cancellation,medium,neutral,no
+I want to cancel my mobile line as soon as possible,cancellation,high,neutral,yes
+I need to discontinue this service as soon as possible,cancellation,high,neutral,no
+"Hi, Please terminate my telecom service as soon as possible",cancellation,high,negative,no
+"Can you help, How can I close my account and stop the plan right now",cancellation,high,neutral,no
+"Hello, Can I cancel without renewal",cancellation,high,neutral,yes
+"Hello, I want to stop my current plan as soon as possible",cancellation,high,neutral,no
+"Hello, Please terminate my telecom service today",cancellation,high,neutral,yes
+"Hi, Please process service termination for my number",cancellation,high,neutral,yes
+Help me end my broadband contract,cancellation,medium,negative,yes
+"Hello, I need to discontinue this service today",cancellation,high,neutral,no
+"Hello, Please terminate my telecom service",cancellation,medium,negative,yes
+"Please, Can I cancel without renewal as soon as possible",cancellation,high,neutral,no
+I want to stop my current plan,cancellation,high,neutral,no
+"Can you help, Please terminate my telecom service right now",cancellation,high,neutral,yes
+"Hello, I want to stop my current plan urgently",cancellation,high,neutral,yes
+"Hi, Can I cancel without renewal right now",cancellation,high,neutral,yes
+"Can you help, I no longer need this line and want to cancel it",cancellation,medium,negative,no
+"Hi, Please process service termination for my number",cancellation,medium,negative,no
+"Can you help, Help me end my broadband contract urgently",cancellation,high,negative,yes
+"Can you help, I want to stop my current plan right now",cancellation,high,negative,yes
+"Hello, Can I cancel without renewal",cancellation,high,neutral,yes
+"Can you help, Help me end my broadband contract right now",cancellation,high,neutral,yes
+I need to cancel my subscription immediately,cancellation,high,neutral,no
+"Please, I want to cancel my mobile line urgently",cancellation,high,negative,yes
+"Hi, I need to discontinue this service right now",cancellation,high,neutral,yes
+"Please, I need to cancel my subscription immediately",cancellation,high,neutral,yes
+"Hello, How can I close my account and stop the plan",cancellation,medium,neutral,yes
+"Hi, How can I close my account and stop the plan",cancellation,high,neutral,yes
+I want to cancel my mobile line right now,cancellation,high,neutral,yes
+"Hello, I need to cancel my subscription immediately",cancellation,high,neutral,yes
+How can I close my account and stop the plan as soon as possible,cancellation,high,neutral,yes
+"Hi, Please process service termination for my number",cancellation,medium,neutral,yes
+"Can you help, I no longer need this line and want to cancel it",cancellation,medium,neutral,yes
+"Please, I need to cancel my subscription immediately",cancellation,high,neutral,no
+"Please, Help me end my broadband contract today",cancellation,high,neutral,yes
+"Can you help, Please process service termination for my number today",cancellation,high,neutral,yes
+"Can you help, Please terminate my telecom service urgently",cancellation,high,negative,no
+"Hi, Please terminate my telecom service right now",cancellation,high,negative,no
+"Please, Can I cancel without renewal",cancellation,high,negative,no
+"Please, Help me end my broadband contract today",cancellation,high,negative,yes
+Can I cancel without renewal,cancellation,medium,neutral,yes
+"Can you help, I need to cancel my subscription immediately today",cancellation,high,negative,yes
+"Can you help, Please process service termination for my number",cancellation,medium,negative,yes
+"Hello, Help me end my broadband contract as soon as possible",cancellation,high,neutral,no
+"Can you help, Please terminate my telecom service urgently",cancellation,high,neutral,yes
+"Can you help, Please terminate my telecom service",cancellation,medium,negative,yes
+"Please, I want to cancel my mobile line",cancellation,medium,negative,no
+Please process service termination for my number as soon as possible,cancellation,high,negative,no
+Help me end my broadband contract,cancellation,high,negative,yes
+"Please, Can I cancel without renewal right now",cancellation,high,neutral,no
+"Can you help, I need to cancel my subscription immediately urgently",cancellation,high,negative,no
+"Hello, Please terminate my telecom service as soon as possible",cancellation,high,neutral,yes
+"Please, I need to discontinue this service",cancellation,medium,neutral,no
+"Hello, I want to cancel my mobile line right now",cancellation,high,neutral,yes
+"Hello, I no longer need this line and want to cancel it as soon as possible",cancellation,high,neutral,yes
+"Hi, How can I close my account and stop the plan",cancellation,medium,neutral,yes
+How can I close my account and stop the plan,cancellation,medium,neutral,yes
+Can I cancel without renewal right now,cancellation,high,neutral,yes
+"Can you help, I want to stop my current plan as soon as possible",cancellation,high,neutral,yes
+"Hello, I no longer need this line and want to cancel it",cancellation,medium,neutral,yes
+How can I close my account and stop the plan right now,cancellation,high,neutral,no
+Please terminate my telecom service as soon as possible,cancellation,high,negative,no
+"Can you help, I want to stop my current plan",cancellation,high,negative,yes
+"Hi, Can I cancel without renewal urgently",cancellation,high,neutral,yes
+"Can you help, Please terminate my telecom service as soon as possible",cancellation,high,negative,no
+"Hello, I want to cancel my mobile line right now",cancellation,high,neutral,yes
+"Please, I want to cancel my mobile line urgently",cancellation,high,neutral,yes
+"Hi, How can I close my account and stop the plan as soon as possible",cancellation,high,neutral,yes
+"Hello, Please terminate my telecom service urgently",cancellation,high,negative,no
+"Can you help, How can I close my account and stop the plan right now",cancellation,high,negative,no
+"Hi, Can I cancel without renewal",cancellation,medium,neutral,yes
+Please process service termination for my number,cancellation,medium,negative,yes
+"Can you help, Please terminate my telecom service as soon as possible",cancellation,high,negative,no
+"Can you help, Please process service termination for my number as soon as possible",cancellation,high,neutral,yes
+I no longer need this line and want to cancel it right now,cancellation,high,neutral,no
+"Can you help, I no longer need this line and want to cancel it urgently",cancellation,high,negative,yes
+"Hi, Please process service termination for my number",cancellation,high,neutral,yes
+"Hello, I no longer need this line and want to cancel it right now",cancellation,high,neutral,yes
+"Hi, Please terminate my telecom service",cancellation,medium,neutral,no
+"Please, I need to cancel my subscription immediately as soon as possible",cancellation,high,negative,no
+"Hi, I need to cancel my subscription immediately urgently",cancellation,high,neutral,yes
+"Hello, I need to cancel my subscription immediately right now",cancellation,high,neutral,no
+"Hi, Please terminate my telecom service right now",cancellation,high,negative,yes
+"Please, I need to discontinue this service today",cancellation,high,negative,no
+"Hello, How can I close my account and stop the plan today",cancellation,high,neutral,yes
+"Can you help, I want to stop my current plan",cancellation,high,negative,no
+I no longer need this line and want to cancel it,cancellation,medium,neutral,yes
+"Can you help, I want to stop my current plan urgently",cancellation,high,neutral,yes
+"Hello, Please terminate my telecom service",cancellation,medium,negative,yes
+"Please, Can I cancel without renewal",cancellation,medium,negative,no
+"Hi, I no longer need this line and want to cancel it",cancellation,high,neutral,no
+"Hi, I want to cancel my mobile line today",cancellation,high,neutral,yes
+"Hello, Please terminate my telecom service",cancellation,medium,neutral,yes
+"Hi, I want to stop my current plan today",cancellation,high,neutral,no
+"Please, I need to discontinue this service right now",cancellation,high,negative,yes
+"Hello, Please process service termination for my number today",cancellation,high,negative,no
+"Please, I want to cancel my mobile line",cancellation,medium,negative,yes
+"Hello, Please terminate my telecom service",cancellation,medium,negative,yes
+"Hello, I need to discontinue this service right now",cancellation,high,neutral,yes
+I need to discontinue this service,cancellation,medium,neutral,yes
+"Hello, Please process service termination for my number right now",cancellation,high,neutral,yes
+"Please, Please process service termination for my number",cancellation,high,neutral,no
+"Please, Please terminate my telecom service",cancellation,medium,negative,no
+"Hello, I want to cancel my mobile line as soon as possible",cancellation,high,neutral,yes
+"Hi, I need to cancel my subscription immediately as soon as possible",cancellation,high,neutral,yes
+"Hi, I need to cancel my subscription immediately right now",cancellation,high,neutral,yes
+Help me end my broadband contract urgently,cancellation,high,neutral,no
+"Hello, I need to discontinue this service right now",cancellation,high,neutral,no
+"Can you help, How can I close my account and stop the plan right now",cancellation,high,neutral,no
+"Please, How can I close my account and stop the plan",cancellation,high,neutral,yes
+"Hello, I need to cancel my subscription immediately today",cancellation,high,neutral,no
+"Hello, I want to stop my current plan right now",cancellation,high,neutral,no
+"Hi, I need to report a bad experience today",complaint,high,negative,yes
+"Hello, I am dissatisfied with the repeated delays today",complaint,high,negative,yes
+"Hello, I am frustrated with how my case was handled",complaint,medium,negative,yes
+"Hi, The service quality has been very poor",complaint,medium,negative,yes
+Please record my complaint about the network issue as soon as possible,complaint,high,negative,no
+The staff was rude and unhelpful urgently,complaint,high,negative,yes
+I am unhappy with the response from customer service as soon as possible,complaint,high,negative,yes
+"Please, I am unhappy with the response from customer service today",complaint,high,negative,yes
+"Hi, Please record my complaint about the network issue as soon as possible",complaint,high,negative,yes
+"Can you help, I want to make a complaint about your service today",complaint,high,negative,no
+"Hello, The service quality has been very poor today",complaint,high,negative,yes
+"Hello, The service quality has been very poor urgently",complaint,high,negative,yes
+This is the second time I am facing the same problem right now,complaint,high,negative,yes
+I need to report a bad experience today,complaint,high,negative,no
+"Hi, Please record my complaint about the network issue today",complaint,high,negative,no
+Your support team did not solve my issue urgently,complaint,high,negative,yes
+"Hi, I am unhappy with the response from customer service",complaint,medium,negative,no
+"Please, I am frustrated with how my case was handled urgently",complaint,high,negative,yes
+"Hi, I need to report a bad experience urgently",complaint,high,negative,yes
+"Hi, I am frustrated with how my case was handled",complaint,medium,negative,yes
+Your support team did not solve my issue today,complaint,high,negative,no
+"Please, I want to make a complaint about your service",complaint,medium,negative,no
+"Hi, I am unhappy with the response from customer service as soon as possible",complaint,high,negative,yes
+I am dissatisfied with the repeated delays as soon as possible,complaint,high,negative,yes
+"Please, I am frustrated with how my case was handled right now",complaint,high,negative,no
+The staff was rude and unhelpful as soon as possible,complaint,high,negative,yes
+"Please, The staff was rude and unhelpful",complaint,medium,negative,no
+I am frustrated with how my case was handled today,complaint,high,negative,yes
+"Can you help, This is the second time I am facing the same problem as soon as possible",complaint,high,negative,no
+This is the second time I am facing the same problem urgently,complaint,high,negative,yes
+"Hi, Your support team did not solve my issue",complaint,medium,negative,yes
+"Hi, I want to make a complaint about your service as soon as possible",complaint,high,negative,no
+"Hello, I am unhappy with the response from customer service",complaint,high,negative,no
+"Can you help, I am unhappy with the response from customer service right now",complaint,high,negative,yes
+"Can you help, I want to make a complaint about your service as soon as possible",complaint,high,negative,yes
+The service quality has been very poor urgently,complaint,high,negative,yes
+"Hello, The staff was rude and unhelpful today",complaint,high,negative,no
+"Can you help, I need to report a bad experience urgently",complaint,high,negative,no
+"Hi, I need to report a bad experience as soon as possible",complaint,high,negative,yes
+"Hello, I need to report a bad experience urgently",complaint,high,negative,yes
+"Can you help, I am frustrated with how my case was handled",complaint,high,negative,yes
+"Hello, I am unhappy with the response from customer service today",complaint,high,negative,no
+"Can you help, This is the second time I am facing the same problem",complaint,high,negative,yes
+"Can you help, Your support team did not solve my issue today",complaint,high,negative,no
+"Hi, The staff was rude and unhelpful as soon as possible",complaint,high,negative,yes
+Your support team did not solve my issue as soon as possible,complaint,high,negative,no
+"Hello, I need to report a bad experience today",complaint,high,negative,no
+"Can you help, I am unhappy with the response from customer service",complaint,high,negative,yes
+"Can you help, I want to make a complaint about your service",complaint,high,negative,no
+"Can you help, I need to report a bad experience",complaint,medium,negative,yes
+"Can you help, This is the second time I am facing the same problem",complaint,medium,negative,no
+"Hi, I want to make a complaint about your service right now",complaint,high,negative,no
+"Can you help, I want to make a complaint about your service right now",complaint,high,negative,yes
+"Hi, This is the second time I am facing the same problem as soon as possible",complaint,high,negative,yes
+"Please, I want to make a complaint about your service",complaint,medium,negative,no
+"Can you help, This is the second time I am facing the same problem as soon as possible",complaint,high,negative,yes
+I am dissatisfied with the repeated delays right now,complaint,high,negative,no
+"Hello, I am frustrated with how my case was handled as soon as possible",complaint,high,negative,no
+"Hello, The service quality has been very poor urgently",complaint,high,negative,yes
+"Hi, Please record my complaint about the network issue",complaint,high,negative,no
+I need to report a bad experience as soon as possible,complaint,high,negative,no
+"Can you help, The service quality has been very poor",complaint,high,negative,no
+"Can you help, The service quality has been very poor urgently",complaint,high,negative,yes
+Please record my complaint about the network issue right now,complaint,high,negative,no
+"Can you help, Your support team did not solve my issue",complaint,high,negative,no
+"Hello, Your support team did not solve my issue",complaint,medium,negative,yes
+"Hello, I am unhappy with the response from customer service",complaint,medium,negative,no
+"Hi, This is the second time I am facing the same problem",complaint,medium,negative,yes
+"Hi, I am unhappy with the response from customer service right now",complaint,high,negative,yes
+This is the second time I am facing the same problem,complaint,medium,negative,yes
+"Can you help, The staff was rude and unhelpful right now",complaint,high,negative,no
+Your support team did not solve my issue as soon as possible,complaint,high,negative,yes
+"Can you help, The staff was rude and unhelpful today",complaint,high,negative,yes
+"Please, Your support team did not solve my issue right now",complaint,high,negative,yes
+Please record my complaint about the network issue today,complaint,high,negative,no
+"Please, This is the second time I am facing the same problem right now",complaint,high,negative,no
+"Please, I am unhappy with the response from customer service right now",complaint,high,negative,yes
+"Please, I want to make a complaint about your service urgently",complaint,high,negative,no
+"Hi, I need to report a bad experience right now",complaint,high,negative,yes
+"Hello, The service quality has been very poor as soon as possible",complaint,high,negative,no
+"Hello, Your support team did not solve my issue as soon as possible",complaint,high,negative,yes
+"Please, I need to report a bad experience right now",complaint,high,negative,no
+"Hello, I am dissatisfied with the repeated delays",complaint,medium,negative,no
+"Hi, I am dissatisfied with the repeated delays",complaint,medium,negative,yes
+"Please, I am dissatisfied with the repeated delays as soon as possible",complaint,high,negative,no
+I want to make a complaint about your service urgently,complaint,high,negative,yes
+"Please, I need to report a bad experience",complaint,medium,negative,no
+"Can you help, I am dissatisfied with the repeated delays",complaint,medium,negative,yes
+"Please, I need to report a bad experience",complaint,high,negative,yes
+"Hi, I am frustrated with how my case was handled as soon as possible",complaint,high,negative,yes
+I want to make a complaint about your service right now,complaint,high,negative,yes
+"Can you help, Please record my complaint about the network issue today",complaint,high,negative,yes
+"Hello, I am dissatisfied with the repeated delays right now",complaint,high,negative,yes
+"Hello, This is the second time I am facing the same problem today",complaint,high,negative,yes
+"Hello, The staff was rude and unhelpful",complaint,medium,negative,yes
+"Hi, Please record my complaint about the network issue urgently",complaint,high,negative,yes
+"Can you help, The service quality has been very poor right now",complaint,high,negative,yes
+I need to report a bad experience today,complaint,high,negative,no
+"Can you help, The service quality has been very poor right now",complaint,high,negative,yes
+"Please, This is the second time I am facing the same problem right now",complaint,high,negative,yes
+"Can you help, The staff was rude and unhelpful today",complaint,high,negative,yes
+"Hello, Please record my complaint about the network issue urgently",complaint,high,negative,yes
+"Can you help, The staff was rude and unhelpful today",complaint,high,negative,yes
+"Hi, I am dissatisfied with the repeated delays as soon as possible",complaint,high,negative,yes
+I need to report a bad experience today,complaint,high,negative,no
+"Can you help, I need to report a bad experience",complaint,medium,negative,yes
+"Can you help, I am unhappy with the response from customer service as soon as possible",complaint,high,negative,no
+"Hello, I am frustrated with how my case was handled as soon as possible",complaint,high,negative,yes
+"Can you help, I want to make a complaint about your service",complaint,medium,negative,yes
+"Hello, The staff was rude and unhelpful as soon as possible",complaint,high,negative,yes
+"Can you help, The staff was rude and unhelpful today",complaint,high,negative,no
+"Hello, I am dissatisfied with the repeated delays",complaint,medium,negative,yes
+"Hi, Your support team did not solve my issue today",complaint,high,negative,yes
+"Hello, The staff was rude and unhelpful as soon as possible",complaint,high,negative,yes
+"Hi, I am dissatisfied with the repeated delays",complaint,high,negative,no
+I want to make a complaint about your service urgently,complaint,high,negative,yes
+"Hello, Please record my complaint about the network issue",complaint,high,negative,yes
+"Please, The staff was rude and unhelpful right now",complaint,high,negative,yes
+"Please, This is the second time I am facing the same problem right now",complaint,high,negative,yes
+"Please, I need to report a bad experience",complaint,high,negative,no
+"Please, The staff was rude and unhelpful today",complaint,high,negative,no
+"Please, I need to report a bad experience today",complaint,high,negative,yes
+"Hello, This is the second time I am facing the same problem",complaint,medium,negative,yes
+"Please, I need to report a bad experience",complaint,medium,negative,no
+I am dissatisfied with the repeated delays today,complaint,high,negative,yes
+"Please, Please help me modify my existing plan right now",plan_change,high,neutral,yes
+"Can you help, Help me change my data plan",plan_change,medium,negative,no
+"Hi, I want to upgrade my current mobile plan",plan_change,medium,neutral,no
+"Hi, I want to upgrade my current mobile plan today",plan_change,high,neutral,no
+"Can you help, Help me change my data plan today",plan_change,high,neutral,no
+"Please, Please help me modify my existing plan today",plan_change,high,neutral,yes
+"Hi, I want a new plan with lower monthly cost right now",plan_change,high,neutral,yes
+"Hello, Can I update my package benefits",plan_change,medium,neutral,no
+"Hi, Can I update my package benefits",plan_change,medium,neutral,yes
+"Hello, What are the options to change my plan",plan_change,medium,neutral,no
+"Hi, What are the options to change my plan",plan_change,medium,neutral,no
+"Hello, What are the options to change my plan",plan_change,low,neutral,yes
+"Can you help, Please move me to a plan with more data today",plan_change,high,negative,yes
+"Hello, What are the options to change my plan urgently",plan_change,high,neutral,yes
+"Please, I want to change from prepaid to postpaid today",plan_change,high,negative,yes
+"Hello, I want to upgrade my current mobile plan as soon as possible",plan_change,high,neutral,yes
+Please move me to a plan with more data today,plan_change,high,negative,yes
+"Can you help, I need to downgrade my subscription right now",plan_change,high,negative,yes
+"Hello, Help me change my data plan urgently",plan_change,high,neutral,no
+I want a new plan with lower monthly cost right now,plan_change,high,neutral,yes
+"Hi, I want to upgrade my current mobile plan urgently",plan_change,high,neutral,no
+"Hello, Can I update my package benefits urgently",plan_change,high,neutral,yes
+"Hi, I want to upgrade my current mobile plan",plan_change,low,neutral,no
+"Can you help, Can I update my package benefits",plan_change,low,negative,no
+"Hello, I want to upgrade my current mobile plan urgently",plan_change,high,neutral,yes
+"Please, I need to downgrade my subscription",plan_change,medium,neutral,no
+"Can you help, Help me change my data plan urgently",plan_change,high,negative,no
+"Hi, What are the options to change my plan urgently",plan_change,high,neutral,no
+"Hello, Please help me modify my existing plan",plan_change,low,negative,no
+"Can you help, I want a new plan with lower monthly cost",plan_change,medium,neutral,yes
+"Can you help, What are the options to change my plan right now",plan_change,high,neutral,no
+"Hi, Can I update my package benefits",plan_change,medium,neutral,yes
+"Hi, I want to upgrade my current mobile plan",plan_change,medium,neutral,no
+"Please, I need to downgrade my subscription right now",plan_change,high,negative,no
+"Please, Please move me to a plan with more data urgently",plan_change,high,negative,yes
+Help me change my data plan right now,plan_change,high,negative,no
+"Hi, I want to upgrade my current mobile plan as soon as possible",plan_change,high,neutral,no
+"Hi, Can I update my package benefits as soon as possible",plan_change,high,neutral,no
+"Hello, Please help me modify my existing plan",plan_change,medium,neutral,no
+"Hello, I need to downgrade my subscription urgently",plan_change,high,neutral,yes
+Can I update my package benefits as soon as possible,plan_change,high,neutral,no
+"Can you help, I want a new plan with lower monthly cost",plan_change,medium,neutral,yes
+"Hello, Please move me to a plan with more data",plan_change,low,neutral,no
+"Can you help, Help me change my data plan today",plan_change,high,negative,no
+"Please, Can I update my package benefits",plan_change,medium,neutral,no
+"Please, Can I switch to a cheaper package",plan_change,medium,negative,no
+"Please, Can I switch to a cheaper package urgently",plan_change,high,neutral,yes
+"Please, Help me change my data plan right now",plan_change,high,negative,yes
+"Can you help, Can I switch to a cheaper package",plan_change,low,negative,no
+"Please, Can I update my package benefits urgently",plan_change,high,negative,yes
+"Please, I want to change from prepaid to postpaid today",plan_change,high,neutral,yes
+"Can you help, What are the options to change my plan",plan_change,low,negative,no
+I need to downgrade my subscription,plan_change,low,neutral,no
+"Can you help, Please move me to a plan with more data",plan_change,low,neutral,no
+"Can you help, I want to upgrade my current mobile plan as soon as possible",plan_change,high,negative,yes
+"Hi, I want to change from prepaid to postpaid as soon as possible",plan_change,high,neutral,no
+"Can you help, I want to change from prepaid to postpaid today",plan_change,high,neutral,yes
+"Please, Help me change my data plan",plan_change,medium,neutral,no
+"Please, I want to change from prepaid to postpaid",plan_change,low,neutral,no
+What are the options to change my plan today,plan_change,high,neutral,yes
+"Please, I want to change from prepaid to postpaid",plan_change,medium,neutral,no
+"Can you help, Please move me to a plan with more data right now",plan_change,high,negative,yes
+I want to upgrade my current mobile plan,plan_change,medium,neutral,yes
+I need to downgrade my subscription right now,plan_change,high,neutral,no
+Please help me modify my existing plan urgently,plan_change,high,negative,yes
+I need to downgrade my subscription,plan_change,low,neutral,no
+"Can you help, I need to downgrade my subscription",plan_change,low,neutral,no
+"Please, What are the options to change my plan right now",plan_change,high,negative,yes
+"Please, Please move me to a plan with more data right now",plan_change,high,negative,yes
+"Please, I need to downgrade my subscription today",plan_change,high,negative,no
+I want a new plan with lower monthly cost,plan_change,medium,neutral,no
+"Can you help, I want a new plan with lower monthly cost today",plan_change,high,neutral,no
+"Can you help, I want a new plan with lower monthly cost as soon as possible",plan_change,high,negative,no
+"Hi, What are the options to change my plan today",plan_change,high,neutral,no
+"Please, Can I update my package benefits right now",plan_change,high,neutral,no
+"Hi, Can I update my package benefits urgently",plan_change,high,neutral,yes
+"Can you help, I want to change from prepaid to postpaid",plan_change,medium,neutral,no
+"Hi, What are the options to change my plan right now",plan_change,high,neutral,no
+Can I update my package benefits as soon as possible,plan_change,high,neutral,no
+"Please, I need to downgrade my subscription urgently",plan_change,high,negative,no
+"Please, Please help me modify my existing plan urgently",plan_change,high,neutral,no
+"Please, I want a new plan with lower monthly cost right now",plan_change,high,negative,yes
+"Hello, What are the options to change my plan urgently",plan_change,high,neutral,no
+"Hi, Can I switch to a cheaper package",plan_change,medium,neutral,no
+"Please, I need to downgrade my subscription today",plan_change,high,neutral,yes
+"Hello, What are the options to change my plan today",plan_change,high,neutral,no
+"Please, Please move me to a plan with more data as soon as possible",plan_change,high,negative,no
+"Please, Can I update my package benefits today",plan_change,high,neutral,yes
+"Can you help, Please move me to a plan with more data right now",plan_change,high,negative,no
+"Can you help, I want to upgrade my current mobile plan",plan_change,low,neutral,no
+"Hello, I want a new plan with lower monthly cost",plan_change,medium,neutral,yes
+"Can you help, What are the options to change my plan right now",plan_change,high,neutral,no
+"Hi, I want to change from prepaid to postpaid",plan_change,low,neutral,no
+"Please, Please move me to a plan with more data as soon as possible",plan_change,high,negative,yes
+"Can you help, Can I update my package benefits right now",plan_change,high,negative,yes
+"Hi, I want a new plan with lower monthly cost today",plan_change,high,neutral,no
+"Please, I want to upgrade my current mobile plan",plan_change,low,neutral,yes
+I want to upgrade my current mobile plan today,plan_change,high,neutral,no
+"Hi, Can I switch to a cheaper package",plan_change,low,neutral,no
+"Hi, I want a new plan with lower monthly cost today",plan_change,high,neutral,no
+Please help me modify my existing plan,plan_change,medium,negative,yes
+"Can you help, I want to upgrade my current mobile plan urgently",plan_change,high,negative,yes
+I want a new plan with lower monthly cost,plan_change,medium,neutral,yes
+"Hello, I want to upgrade my current mobile plan",plan_change,medium,neutral,yes
+"Can you help, Help me change my data plan urgently",plan_change,high,neutral,yes
+"Hi, I need to downgrade my subscription right now",plan_change,high,neutral,yes
+"Please, What are the options to change my plan as soon as possible",plan_change,high,negative,no
+Please move me to a plan with more data today,plan_change,high,negative,yes
+"Hi, I need to downgrade my subscription as soon as possible",plan_change,high,neutral,yes
+I want to upgrade my current mobile plan urgently,plan_change,high,neutral,no
+"Can you help, I want to change from prepaid to postpaid",plan_change,medium,neutral,yes
+Help me change my data plan urgently,plan_change,high,negative,no
+"Hello, Please help me modify my existing plan urgently",plan_change,high,neutral,no
+"Hi, Please help me modify my existing plan today",plan_change,high,negative,yes
+What are the options to change my plan,plan_change,medium,neutral,yes
+Help me change my data plan as soon as possible,plan_change,high,neutral,no
+"Please, Help me change my data plan",plan_change,medium,neutral,no
+"Hi, Please help me modify my existing plan right now",plan_change,high,negative,yes
+"Please, Please move me to a plan with more data today",plan_change,high,neutral,yes
+I want a new plan with lower monthly cost,plan_change,medium,neutral,no
+I want to change from prepaid to postpaid right now,plan_change,high,neutral,no
+"Hello, Please help me modify my existing plan",plan_change,medium,negative,no
+What are the options to change my plan today,plan_change,high,neutral,no
+"Hi, Please move me to a plan with more data",plan_change,medium,negative,no
+"Please, I want to change from prepaid to postpaid urgently",plan_change,high,negative,yes
+How do I activate international roaming as soon as possible,roaming,high,neutral,no
+"Can you help, I got unexpected roaming charges abroad",roaming,medium,negative,no
+How do I activate international roaming urgently,roaming,high,neutral,no
+"Can you help, I need a roaming package for my trip as soon as possible",roaming,high,neutral,no
+I got unexpected roaming charges abroad today,roaming,high,neutral,no
+"Please, How much does roaming cost in another country",roaming,medium,neutral,no
+I need a roaming package for my trip,roaming,low,neutral,yes
+"Please, I need a roaming package for my trip today",roaming,high,neutral,no
+"Can you help, Please check my roaming service activation urgently",roaming,high,neutral,yes
+"Please, I got unexpected roaming charges abroad",roaming,medium,neutral,no
+"Hello, Why can't I use mobile data while travelling as soon as possible",roaming,high,negative,no
+"Hi, How do I activate international roaming right now",roaming,high,neutral,no
+"Hello, Please check my roaming service activation as soon as possible",roaming,high,negative,yes
+"Hello, Why can't I use mobile data while travelling right now",roaming,high,negative,yes
+"Can you help, I cannot connect to a network overseas",roaming,medium,negative,no
+I got unexpected roaming charges abroad as soon as possible,roaming,high,neutral,no
+"Can you help, I need a roaming package for my trip",roaming,medium,negative,no
+"Hello, Please check my roaming service activation",roaming,medium,neutral,no
+"Hello, I cannot connect to a network overseas",roaming,medium,negative,no
+"Hello, I got unexpected roaming charges abroad today",roaming,high,neutral,no
+"Hello, Roaming calls are not going through",roaming,low,neutral,no
+"Can you help, Why can't I use mobile data while travelling today",roaming,high,negative,no
+I cannot connect to a network overseas right now,roaming,high,negative,yes
+"Please, I got unexpected roaming charges abroad",roaming,medium,neutral,yes
+"Can you help, Can you help me with roaming settings today",roaming,high,negative,yes
+Please check my roaming service activation,roaming,medium,neutral,yes
+"Hello, Can you help me with roaming settings as soon as possible",roaming,high,neutral,yes
+"Can you help, Please check my roaming service activation urgently",roaming,high,negative,yes
+"Can you help, I cannot connect to a network overseas today",roaming,high,negative,yes
+"Please, Please check my roaming service activation",roaming,low,negative,yes
+"Please, I cannot connect to a network overseas",roaming,medium,negative,no
+"Hi, I need a roaming package for my trip right now",roaming,high,neutral,yes
+"Please, My roaming is not working overseas",roaming,high,negative,no
+My roaming is not working overseas urgently,roaming,high,neutral,no
+"Hi, How much does roaming cost in another country",roaming,medium,neutral,yes
+"Please, I cannot connect to a network overseas right now",roaming,high,negative,no
+"Hello, Please check my roaming service activation today",roaming,high,neutral,no
+Roaming calls are not going through urgently,roaming,high,neutral,no
+"Can you help, How do I activate international roaming urgently",roaming,high,neutral,no
+"Hello, I need a roaming package for my trip today",roaming,high,neutral,no
+"Please, Roaming calls are not going through as soon as possible",roaming,high,negative,yes
+"Can you help, Roaming calls are not going through as soon as possible",roaming,high,neutral,no
+How do I activate international roaming urgently,roaming,high,neutral,no
+I got unexpected roaming charges abroad,roaming,low,neutral,yes
+"Hi, How much does roaming cost in another country right now",roaming,high,neutral,no
+"Please, Please check my roaming service activation today",roaming,high,neutral,no
+"Hi, I got unexpected roaming charges abroad",roaming,medium,neutral,no
+"Can you help, My roaming is not working overseas",roaming,medium,negative,yes
+"Can you help, Please check my roaming service activation urgently",roaming,high,neutral,no
+"Hello, How do I activate international roaming",roaming,low,neutral,yes
+"Hi, I need a roaming package for my trip as soon as possible",roaming,high,neutral,no
+"Can you help, How do I activate international roaming as soon as possible",roaming,high,negative,yes
+"Hello, I cannot connect to a network overseas today",roaming,high,negative,yes
+"Can you help, I cannot connect to a network overseas urgently",roaming,high,negative,no
+"Hello, Roaming calls are not going through",roaming,low,neutral,yes
+"Hello, I cannot connect to a network overseas",roaming,medium,negative,yes
+"Hi, I need a roaming package for my trip urgently",roaming,high,neutral,no
+"Hello, How do I activate international roaming right now",roaming,high,neutral,no
+"Hi, How much does roaming cost in another country today",roaming,high,neutral,no
+"Please, I got unexpected roaming charges abroad",roaming,medium,negative,no
+"Can you help, How much does roaming cost in another country",roaming,medium,neutral,yes
+"Hi, Roaming calls are not going through as soon as possible",roaming,high,neutral,no
+"Hi, I need a roaming package for my trip today",roaming,high,neutral,yes
+I need a roaming package for my trip urgently,roaming,high,neutral,no
+"Hi, Can you help me with roaming settings today",roaming,high,negative,no
+"Can you help, Please check my roaming service activation",roaming,medium,negative,no
+I cannot connect to a network overseas urgently,roaming,high,negative,yes
+"Hello, My roaming is not working overseas as soon as possible",roaming,high,neutral,no
+"Please, Why can't I use mobile data while travelling right now",roaming,high,negative,no
+"Please, Roaming calls are not going through",roaming,medium,neutral,yes
+Why can't I use mobile data while travelling,roaming,high,negative,yes
+Roaming calls are not going through,roaming,low,neutral,no
+Can you help me with roaming settings as soon as possible,roaming,high,neutral,no
+"Hello, I need a roaming package for my trip urgently",roaming,high,neutral,no
+Can you help me with roaming settings right now,roaming,high,negative,yes
+"Please, Please check my roaming service activation right now",roaming,high,neutral,no
+"Hi, My roaming is not working overseas",roaming,high,neutral,yes
+"Hello, I cannot connect to a network overseas",roaming,medium,negative,no
+"Hello, Why can't I use mobile data while travelling",roaming,high,negative,yes
+I got unexpected roaming charges abroad today,roaming,high,neutral,no
+"Hello, I got unexpected roaming charges abroad",roaming,low,neutral,no
+"Hi, I need a roaming package for my trip right now",roaming,high,neutral,yes
+"Can you help, Roaming calls are not going through right now",roaming,high,negative,yes
+"Can you help, Please check my roaming service activation today",roaming,high,neutral,yes
+Please check my roaming service activation,roaming,medium,negative,yes
+"Hello, Roaming calls are not going through today",roaming,high,neutral,no
+"Please, My roaming is not working overseas",roaming,medium,negative,yes
+"Hello, How do I activate international roaming",roaming,medium,neutral,no
+"Can you help, Can you help me with roaming settings today",roaming,high,negative,no
+"Hello, I need a roaming package for my trip",roaming,medium,neutral,no
+"Please, Roaming calls are not going through as soon as possible",roaming,high,neutral,no
+Roaming calls are not going through urgently,roaming,high,neutral,no
+"Hi, Roaming calls are not going through today",roaming,high,neutral,no
+"Can you help, Can you help me with roaming settings",roaming,low,negative,no
+"Hello, How do I activate international roaming",roaming,medium,neutral,no
+I need a roaming package for my trip,roaming,medium,neutral,no
+Please check my roaming service activation,roaming,medium,neutral,no
+How do I activate international roaming urgently,roaming,high,neutral,no
+"Can you help, How do I activate international roaming right now",roaming,high,neutral,yes
+"Can you help, My roaming is not working overseas urgently",roaming,high,negative,yes
+"Can you help, I got unexpected roaming charges abroad today",roaming,high,neutral,no
+"Can you help, How do I activate international roaming",roaming,low,neutral,no
+"Hello, Why can't I use mobile data while travelling right now",roaming,high,negative,no
+"Hi, I got unexpected roaming charges abroad urgently",roaming,high,neutral,yes
+"Please, My roaming is not working overseas",roaming,medium,negative,no
+"Hi, I got unexpected roaming charges abroad today",roaming,high,neutral,yes
+"Can you help, Can you help me with roaming settings urgently",roaming,high,neutral,no
+I cannot connect to a network overseas,roaming,high,negative,no
+"Can you help, I need a roaming package for my trip right now",roaming,high,neutral,no
+Can you help me with roaming settings,roaming,medium,negative,yes
+Why can't I use mobile data while travelling right now,roaming,high,negative,yes
+"Please, How much does roaming cost in another country right now",roaming,high,negative,no
+Can you help me with roaming settings today,roaming,high,negative,yes
+"Hi, Roaming calls are not going through",roaming,medium,neutral,no
+"Please, My roaming is not working overseas as soon as possible",roaming,high,negative,yes
+"Can you help, I cannot connect to a network overseas today",roaming,high,negative,no
+"Please, I got unexpected roaming charges abroad today",roaming,high,neutral,no
+"Please, How do I activate international roaming urgently",roaming,high,negative,yes
+My roaming is not working overseas today,roaming,high,neutral,yes
+"Hello, How much does roaming cost in another country today",roaming,high,neutral,no
+"Can you help, How do I activate international roaming",roaming,medium,neutral,no
+Why can't I use mobile data while travelling urgently,roaming,high,negative,yes
+"Hi, I got unexpected roaming charges abroad",roaming,medium,neutral,no
+"Please, How do I activate international roaming as soon as possible",roaming,high,negative,yes
+"Hi, My roaming is not working overseas right now",roaming,high,neutral,no
+"Can you help, I need to replace my damaged SIM card today",sim_issue,high,neutral,no
+"Hi, I need to replace my damaged SIM card urgently",sim_issue,high,neutral,yes
+"Hi, My SIM card is not detected right now",sim_issue,high,neutral,no
+"Hello, My SIM card suddenly has no signal",sim_issue,medium,neutral,no
+"Hi, My new SIM is not activated yet right now",sim_issue,high,neutral,yes
+"Hello, I need to replace my damaged SIM card urgently",sim_issue,high,neutral,no
+"Can you help, I lost my SIM card and need a new one",sim_issue,low,negative,no
+"Please, I need to replace my damaged SIM card today",sim_issue,high,negative,yes
+"Hello, My SIM card is not detected today",sim_issue,high,neutral,yes
+"Hi, My new SIM is not activated yet right now",sim_issue,high,neutral,no
+I need support for an eSIM activation issue,sim_issue,medium,neutral,no
+"Hi, My SIM card suddenly has no signal urgently",sim_issue,high,neutral,no
+Why does my phone say invalid SIM urgently,sim_issue,high,negative,no
+"Hello, The SIM tray is fine but the card has no service right now",sim_issue,high,neutral,no
+My SIM card suddenly has no signal,sim_issue,medium,neutral,yes
+"Can you help, Why does my phone say invalid SIM as soon as possible",sim_issue,high,negative,yes
+"Can you help, My new SIM is not activated yet as soon as possible",sim_issue,high,neutral,yes
+"Hello, I need to replace my damaged SIM card",sim_issue,medium,neutral,no
+"Hi, Why does my phone say invalid SIM",sim_issue,low,negative,no
+Can you help me with SIM activation as soon as possible,sim_issue,high,negative,no
+My SIM card suddenly has no signal today,sim_issue,high,neutral,no
+"Hello, Why does my phone say invalid SIM as soon as possible",sim_issue,high,negative,yes
+"Hello, I need support for an eSIM activation issue right now",sim_issue,high,neutral,no
+"Hello, I need support for an eSIM activation issue today",sim_issue,high,neutral,no
+"Please, Why does my phone say invalid SIM right now",sim_issue,high,negative,yes
+"Can you help, My SIM card is not detected right now",sim_issue,high,negative,yes
+My new SIM is not activated yet urgently,sim_issue,high,neutral,yes
+"Can you help, I lost my SIM card and need a new one urgently",sim_issue,high,negative,yes
+"Please, Why does my phone say invalid SIM today",sim_issue,high,negative,no
+The SIM stopped working after I inserted it,sim_issue,medium,neutral,no
+Why does my phone say invalid SIM,sim_issue,medium,negative,yes
+"Hello, Can you help me with SIM activation",sim_issue,low,neutral,yes
+"Hi, The SIM tray is fine but the card has no service urgently",sim_issue,high,neutral,yes
+"Please, My SIM card is not detected today",sim_issue,high,neutral,no
+"Hello, I lost my SIM card and need a new one as soon as possible",sim_issue,high,negative,no
+"Hello, My new SIM is not activated yet today",sim_issue,high,neutral,no
+"Hi, I need to replace my damaged SIM card right now",sim_issue,high,neutral,no
+"Please, I need to replace my damaged SIM card right now",sim_issue,high,neutral,no
+"Can you help, Can you help me with SIM activation as soon as possible",sim_issue,high,negative,yes
+"Please, My new SIM is not activated yet right now",sim_issue,high,negative,no
+"Can you help, I lost my SIM card and need a new one urgently",sim_issue,high,negative,yes
+"Hi, I lost my SIM card and need a new one",sim_issue,medium,negative,yes
+Why does my phone say invalid SIM as soon as possible,sim_issue,high,negative,yes
+Why does my phone say invalid SIM as soon as possible,sim_issue,high,negative,no
+"Please, My SIM card is not detected",sim_issue,medium,negative,no
+The SIM tray is fine but the card has no service today,sim_issue,high,neutral,yes
+"Please, Why does my phone say invalid SIM urgently",sim_issue,high,negative,no
+The SIM stopped working after I inserted it urgently,sim_issue,high,neutral,no
+Why does my phone say invalid SIM right now,sim_issue,high,negative,yes
+"Can you help, My new SIM is not activated yet",sim_issue,medium,neutral,yes
+"Please, I lost my SIM card and need a new one urgently",sim_issue,high,negative,yes
+Why does my phone say invalid SIM,sim_issue,medium,negative,no
+My new SIM is not activated yet urgently,sim_issue,high,neutral,no
+"Can you help, My SIM card is not detected right now",sim_issue,high,negative,yes
+"Can you help, Can you help me with SIM activation urgently",sim_issue,high,negative,yes
+"Can you help, The SIM stopped working after I inserted it as soon as possible",sim_issue,high,neutral,no
+"Hello, I lost my SIM card and need a new one today",sim_issue,high,negative,yes
+I need support for an eSIM activation issue,sim_issue,medium,neutral,no
+"Hello, Can you help me with SIM activation today",sim_issue,high,negative,yes
+I lost my SIM card and need a new one today,sim_issue,high,negative,yes
+"Can you help, Why does my phone say invalid SIM",sim_issue,medium,negative,no
+"Please, My SIM card is not detected today",sim_issue,high,negative,no
+"Please, Can you help me with SIM activation as soon as possible",sim_issue,high,negative,no
+"Hello, The SIM stopped working after I inserted it urgently",sim_issue,high,neutral,no
+"Please, Why does my phone say invalid SIM urgently",sim_issue,high,negative,no
+Can you help me with SIM activation,sim_issue,medium,neutral,no
+Why does my phone say invalid SIM,sim_issue,low,negative,no
+"Please, My SIM card is not detected right now",sim_issue,high,negative,no
+"Hi, The SIM stopped working after I inserted it right now",sim_issue,high,neutral,yes
+"Hello, My new SIM is not activated yet",sim_issue,low,neutral,yes
+"Hello, I need support for an eSIM activation issue",sim_issue,low,neutral,yes
+"Hi, Can you help me with SIM activation",sim_issue,medium,neutral,no
+I need to replace my damaged SIM card urgently,sim_issue,high,neutral,no
+"Please, Why does my phone say invalid SIM urgently",sim_issue,high,negative,yes
+"Can you help, My SIM card is not detected as soon as possible",sim_issue,high,neutral,no
+"Hello, The SIM stopped working after I inserted it as soon as possible",sim_issue,high,neutral,no
+The SIM stopped working after I inserted it,sim_issue,medium,neutral,no
+My SIM card suddenly has no signal as soon as possible,sim_issue,high,neutral,no
+"Hello, The SIM tray is fine but the card has no service",sim_issue,medium,neutral,no
+"Hello, My new SIM is not activated yet right now",sim_issue,high,neutral,no
+"Can you help, Can you help me with SIM activation",sim_issue,medium,neutral,yes
+"Please, I need support for an eSIM activation issue as soon as possible",sim_issue,high,neutral,yes
+"Please, The SIM stopped working after I inserted it today",sim_issue,high,negative,yes
+"Hello, The SIM stopped working after I inserted it right now",sim_issue,high,neutral,yes
+I need support for an eSIM activation issue today,sim_issue,high,neutral,yes
+The SIM stopped working after I inserted it,sim_issue,medium,neutral,yes
+"Hi, I need support for an eSIM activation issue urgently",sim_issue,high,neutral,no
+"Hi, My new SIM is not activated yet",sim_issue,low,neutral,no
+"Hello, My new SIM is not activated yet right now",sim_issue,high,neutral,yes
+My new SIM is not activated yet today,sim_issue,high,neutral,no
+"Hello, Why does my phone say invalid SIM right now",sim_issue,high,negative,yes
+My new SIM is not activated yet as soon as possible,sim_issue,high,neutral,no
+My SIM card is not detected today,sim_issue,high,neutral,no
+"Can you help, The SIM stopped working after I inserted it today",sim_issue,high,negative,no
+"Hello, My SIM card suddenly has no signal today",sim_issue,high,neutral,no
+"Can you help, I need support for an eSIM activation issue",sim_issue,medium,neutral,no
+"Can you help, I need to replace my damaged SIM card urgently",sim_issue,high,negative,yes
+"Hello, I lost my SIM card and need a new one urgently",sim_issue,high,negative,yes
+"Hello, The SIM stopped working after I inserted it today",sim_issue,high,neutral,no
+My SIM card suddenly has no signal urgently,sim_issue,high,neutral,no
+"Please, I need support for an eSIM activation issue today",sim_issue,high,neutral,no
+"Hi, I need support for an eSIM activation issue today",sim_issue,high,neutral,no
+I need to replace my damaged SIM card as soon as possible,sim_issue,high,neutral,no
+"Hi, The SIM tray is fine but the card has no service",sim_issue,high,neutral,yes
+"Hello, I lost my SIM card and need a new one right now",sim_issue,high,negative,yes
+The SIM tray is fine but the card has no service,sim_issue,high,neutral,no
+My new SIM is not activated yet urgently,sim_issue,high,neutral,no
+I lost my SIM card and need a new one,sim_issue,medium,negative,yes
+"Can you help, Why does my phone say invalid SIM urgently",sim_issue,high,negative,yes
+"Hi, The SIM stopped working after I inserted it",sim_issue,medium,neutral,no
+"Can you help, I need to replace my damaged SIM card as soon as possible",sim_issue,high,negative,no
+"Can you help, I lost my SIM card and need a new one urgently",sim_issue,high,negative,yes
+"Please, The SIM tray is fine but the card has no service right now",sim_issue,high,negative,no
+"Hello, The SIM stopped working after I inserted it today",sim_issue,high,neutral,no
+"Hello, Can you help me with SIM activation today",sim_issue,high,negative,yes
+"Hello, I need support for an eSIM activation issue urgently",sim_issue,high,neutral,no
+I need to replace my damaged SIM card,sim_issue,medium,neutral,yes
+"Can you help, I need support for an eSIM activation issue right now",sim_issue,high,neutral,no
+"Please, The SIM tray is fine but the card has no service",sim_issue,high,neutral,no
+"Hello, I need to replace my damaged SIM card today",sim_issue,high,neutral,yes
+My SIM card suddenly has no signal,sim_issue,medium,neutral,yes
+"Please, The SIM stopped working after I inserted it urgently",sim_issue,high,negative,yes
+"Hi, Why does my phone say invalid SIM right now",sim_issue,high,negative,yes
+The SIM tray is fine but the card has no service urgently,sim_issue,high,neutral,yes
+"Can you help, Why does my phone say invalid SIM",sim_issue,low,negative,yes
+"Hello, My router is not working properly",technical_support,medium,neutral,no
+"Can you help, The service is down in my area today",technical_support,high,negative,no
+"Please, Calls keep dropping during conversations urgently",technical_support,high,negative,yes
+"Can you help, I cannot connect to the broadband service right now",technical_support,high,negative,yes
+"Please, My data connection is unstable today urgently",technical_support,high,neutral,yes
+The app keeps crashing when I open it,technical_support,medium,negative,no
+"Hello, I need technical support for a connection problem",technical_support,medium,neutral,yes
+"Please, Calls keep dropping during conversations urgently",technical_support,high,neutral,no
+"Can you help, I cannot connect to the broadband service",technical_support,high,negative,yes
+"Can you help, My router is not working properly",technical_support,medium,neutral,yes
+"Can you help, The app keeps crashing when I open it as soon as possible",technical_support,high,negative,yes
+"Hello, The app keeps crashing when I open it as soon as possible",technical_support,high,negative,no
+"Can you help, The network keeps disconnecting right now",technical_support,high,negative,yes
+"Hello, Calls keep dropping during conversations as soon as possible",technical_support,high,neutral,no
+"Can you help, My data connection is unstable today",technical_support,high,neutral,no
+"Can you help, Why is my phone signal so weak today",technical_support,high,negative,yes
+"Hello, My mobile internet is very slow",technical_support,low,negative,no
+"Hello, The service is down in my area today",technical_support,high,neutral,no
+"Please, My data connection is unstable today urgently",technical_support,high,neutral,no
+"Hi, My mobile internet is very slow right now",technical_support,high,negative,yes
+"Can you help, My mobile internet is very slow as soon as possible",technical_support,high,negative,yes
+"Hi, The app keeps crashing when I open it as soon as possible",technical_support,high,negative,no
+"Please, I need technical support for a connection problem",technical_support,low,neutral,no
+"Hello, Calls keep dropping during conversations",technical_support,medium,neutral,no
+"Can you help, My data connection is unstable today",technical_support,high,negative,no
+"Hi, The app keeps crashing when I open it",technical_support,medium,negative,no
+"Hello, My mobile internet is very slow today",technical_support,high,negative,yes
+"Hi, My data connection is unstable today right now",technical_support,high,neutral,no
+"Hi, Why is my phone signal so weak as soon as possible",technical_support,high,neutral,yes
+"Can you help, The service is down in my area urgently",technical_support,high,neutral,no
+"Hi, I cannot connect to the broadband service",technical_support,medium,negative,no
+"Hello, My data connection is unstable today as soon as possible",technical_support,high,neutral,yes
+"Hello, I need technical support for a connection problem today",technical_support,high,neutral,no
+"Can you help, The app keeps crashing when I open it right now",technical_support,high,negative,no
+"Hello, The service is down in my area",technical_support,high,neutral,yes
+My mobile internet is very slow,technical_support,medium,negative,no
+"Please, My data connection is unstable today",technical_support,high,negative,no
+Calls keep dropping during conversations urgently,technical_support,high,neutral,no
+"Hello, My router is not working properly as soon as possible",technical_support,high,neutral,no
+"Hello, Why is my phone signal so weak right now",technical_support,high,neutral,yes
+"Hi, My mobile internet is very slow",technical_support,medium,negative,yes
+"Hello, I cannot connect to the broadband service",technical_support,medium,negative,yes
+"Can you help, The app keeps crashing when I open it as soon as possible",technical_support,high,negative,no
+"Can you help, I need technical support for a connection problem",technical_support,low,neutral,no
+"Hi, The service is down in my area",technical_support,high,neutral,yes
+"Hello, The service is down in my area as soon as possible",technical_support,high,neutral,no
+"Please, I cannot connect to the broadband service as soon as possible",technical_support,high,negative,yes
+"Can you help, I cannot connect to the broadband service",technical_support,high,negative,yes
+"Please, I cannot connect to the broadband service",technical_support,high,negative,yes
+Why is my phone signal so weak as soon as possible,technical_support,high,neutral,no
+"Hello, I need technical support for a connection problem as soon as possible",technical_support,high,neutral,no
+"Hello, My data connection is unstable today as soon as possible",technical_support,high,neutral,no
+Calls keep dropping during conversations urgently,technical_support,high,neutral,yes
+"Please, My data connection is unstable today",technical_support,high,neutral,no
+"Hi, The service is down in my area urgently",technical_support,high,neutral,yes
+"Can you help, The service is down in my area as soon as possible",technical_support,high,negative,yes
+"Hi, I cannot connect to the broadband service right now",technical_support,high,negative,no
+"Can you help, My data connection is unstable today today",technical_support,high,neutral,no
+"Hi, The network keeps disconnecting today",technical_support,high,negative,no
+"Hi, My router is not working properly",technical_support,medium,neutral,no
+"Can you help, The app keeps crashing when I open it right now",technical_support,high,negative,yes
+"Please, I cannot connect to the broadband service today",technical_support,high,negative,yes
+"Hi, My data connection is unstable today today",technical_support,high,neutral,yes
+"Can you help, I need technical support for a connection problem today",technical_support,high,negative,no
+My mobile internet is very slow,technical_support,low,negative,yes
+"Hello, My mobile internet is very slow as soon as possible",technical_support,high,negative,yes
+"Hi, My mobile internet is very slow",technical_support,low,negative,yes
+"Hi, Why is my phone signal so weak",technical_support,medium,neutral,no
+"Hi, The network keeps disconnecting today",technical_support,high,negative,yes
+"Please, The app keeps crashing when I open it right now",technical_support,high,negative,yes
+The app keeps crashing when I open it as soon as possible,technical_support,high,negative,no
+"Please, My data connection is unstable today",technical_support,high,negative,no
+"Hi, My router is not working properly today",technical_support,high,neutral,no
+"Hi, I cannot connect to the broadband service today",technical_support,high,negative,yes
+"Hi, Why is my phone signal so weak",technical_support,low,neutral,no
+My data connection is unstable today,technical_support,high,neutral,no
+My router is not working properly,technical_support,medium,neutral,no
+"Hello, The service is down in my area",technical_support,medium,neutral,yes
+The network keeps disconnecting,technical_support,low,negative,no
+I need technical support for a connection problem today,technical_support,high,neutral,no
+The service is down in my area as soon as possible,technical_support,high,neutral,no
+"Hi, Why is my phone signal so weak",technical_support,medium,neutral,yes
+The app keeps crashing when I open it today,technical_support,high,negative,yes
+The service is down in my area as soon as possible,technical_support,high,neutral,yes
+"Please, I cannot connect to the broadband service today",technical_support,high,negative,yes
+"Please, My data connection is unstable today urgently",technical_support,high,negative,yes
+Calls keep dropping during conversations right now,technical_support,high,neutral,yes
+"Hi, The app keeps crashing when I open it",technical_support,low,negative,no
+"Can you help, The app keeps crashing when I open it right now",technical_support,high,negative,yes
+"Please, Calls keep dropping during conversations right now",technical_support,high,negative,no
+"Hi, My mobile internet is very slow urgently",technical_support,high,negative,yes
+The network keeps disconnecting,technical_support,medium,negative,no
+"Hi, The network keeps disconnecting",technical_support,low,negative,yes
+The app keeps crashing when I open it,technical_support,low,negative,no
+"Hello, The app keeps crashing when I open it today",technical_support,high,negative,yes
+I cannot connect to the broadband service urgently,technical_support,high,negative,no
+"Hello, My router is not working properly today",technical_support,high,neutral,yes
+The network keeps disconnecting urgently,technical_support,high,negative,yes
+"Hi, I cannot connect to the broadband service as soon as possible",technical_support,high,negative,no
+"Can you help, My data connection is unstable today as soon as possible",technical_support,high,neutral,no
+"Hello, I cannot connect to the broadband service urgently",technical_support,high,negative,no
+"Can you help, Calls keep dropping during conversations as soon as possible",technical_support,high,negative,yes
+"Can you help, I need technical support for a connection problem",technical_support,low,neutral,no
+I cannot connect to the broadband service urgently,technical_support,high,negative,no
+"Please, Calls keep dropping during conversations",technical_support,medium,negative,no
+"Please, I need technical support for a connection problem as soon as possible",technical_support,high,neutral,yes
+"Hi, Calls keep dropping during conversations today",technical_support,high,neutral,no
+"Can you help, Calls keep dropping during conversations urgently",technical_support,high,neutral,no
+"Hello, My mobile internet is very slow",technical_support,medium,negative,yes
+"Please, My data connection is unstable today right now",technical_support,high,negative,yes
+"Please, My data connection is unstable today urgently",technical_support,high,negative,yes
+"Hi, Calls keep dropping during conversations as soon as possible",technical_support,high,neutral,yes
+"Can you help, I cannot connect to the broadband service",technical_support,medium,negative,no
+"Hi, The service is down in my area today",technical_support,high,neutral,no
+"Hi, The network keeps disconnecting today",technical_support,high,negative,no
+"Hi, My router is not working properly as soon as possible",technical_support,high,neutral,no
+"Please, Why is my phone signal so weak",technical_support,medium,negative,no
+"Hi, The network keeps disconnecting today",technical_support,high,negative,no
+"Please, Calls keep dropping during conversations urgently",technical_support,high,negative,no
+"Hello, The network keeps disconnecting today",technical_support,high,negative,yes
+The network keeps disconnecting today,technical_support,high,negative,no
+The service is down in my area,technical_support,medium,neutral,no
+"Please, My data connection is unstable today",technical_support,high,negative,yes
+"Please, Why is my phone signal so weak",technical_support,medium,negative,no
+"Hello, My mobile internet is very slow right now",technical_support,high,negative,no
+"I’ve been trying to get into my account since this morning, but it keeps telling me the details don’t match.",account_issue,high,negative,yes
+"I reset my password twice already and still cannot sign in on the app.",account_issue,high,negative,yes
+"Why does the website log me out every time I try to view my profile?",account_issue,medium,negative,no
+"I think my account got locked because I entered the wrong code too many times.",account_issue,medium,negative,no
+"My mobile app keeps asking me to verify again even though I already did that last week.",account_issue,medium,neutral,no
+"I can receive OTP on email but not on my phone, so I’m stuck at login.",account_issue,high,negative,yes
+"It says my account doesn’t exist, but I’ve been using this number for years.",account_issue,high,negative,yes
+"I changed phones and now I cannot access my account settings anymore.",account_issue,medium,negative,no
+"Login works on laptop but not on mobile, and I’m not sure what’s wrong.",account_issue,medium,neutral,no
+"I was suddenly signed out everywhere and now I cannot get back in.",account_issue,high,negative,yes
+"My latest bill is much higher than usual and I don’t understand why.",billing,high,negative,yes
+"I thought I already paid, but the system still shows an outstanding balance.",billing,medium,negative,no
+"There’s a charge on my statement that I don’t recognize at all.",billing,high,negative,yes
+"Can someone explain why I was billed even after changing my plan?",billing,medium,negative,yes
+"I was expecting a smaller amount this month, so something feels off.",billing,medium,negative,no
+"Why am I seeing two separate deductions for what looks like the same service?",billing,high,negative,yes
+"My invoice date seems different this time and I’m confused about what period I’m paying for.",billing,low,neutral,no
+"I was told the fee would be waived, but it’s still showing on the bill.",billing,medium,negative,yes
+"I just want to check whether this extra amount is tax or some other charge.",billing,low,neutral,no
+"The app says payment failed, but money already left my bank account.",billing,high,negative,yes
+"I don’t really use this line anymore, so I’m thinking of ending it.",cancellation,medium,neutral,no
+"What’s the process if I want to stop my service after this month?",cancellation,medium,neutral,no
+"I’m moving overseas soon and probably won’t need this number after that.",cancellation,medium,neutral,yes
+"Please let me know if there’s any penalty for closing the account early.",cancellation,medium,neutral,yes
+"I want to discontinue the broadband, but I’m still under contract.",cancellation,high,negative,yes
+"Can I terminate just one line from my family plan?",cancellation,medium,neutral,yes
+"I’ve already switched provider, so I need this account closed properly.",cancellation,high,negative,yes
+"I don’t want the service to renew automatically next cycle.",cancellation,medium,negative,no
+"Can someone help me cancel without losing my current number first?",cancellation,high,negative,yes
+"I was charged again even though I thought the service had already been stopped.",cancellation,high,negative,yes
+"I’ve contacted support a few times already and nothing has actually been fixed.",complaint,high,negative,yes
+"This is honestly getting frustrating because I keep getting different answers from different agents.",complaint,high,negative,yes
+"The issue may be small, but the way it was handled was really disappointing.",complaint,medium,negative,yes
+"I waited so long just to be told to try again later, which isn’t helpful at all.",complaint,medium,negative,yes
+"I’m unhappy with how this was resolved because I’m still facing the same problem.",complaint,high,negative,yes
+"Nobody followed up after promising they would, so I need someone to look into this properly.",complaint,high,negative,yes
+"The service itself is okay, but customer support has been very poor.",complaint,medium,negative,yes
+"I’m not satisfied with the explanation I received regarding my earlier report.",complaint,medium,negative,yes
+"This experience has been much worse than I expected from your company.",complaint,medium,negative,yes
+"I’d like to raise a formal complaint about how my request was handled.",complaint,high,negative,yes
+"I’m considering moving to a plan with more data because mine runs out too fast.",plan_change,medium,neutral,no
+"Can I switch to something cheaper without changing my number?",plan_change,medium,neutral,no
+"My current package doesn’t really match how I use my phone anymore.",plan_change,low,neutral,no
+"I need more roaming included, so I’m looking at other plan options.",plan_change,medium,neutral,no
+"Is there a way to downgrade after this billing cycle ends?",plan_change,medium,neutral,no
+"I want to move to a higher-speed broadband package if possible.",plan_change,medium,positive,no
+"Can I change my plan now, or do I have to wait until contract renewal?",plan_change,medium,neutral,yes
+"The sales person mentioned another package that might suit me better.",plan_change,low,neutral,no
+"I’m paying for benefits I don’t use, so I’d rather switch to something simpler.",plan_change,medium,neutral,no
+"I need a plan that covers both calls and more data since my usage changed recently.",plan_change,medium,neutral,no
+"I’m landing in Japan tomorrow and I’m not sure whether my line will work there.",roaming,high,anxious,yes
+"My data stopped working the moment I crossed the border.",roaming,high,negative,yes
+"Do I need to turn on anything before using my phone overseas?",roaming,medium,neutral,no
+"I got a message about international charges and now I’m worried I enabled something by accident.",roaming,medium,anxious,no
+"Calls are going through overseas, but mobile data isn’t connecting at all.",roaming,high,negative,yes
+"I’ll be travelling for a week and want to avoid unexpected roaming fees.",roaming,medium,neutral,no
+"Can I still receive OTP when I’m outside the country?",roaming,medium,neutral,no
+"My phone shows signal abroad, but nothing actually loads.",roaming,high,negative,yes
+"I think I bought the travel add-on, but I’m not seeing it reflected anywhere.",roaming,medium,negative,yes
+"Will my existing plan cover usage in Malaysia, or do I need an extra pass?",roaming,low,neutral,no
+"My SIM suddenly isn’t being detected after I restarted the phone.",sim_issue,high,negative,yes
+"I inserted the card into another device and it still says no SIM.",sim_issue,high,negative,yes
+"The line was fine yesterday, but now I have no service and I’m wondering if the SIM is damaged.",sim_issue,high,negative,yes
+"Can I replace my SIM without changing my number?",sim_issue,medium,neutral,no
+"The tray reads the SIM on and off, so connection keeps dropping.",sim_issue,medium,negative,yes
+"I switched to a new phone and now the card doesn’t seem to work properly.",sim_issue,medium,negative,no
+"Is eSIM available instead of getting a physical replacement?",sim_issue,low,neutral,no
+"My phone asks for a SIM PIN that I don’t remember setting.",sim_issue,medium,negative,yes
+"I think my SIM stopped working after I cut it to fit an older device.",sim_issue,medium,negative,no
+"I lost my SIM card and need to secure the line before someone else uses it.",sim_issue,high,anxious,yes
+"My internet has been unusually slow for the past two days even after restarting the router.",technical_support,medium,negative,no
+"The app crashes whenever I try to open the support section.",technical_support,medium,negative,no
+"I cannot make calls even though the signal bars look normal.",technical_support,high,negative,yes
+"Messages are delayed and sometimes never arrive at all.",technical_support,medium,negative,no
+"Broadband keeps disconnecting randomly, especially at night.",technical_support,high,negative,yes
+"The connection works for browsing but video calls keep freezing badly.",technical_support,medium,negative,no
+"I’m having trouble setting up the new modem because the light stays red.",technical_support,high,negative,yes
+"My phone shows 5G, but speeds feel worse than before.",technical_support,medium,negative,no
+"Everything was working until the latest app update, and now features won’t load.",technical_support,medium,negative,no
+"There seems to be some network issue in my area because several of us cannot connect.",technical_support,high,negative,yes
