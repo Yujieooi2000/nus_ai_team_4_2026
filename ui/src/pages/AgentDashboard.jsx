@@ -2,14 +2,10 @@ import { useState, useEffect } from 'react'
 import { Typography, Tag, Button, Input, Alert, Empty, Space, Divider, Card, Spin } from 'antd'
 import TicketCard from '../components/TicketCard'
 import { getTickets, resolveTicket } from '../services/api'
-import { capitalize, formatCategory, mapSentiment, formatTimestamp } from '../utils/formatters'
+import { capitalize, formatCategory, mapSentiment, formatTimestamp, PRIORITY_COLORS, SENTIMENT_COLORS } from '../utils/formatters'
 
 const { Title, Text } = Typography
 const { TextArea } = Input
-
-// ── Colour maps ────────────────────────────────────────────────────────────────
-const PRIORITY_COLORS  = { High: 'red', Medium: 'orange', Low: 'green' }
-const SENTIMENT_COLORS = { Frustrated: 'volcano', Neutral: 'default', Satisfied: 'green' }
 
 // ── Helper: map API ticket format to the shape the UI components expect ────────
 // The API returns field names like ticket_id, conversation_history, etc.
@@ -83,7 +79,7 @@ function AgentDashboard() {
   const [selectedId, setSelectedId]       = useState(null)
   const [showReplyBox, setShowReplyBox]   = useState(false)
   const [customReply, setCustomReply]     = useState('')
-  const [actionDone, setActionDone]       = useState(null) // 'approved' | 'replied' | 'closed'
+  const [actionError, setActionError]     = useState(false)
   const [actionLoading, setActionLoading] = useState(false)
 
   // Load tickets from the API when the page first loads
@@ -112,53 +108,46 @@ function AgentDashboard() {
     setSelectedId(id)
     setShowReplyBox(false)
     setCustomReply('')
-    setActionDone(null)
+    setActionError(false)
   }
 
-  async function handleApprove() {
+  async function runTicketAction(fn) {
     setActionLoading(true)
+    setActionError(false)
     try {
+      await fn()
+    } catch (err) {
+      setActionError(true)
+    } finally {
+      setActionLoading(false)
+    }
+  }
+
+  function handleApprove() {
+    runTicketAction(async () => {
       await resolveTicket(selected._ticketId, 'approved')
       updateLocalTicket(selectedId, {
         status: 'Resolved',
         agentReplySent: selected.aiResponse,
         resolveAction: 'approved',
       })
-      setActionDone('approved')
-    } catch (err) {
-      setActionDone('error')
-    } finally {
-      setActionLoading(false)
-    }
+    })
   }
 
-  async function handleSendReply() {
+  function handleSendReply() {
     if (!customReply.trim()) return
-    setActionLoading(true)
-    try {
+    runTicketAction(async () => {
       await resolveTicket(selected._ticketId, 'custom_reply', customReply)
-      // Store the agent's reply in a separate field — aiResponse stays as the AI draft
       updateLocalTicket(selectedId, { status: 'Resolved', agentReplySent: customReply })
-      setActionDone('replied')
       setShowReplyBox(false)
-    } catch (err) {
-      setActionDone('error')
-    } finally {
-      setActionLoading(false)
-    }
+    })
   }
 
-  async function handleClose() {
-    setActionLoading(true)
-    try {
+  function handleClose() {
+    runTicketAction(async () => {
       await resolveTicket(selected._ticketId, 'closed')
       updateLocalTicket(selectedId, { status: 'Closed' })
-      setActionDone('closed')
-    } catch (err) {
-      setActionDone('error')
-    } finally {
-      setActionLoading(false)
-    }
+    })
   }
 
   // ── Loading state ──────────────────────────────────────────────────────────
@@ -293,8 +282,7 @@ function AgentDashboard() {
               <Alert message="This ticket has been closed." type="warning" showIcon style={{ marginBottom: 12 }} />
             )}
 
-            {/* Transient error feedback (only visible immediately after a failed action) */}
-            {actionDone === 'error' && (
+            {actionError && (
               <Alert message="Action failed. Please check if the API server is running." type="error" showIcon style={{ marginBottom: 12 }} />
             )}
 

@@ -1,5 +1,9 @@
 // Shared formatting utilities used across multiple pages/components.
 
+export const PRIORITY_COLORS  = { High: 'red', Medium: 'orange', Low: 'green' }
+export const SENTIMENT_COLORS = { Frustrated: 'volcano', Neutral: 'default', Satisfied: 'green' }
+export const STATUS_COLORS    = { Open: 'blue', 'In Progress': 'orange', Resolved: 'green', Closed: 'default' }
+
 export function capitalize(str) {
   if (!str) return ''
   return str.charAt(0).toUpperCase() + str.slice(1)

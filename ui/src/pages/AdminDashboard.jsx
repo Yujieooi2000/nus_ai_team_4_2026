@@ -5,7 +5,7 @@ import {
   PieChart, Pie, Cell, ResponsiveContainer,
 } from 'recharts'
 import { getAnalyticsSummary, getXaiTraces } from '../services/api'
-import { formatCategory, mapSentiment, capitalize, formatTimestamp } from '../utils/formatters'
+import { formatCategory, mapSentiment, capitalize, formatTimestamp, PRIORITY_COLORS, SENTIMENT_COLORS } from '../utils/formatters'
 
 const { Title, Text } = Typography
 
@@ -25,9 +25,6 @@ const backgroundAgents = [
 const PIE_COLORS = ['#1677ff', '#52c41a', '#faad14', '#ff4d4f', '#722ed1', '#13c2c2']
 
 // ── XAI traces table columns ───────────────────────────────────────────────────
-const PRIORITY_COLORS  = { High: 'red', Medium: 'orange', Low: 'green' }
-const SENTIMENT_COLORS = { Frustrated: 'volcano', Neutral: 'default', Satisfied: 'green' }
-
 const xaiColumns = [
   { title: 'Trace ID',        dataIndex: 'traceId',    key: 'traceId',    width: 110 },
   { title: 'Agent Path',      dataIndex: 'agentPath',  key: 'agentPath',  width: 210 },

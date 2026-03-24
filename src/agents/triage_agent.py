@@ -5,6 +5,9 @@ from textblob import TextBlob
 import joblib
 import os
 
+SENTIMENT_POSITIVE_THRESHOLD = 0.2
+SENTIMENT_NEGATIVE_THRESHOLD = -0.2
+
 @dataclass
 class TriageResult:
     category: str
@@ -42,9 +45,6 @@ class TriageAgent:
             r"act\s+as"
         ]
 
-    # -----------------------------
-    # Security Layer
-    # -----------------------------
     def validate_input(self, text: str) -> bool:
         text_lower = text.lower()
         for pattern in self.injection_patterns:
@@ -61,21 +61,15 @@ class TriageAgent:
             risk += 0.2
         return min(risk, 1.0)
 
-    # -----------------------------
-    # Sentiment Analysis
-    # -----------------------------
     def analyze_sentiment(self, text: str) -> str:
         polarity = TextBlob(text).sentiment.polarity
-        if polarity > 0.2:
+        if polarity > SENTIMENT_POSITIVE_THRESHOLD:
             return "positive"
-        elif polarity < -0.2:
+        elif polarity < SENTIMENT_NEGATIVE_THRESHOLD:
             return "negative"
         else:
             return "neutral"
 
-    # -----------------------------
-    # Core Analysis
-    # -----------------------------
     def analyze_request(self, request: Dict[str, Any]) -> TriageResult:
 
         text = request.get("body", "")
@@ -187,9 +181,6 @@ class TriageAgent:
             explanation=explanation
         )
 
-    # -----------------------------
-    # Routing Logic
-    # -----------------------------
     def route_request(self, analysis: TriageResult) -> str:
 
         if analysis.category == "security_alert":

@@ -1,12 +1,9 @@
 import { useState, useRef, useEffect } from 'react'
 import { Input, Button, Tag, Typography, Space, Spin } from 'antd'
 import { sendChatMessage } from '../services/api'
-import { capitalize, formatCategory } from '../utils/formatters'
+import { capitalize, formatCategory, PRIORITY_COLORS } from '../utils/formatters'
 
 const { Text } = Typography
-
-// Colour map for priority tags
-const PRIORITY_COLORS = { High: 'red', Medium: 'orange', Low: 'green' }
 
 // ── Helper: format agent name from API ("ResolutionAgent" → "Resolution Agent") ──
 // capitalize and formatCategory are imported from utils/formatters.js
