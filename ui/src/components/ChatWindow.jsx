@@ -60,8 +60,10 @@ function ChatWindow() {
       const result = await sendChatMessage(userText, sessionId.current)
 
       const aiMsg = {
-        role:     'ai',
-        text:     result.message || 'I received your message.',
+        role:  'ai',
+        text:  result.status === 'escalated' && result.ticket_id
+          ? `${result.message} Your reference number is ${result.ticket_id}.`
+          : (result.message || 'I received your message.'),
         agent:    formatAgentName(result.agent),
         category: formatCategory(result.analysis?.category),
         priority: capitalize(result.analysis?.priority),

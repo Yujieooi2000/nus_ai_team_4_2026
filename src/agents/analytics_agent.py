@@ -41,7 +41,7 @@ class AnalyticsAgent:
             'retrieval_confidence': resolution.get('retrieval_confidence'),
             'verification_passed': resolution.get('verification_passed'),
             'hallucination_detected': resolution.get('hallucination_detected', False),
-            'escalated': resolution.get('escalated', False),
+            'escalated': resolution.get('status') == 'escalated',
             'conversation_length': len(conversation_history)
         }
 

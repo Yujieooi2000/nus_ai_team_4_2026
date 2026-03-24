@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react'
 import { Typography, Tag, Button, Input, Alert, Empty, Space, Divider, Card, Spin } from 'antd'
 import TicketCard from '../components/TicketCard'
 import { getTickets, resolveTicket } from '../services/api'
-import { capitalize, formatCategory, mapSentiment } from '../utils/formatters'
+import { capitalize, formatCategory, mapSentiment, formatTimestamp } from '../utils/formatters'
 
 const { Title, Text } = Typography
 const { TextArea } = Input
@@ -23,9 +23,7 @@ function mapTicket(t) {
     // Map API sentiment ("negative"/"neutral"/"positive") to display labels
     sentiment: mapSentiment(t.sentiment),
     category:  formatCategory(t.category),
-    timestamp: t.created_at
-      ? new Date(t.created_at).toLocaleString('en-SG', { dateStyle: 'short', timeStyle: 'short', timeZone: 'Asia/Singapore' })
-      : '',
+    timestamp: formatTimestamp(t.created_at),
     status:    capitalize(t.status),
     preview:   t.last_message || '',
     // AI summary uses the triage explanation (the XAI trace for this ticket)

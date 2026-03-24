@@ -144,7 +144,38 @@ class TriageAgent:
         if priority == "high" or risk_score > 0.7 or sentiment == "negative":
             requires_human = True
 
-        explanation = " | ".join(decision_trace)
+        # Build a structured, human-readable explanation for the XAI trace
+        xai_parts = []
+
+        # How the category was determined
+        if decision_trace and decision_trace[0].startswith("Matched"):
+            xai_parts.append(f"Category: {category.replace('_', ' ').title()} ({decision_trace[0].lower()})")
+        elif predicted_intent:
+            xai_parts.append(f"Category: {category.replace('_', ' ').title()} (ML model prediction)")
+        else:
+            xai_parts.append(f"Category: {category.replace('_', ' ').title()} (no specific keyword matched)")
+
+        xai_parts.append(f"Confidence: {confidence:.0%}")
+        xai_parts.append(f"Sentiment: {sentiment.title()}")
+
+        if priority == "high":
+            xai_parts.append("Priority: High (urgent keyword detected)")
+        else:
+            xai_parts.append("Priority: Low")
+
+        if requires_human:
+            escalation_reasons = []
+            if priority == "high":
+                escalation_reasons.append("high priority")
+            if sentiment == "negative":
+                escalation_reasons.append("negative sentiment")
+            if risk_score > 0.7:
+                escalation_reasons.append(f"high risk score ({risk_score:.2f})")
+            xai_parts.append(f"Routed to: Human Agent ({', '.join(escalation_reasons)})")
+        else:
+            xai_parts.append("Routed to: AI Resolution")
+
+        explanation = " | ".join(xai_parts)
 
         return TriageResult(
             category=category,

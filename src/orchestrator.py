@@ -93,7 +93,7 @@ class Orchestrator:
             response = {
                 "status": "escalated",
                 "queue": escalation["queue"],
-                "message": "Connecting you to a human agent."
+                "message": "Your case has been escalated. Our support team will review it and follow up with you shortly."
             }
 
             self.analytics_agent.log_interaction(
@@ -172,7 +172,7 @@ class Orchestrator:
             response = {
                 "status": "escalated",
                 "queue": escalation["queue"],
-                "message": "Your issue is being transferred to a support specialist."
+                "message": "Your case has been escalated. Our support team will review it and follow up with you shortly."
             }
 
         else:
