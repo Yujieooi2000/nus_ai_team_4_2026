@@ -195,17 +195,17 @@ This is the part Jonas handles. It takes about 10–15 minutes once the teammate
 
 ---
 
-### Step 3 — Set the environment variable
+### Step 3 — Set the environment variables
 
-Before clicking Deploy, you must tell the frontend where the backend lives:
+Before clicking Deploy, you must tell the frontend where the backend lives and provide the shared API key:
 
 1. Scroll down to **Environment Variables**
-2. Add:
-   - **Name:** `VITE_API_URL`
-   - **Value:** `https://ai-support-api.onrender.com` ← (use your teammate's actual URL here)
+2. Add both of the following:
+   - **Name:** `VITE_API_URL` — **Value:** `https://ai-support-api.onrender.com` ← (use your teammate's actual URL here)
+   - **Name:** `VITE_INTERNAL_API_KEY` — **Value:** the same secret value as `INTERNAL_API_KEY` set on the backend
 3. Make sure the environment is set to **Production**
 
-> **Why this is important:** Without this, the React app will try to call `localhost:8000` — which doesn't exist in the cloud. The environment variable tells it to call the real deployed backend instead.
+> **Why this is important:** `VITE_API_URL` tells the React app which backend to call (instead of `localhost:8000`). `VITE_INTERNAL_API_KEY` is required to authenticate against the agent and admin API endpoints — without it, all ticket and analytics requests will return 401.
 
 ---
 
@@ -262,7 +262,9 @@ This section is for reference — it is the backend teammate's responsibility, n
    - **Runtime:** Python 3
    - **Build Command:** `pip install -r requirements.txt && python -m textblob.download_corpora && python src/vector_db.py`
    - **Start Command:** `python -m uvicorn src.api:app --host 0.0.0.0 --port 8000`
-5. Add environment variable: `OPENAI_API_KEY` = your key
+5. Add environment variables:
+   - `OPENAI_API_KEY` = your OpenAI key
+   - `INTERNAL_API_KEY` = a random secret string (must match `VITE_INTERNAL_API_KEY` set in Vercel)
 6. Click **Create Web Service**
 
 > The Build Command above runs `python src/vector_db.py` during deployment — this is Solution B (initialise on build). The `chroma_data/` folder will not persist between deploys, so each new deploy re-initialises the knowledge base.
@@ -278,11 +280,11 @@ az webapp up \
   --runtime "PYTHON:3.11" \
   --sku B1
 ```
-4. Set the API key:
+4. Set the API keys:
 ```bash
 az webapp config appsettings set \
   --name ai-support-api \
-  --settings OPENAI_API_KEY="sk-..."
+  --settings OPENAI_API_KEY="sk-..." INTERNAL_API_KEY="your-secret-key-here"
 ```
 5. Note the URL: `https://ai-support-api.azurewebsites.net`
 
@@ -330,7 +332,8 @@ After both frontend and backend are deployed, verify each item:
 
 ### Security
 - [ ] `OPENAI_API_KEY` is set only in the cloud platform's environment settings — never in code
-- [ ] `.env` file is not committed to GitHub (check with `git log --all -- .env`)
+- [ ] `INTERNAL_API_KEY` is set on the backend host and `VITE_INTERNAL_API_KEY` is set in Vercel — same value, never committed to git
+- [ ] `.env` and `ui/.env.development` are not committed to GitHub (check with `git log --all -- .env`)
 - [ ] Backend CORS only allows your frontend's URL — not all origins (`*`)
 - [ ] The backend API URL in Vercel uses `https://` not `http://`
 

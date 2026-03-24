@@ -404,9 +404,9 @@ Before you build, align with your teammates on:
 
 **Remaining before final submission:**
 
-1. **Phase 2 UI enhancements** — Dark/Light mode, glass effect, Atkinson Hyperlegible Next font. See Section 11.
-2. **Cloud deployment** — Deploy backend to Azure, frontend to Vercel. See `Jonas_Integration_Plan.md` Section 10 for options.
-3. **Security check** — Confirm `.env` files are git-ignored and the OpenAI API key is not committed. See `Jonas_Integration_Plan.md` Section 12.
+1. ~~**Phase 2 UI enhancements** — Dark/Light mode, glass effect, Atkinson Hyperlegible Next font.~~ ✅ Done (Steps M–T)
+2. **Cloud deployment** — Deploy backend to Render/Azure, frontend to Vercel. See `DEPLOYMENT.md` for full instructions. Remember to set `INTERNAL_API_KEY` on the backend host and `VITE_INTERNAL_API_KEY` in Vercel.
+3. ~~**Security check** — Confirm `.env` files are git-ignored and API key not committed.~~ ✅ Done (Step V — full API key auth implemented)
 4. **Team testing** — Share `QUICKSTART.md` with all teammates so they can run the full system locally and verify end-to-end.
 
 ---
@@ -593,8 +593,10 @@ useEffect(() => {
 | R | Code cleanup & shared utilities | `ui/src/utils/formatters.js`, `AgentDashboard.jsx`, `ChatWindow.jsx`, `AdminDashboard.jsx`, `src/orchestrator.py`, `src/api.py` |
 | S | Self-learning vector DB (approved answers) | `src/vector_db.py`, `src/api.py` |
 | T | XAI traces, escalation UX, date format, knowledge gap bug fix | `src/agents/analytics_agent.py`, `src/agents/triage_agent.py`, `src/orchestrator.py`, `src/api.py`, `ui/src/utils/formatters.js`, `ChatWindow.jsx`, `AdminDashboard.jsx`, `AgentDashboard.jsx` |
+| U | Simplify: color constants, single-pass analytics, named thresholds, action handler refactor | `ui/src/utils/formatters.js`, `ChatWindow.jsx`, `TicketCard.jsx`, `AgentDashboard.jsx`, `AdminDashboard.jsx`, `src/agents/analytics_agent.py`, `src/agents/escalation_agent.py`, `src/agents/resolution_agent.py`, `src/agents/triage_agent.py` |
+| V | Security: API key authentication on agent and admin endpoints | `src/api.py`, `ui/src/services/api.js`, `.env`, `ui/.env.development` |
 
-> Steps M, N, and O build on each other — do them in order. Step N sets up the `isDark` state and `data-theme` attribute that Step O relies on. Step P is a follow-up polish pass applied after visual testing. Step Q adds true HITL (AI draft generation) and UX polish. Step R is a code quality pass — no user-visible changes. Step S adds a self-learning feedback loop where human-approved ticket replies are stored in ChromaDB to improve future AI responses. Step T improves XAI explainability, escalation messaging, date formatting, and fixes a bug that prevented Knowledge Gap Alerts from appearing.
+> Steps M, N, and O build on each other — do them in order. Step N sets up the `isDark` state and `data-theme` attribute that Step O relies on. Step P is a follow-up polish pass applied after visual testing. Step Q adds true HITL (AI draft generation) and UX polish. Step R is a code quality pass — no user-visible changes. Step S adds a self-learning feedback loop where human-approved ticket replies are stored in ChromaDB to improve future AI responses. Step T improves XAI explainability, escalation messaging, date formatting, and fixes a bug that prevented Knowledge Gap Alerts from appearing. Step U is a second code quality pass consolidating duplicate constants and simplifying state management — no user-visible changes. Step V adds API key authentication to all agent/admin endpoints.
 
 ---
 
@@ -610,6 +612,8 @@ useEffect(() => {
 | R | Code cleanup & shared utilities | ✅ Done |
 | S | Self-learning vector DB (approved answers) | ✅ Done |
 | T | XAI traces, escalation UX, date format, knowledge gap bug fix | ✅ Done |
+| U | Simplify: color constants, single-pass analytics, named thresholds, action handler refactor | ✅ Done |
+| V | Security: API key authentication on agent and admin endpoints | ✅ Done |
 
 ### Step P — Dark Mode & Visual Polish (Detail)
 
@@ -696,6 +700,33 @@ Customer asks question
 
 **Key design note — HITL is async, not real-time:**
 When a ticket is escalated, the customer's chat is locked and a ticket is created. The human agent reviews the ticket and approves/replies — but this reply is stored in the ticket, not pushed back to the customer's chat in real time. This is by design for the demo (production would need WebSockets or email). The escalation message was updated to reflect this honestly.
+
+### Step U — Simplify: Code Consolidation & Refactor (Detail)
+
+A second code quality pass. No user-visible behaviour changes.
+
+| Area | Change | Files |
+|------|--------|-------|
+| **Color constants consolidated** | `PRIORITY_COLORS`, `SENTIMENT_COLORS`, `STATUS_COLORS` were each defined locally in 3–4 files. Moved to `formatters.js` as named exports; all files now import from there | `formatters.js`, `ChatWindow.jsx`, `TicketCard.jsx`, `AgentDashboard.jsx`, `AdminDashboard.jsx` |
+| **Single-pass analytics** | `analytics_agent.generate_insights()` made 5 separate passes over `analytics_database`. Replaced with a single loop accumulating all counts simultaneously | `src/agents/analytics_agent.py` |
+| **Named thresholds** | Magic numbers replaced with named module-level constants: `ESCALATION_THRESHOLD = 5` (escalation_agent), `ESCALATE_SCORE_THRESHOLD = 5` / `REVISE_SCORE_THRESHOLD = 2` (resolution_agent), `SENTIMENT_POSITIVE_THRESHOLD = 0.2` / `SENTIMENT_NEGATIVE_THRESHOLD = -0.2` (triage_agent) | `src/agents/escalation_agent.py`, `src/agents/resolution_agent.py`, `src/agents/triage_agent.py` |
+| **`actionDone` → `actionError`** | `AgentDashboard` had a 4-value string state (`null` / `'approved'` / `'replied'` / `'closed'` / `'error'`) but only the error branch was actually used. Simplified to a boolean `actionError` | `AgentDashboard.jsx` |
+| **`runTicketAction` helper** | The three action handlers (`handleApprove`, `handleSendReply`, `handleClose`) each duplicated the same loading/error pattern. Extracted into a single `runTicketAction(fn)` wrapper | `AgentDashboard.jsx` |
+| **Timezone consistency** | `analytics_agent.log_interaction()` used `datetime.utcnow()` (timezone-naive) while `api.py` used `datetime.now(timezone.utc)` (timezone-aware). Unified to timezone-aware | `src/agents/analytics_agent.py` |
+
+### Step V — Security: API Key Authentication (Detail)
+
+Added authentication to all internal (agent/admin) endpoints to prevent unauthorised access to ticket data and analytics.
+
+| Area | Change | Files |
+|------|--------|-------|
+| **`require_internal_key` dependency** | New FastAPI `Depends` function — reads `INTERNAL_API_KEY` from env and validates the `X-API-Key` request header. Returns 401 if missing or wrong | `src/api.py` |
+| **5 endpoints protected** | `GET /api/tickets`, `GET /api/tickets/{id}`, `POST /api/tickets/{id}/resolve`, `GET /api/analytics/summary`, `GET /api/analytics/xai-traces` all require the API key. `POST /api/chat` is left unauthenticated (public-facing) | `src/api.py` |
+| **Axios instance pre-configured** | `api.js` creates a shared Axios instance with `X-API-Key` header set from `VITE_INTERNAL_API_KEY` env var — all API call functions automatically include it | `ui/src/services/api.js` |
+| **`.env` updated** | Added `INTERNAL_API_KEY` to the backend `.env` file (gitignored) | `.env` |
+| **`ui/.env.development` created** | New gitignored file with `VITE_API_URL=http://localhost:8000` and `VITE_INTERNAL_API_KEY=<same-value>` for local frontend dev | `ui/.env.development` |
+
+**For production deployment:** Set `INTERNAL_API_KEY` as an environment variable on the backend host (Render/Azure) and `VITE_INTERNAL_API_KEY` in the Vercel dashboard — both must use the same value. See `DEPLOYMENT.md` for full instructions.
 
 ---
 

@@ -22,6 +22,7 @@ This report details the security architecture and risk mitigation strategies for
 | **SEC-02** | Insecure Output Handling | AI output used directly in system commands (e.g., SQL queries). | Use of strictly typed schemas and intermediary validation agents for any tool usage. |
 | **SEC-03** | Data Poisoning | Malicious data added to the RAG Knowledge Base. | Strict RBAC (Role-Based Access Control) on the Knowledge Base ingestion pipeline. |
 | **SEC-04** | PII Leakage | Sensitive user data being sent to external LLM providers. | Localized PII masking agent and data minimization practices. |
+| **SEC-05** | Unauthorized API Access | Agent and Admin dashboard endpoints (ticket queue, analytics, XAI traces) accessed without authentication, exposing operational data and conversation history. | All agent/admin endpoints protected by a shared `INTERNAL_API_KEY` validated via the `X-API-Key` request header (`FastAPI Depends` + `APIKeyHeader`). The customer chat endpoint remains unauthenticated as it is public-facing. |
 
 ## 4. MLOps/LLMOps Security Integration
 - **Automated Red-Teaming:** As part of the CI/CD pipeline, we will run automated test suites containing known adversarial prompts.
