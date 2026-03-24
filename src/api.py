@@ -245,6 +245,12 @@ def chat(request: ChatRequest):
         api_response["ticket_id"] = ticket_id
         api_response["queue"]     = response.get("queue")
 
+        # Append the ticket reference to the stored assistant message so the
+        # conversation history shown to the agent matches what the customer saw.
+        if history and history[-1]["role"] == "assistant":
+            history[-1]["content"] += f" Your reference number is {ticket_id}."
+            sessions[session_id] = history
+
     return api_response
 
 

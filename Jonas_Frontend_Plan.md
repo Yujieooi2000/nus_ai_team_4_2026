@@ -592,8 +592,9 @@ useEffect(() => {
 | Q | True HITL + UX improvements | `src/orchestrator.py`, `src/api.py`, `AgentDashboard.jsx`, `ChatWindow.jsx` |
 | R | Code cleanup & shared utilities | `ui/src/utils/formatters.js`, `AgentDashboard.jsx`, `ChatWindow.jsx`, `AdminDashboard.jsx`, `src/orchestrator.py`, `src/api.py` |
 | S | Self-learning vector DB (approved answers) | `src/vector_db.py`, `src/api.py` |
+| T | XAI traces, escalation UX, date format, knowledge gap bug fix | `src/agents/analytics_agent.py`, `src/agents/triage_agent.py`, `src/orchestrator.py`, `src/api.py`, `ui/src/utils/formatters.js`, `ChatWindow.jsx`, `AdminDashboard.jsx`, `AgentDashboard.jsx` |
 
-> Steps M, N, and O build on each other — do them in order. Step N sets up the `isDark` state and `data-theme` attribute that Step O relies on. Step P is a follow-up polish pass applied after visual testing. Step Q adds true HITL (AI draft generation) and UX polish. Step R is a code quality pass — no user-visible changes. Step S adds a self-learning feedback loop where human-approved ticket replies are stored in ChromaDB to improve future AI responses.
+> Steps M, N, and O build on each other — do them in order. Step N sets up the `isDark` state and `data-theme` attribute that Step O relies on. Step P is a follow-up polish pass applied after visual testing. Step Q adds true HITL (AI draft generation) and UX polish. Step R is a code quality pass — no user-visible changes. Step S adds a self-learning feedback loop where human-approved ticket replies are stored in ChromaDB to improve future AI responses. Step T improves XAI explainability, escalation messaging, date formatting, and fixes a bug that prevented Knowledge Gap Alerts from appearing.
 
 ---
 
@@ -608,6 +609,7 @@ useEffect(() => {
 | Q | True HITL + UX improvements | ✅ Done |
 | R | Code cleanup & shared utilities | ✅ Done |
 | S | Self-learning vector DB (approved answers) | ✅ Done |
+| T | XAI traces, escalation UX, date format, knowledge gap bug fix | ✅ Done |
 
 ### Step P — Dark Mode & Visual Polish (Detail)
 
@@ -680,6 +682,20 @@ Customer asks question
 - **Both `approved` and `custom_reply`** trigger a save — `approved` means the AI was correct; `custom_reply` means the human corrected the AI (the most valuable learning signal)
 - **`closed` does NOT trigger a save** — no reply was sent, so there's nothing to learn from
 - `information_retrieval_agent.py` required **zero changes** — the merge happens transparently inside `VectorDB.search()`
+
+### Step T — XAI Traces, Escalation UX, Date Format & Bug Fixes (Detail)
+
+| Area | Change | Files |
+|------|--------|-------|
+| **Bug fix: Knowledge Gap Alerts** | `analytics_agent.py` logged `resolution.get('escalated', False)` — but the response dict uses `status: 'escalated'`, not a boolean key, so escalations were never counted. Fixed to `resolution.get('status') == 'escalated'`. Knowledge Gap Alerts now populate correctly. | `src/agents/analytics_agent.py` |
+| **XAI richer explanation** | `triage_agent.py` now builds a structured explanation: Category + how determined (keyword/ML/no match), Confidence %, Sentiment, Priority, and Routing decision with reasons (e.g. *"Routed to: Human Agent (negative sentiment, high priority)"*). Previously only showed *"Sentiment detected as neutral"*. | `src/agents/triage_agent.py` |
+| **XAI table new columns** | Added Priority (colour-coded tag), Sentiment (colour-coded tag), and Confidence columns to the XAI Decision Traces table. All data was already in the API — just not displayed. | `ui/src/pages/AdminDashboard.jsx` |
+| **Escalation message** | Changed from *"Connecting you to a human agent."* (implies real-time handover) to *"Your case has been escalated. Our support team will review it and follow up with you shortly."* — honest about the async nature of the ticket workflow. | `src/orchestrator.py` |
+| **Ticket reference in chat** | Customer chat now shows the ticket ID after escalation: *"…Your reference number is TKT-00001."* The same reference is also stored in the conversation history (backend) so the agent sees the same text the customer saw. | `ui/src/components/ChatWindow.jsx`, `src/api.py` |
+| **Date/time format** | Added `formatTimestamp()` to shared formatters — outputs `DD MMM YYYY, HH:mm SGT` (e.g. *24 Mar 2026, 14:30 SGT*). Applied consistently in Agent Dashboard and Admin Dashboard. | `ui/src/utils/formatters.js`, `AgentDashboard.jsx`, `AdminDashboard.jsx` |
+
+**Key design note — HITL is async, not real-time:**
+When a ticket is escalated, the customer's chat is locked and a ticket is created. The human agent reviews the ticket and approves/replies — but this reply is stored in the ticket, not pushed back to the customer's chat in real time. This is by design for the demo (production would need WebSockets or email). The escalation message was updated to reflect this honestly.
 
 ---
 
