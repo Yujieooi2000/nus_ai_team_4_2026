@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect } from 'react'
 import { Input, Button, Tag, Typography, Space, Spin } from 'antd'
 import { sendChatMessage } from '../services/api'
+import { capitalize, formatCategory } from '../utils/formatters'
 
 const { Text } = Typography
 
@@ -8,6 +9,7 @@ const { Text } = Typography
 const PRIORITY_COLORS = { High: 'red', Medium: 'orange', Low: 'green' }
 
 // ── Helper: format agent name from API ("ResolutionAgent" → "Resolution Agent") ──
+// capitalize and formatCategory are imported from utils/formatters.js
 const AGENT_DISPLAY_NAMES = {
   ResolutionAgent:            'Resolution Agent',
   InformationRetrievalAgent:  'Information Retrieval Agent',
@@ -16,18 +18,6 @@ const AGENT_DISPLAY_NAMES = {
 }
 function formatAgentName(name) {
   return AGENT_DISPLAY_NAMES[name] || name || 'AI Agent'
-}
-
-// ── Helper: format category from API ("technical_support" → "Technical Support") ──
-function formatCategory(cat) {
-  if (!cat) return 'General'
-  return cat.replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase())
-}
-
-// ── Helper: capitalise first letter ("high" → "High") ──
-function capitalize(str) {
-  if (!str) return ''
-  return str.charAt(0).toUpperCase() + str.slice(1)
 }
 
 

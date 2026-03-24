@@ -229,8 +229,7 @@ class Orchestrator:
         ]
 
         # Include the full conversation history so the LLM has full context
-        for msg in conversation_history:
-            messages.append(msg)
+        messages.extend(conversation_history)
 
         # Final instruction to trigger the draft
         messages.append({

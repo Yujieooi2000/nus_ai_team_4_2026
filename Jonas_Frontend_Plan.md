@@ -348,12 +348,18 @@ nus_ai_team_4_2026/
 │       │   └── TicketCard.jsx        # ✅ Step 5 — A single ticket summary card (ID, priority,
 │       │                             #            sentiment badge). Used in AgentDashboard.jsx.
 │       │
-│       └── services/                 #            Code that talks to the outside world (the API).
-│           │                         #            Kept separate so API logic never mixes with
-│           │                         #            visual/display code.
-│           └── api.js                # ✅ Step L — NEW: All 6 Axios API call functions.
-│                                     #            sendChatMessage(), getTickets(), resolveTicket(),
-│                                     #            getAnalyticsSummary(), getXaiTraces(), etc.
+│       ├── services/                 #            Code that talks to the outside world (the API).
+│       │   │                         #            Kept separate so API logic never mixes with
+│       │   │                         #            visual/display code.
+│       │   └── api.js                # ✅ Step L — NEW: All 6 Axios API call functions.
+│       │                             #            sendChatMessage(), getTickets(), resolveTicket(),
+│       │                             #            getAnalyticsSummary(), getXaiTraces(), etc.
+│       │
+│       └── utils/                    #            Shared helper functions used across multiple
+│           │                         #            pages and components.
+│           └── formatters.js         # ✅ Step R — NEW: capitalize(), formatCategory(),
+│                                     #            mapSentiment(). Extracted here to avoid
+│                                     #            duplicating the same code in 3 different files.
 │
 ├── Jonas_Frontend_Plan.md            # UI planning document (this file)
 ├── Jonas_Integration_Plan.md         # Integration architecture, API contract, completion status
@@ -584,8 +590,9 @@ useEffect(() => {
 | O | Glass effect CSS variables + token overrides | `App.jsx`, `index.css` |
 | P | Dark mode & visual polish (all components) | `index.css`, `App.jsx`, `ChatWindow.jsx`, `TicketCard.jsx`, `AgentDashboard.jsx` |
 | Q | True HITL + UX improvements | `src/orchestrator.py`, `src/api.py`, `AgentDashboard.jsx`, `ChatWindow.jsx` |
+| R | Code cleanup & shared utilities | `ui/src/utils/formatters.js`, `AgentDashboard.jsx`, `ChatWindow.jsx`, `AdminDashboard.jsx`, `src/orchestrator.py`, `src/api.py` |
 
-> Steps M, N, and O build on each other — do them in order. Step N sets up the `isDark` state and `data-theme` attribute that Step O relies on. Step P is a follow-up polish pass applied after visual testing. Step Q adds true HITL (AI draft generation) and UX polish.
+> Steps M, N, and O build on each other — do them in order. Step N sets up the `isDark` state and `data-theme` attribute that Step O relies on. Step P is a follow-up polish pass applied after visual testing. Step Q adds true HITL (AI draft generation) and UX polish. Step R is a code quality pass — no user-visible changes.
 
 ---
 
@@ -598,6 +605,7 @@ useEffect(() => {
 | O | Glass effect (iOS/macOS 26 design language) | ✅ Done |
 | P | Dark mode & visual polish | ✅ Done |
 | Q | True HITL + UX improvements | ✅ Done |
+| R | Code cleanup & shared utilities | ✅ Done |
 
 ### Step P — Dark Mode & Visual Polish (Detail)
 
@@ -630,6 +638,19 @@ After visual testing of Steps M–O, the following refinements were applied:
 | Instant confirmation | After approving, local state updates `agentReplySent` and `resolveAction` immediately — no page reload needed | `AgentDashboard.jsx` |
 | Approval label | "AI Response Approved — Sent to Customer" (blue) shown with the AI text after approval; "Custom Reply Sent to Customer" for manual replies | `AgentDashboard.jsx` |
 | Escalate button hidden | "Escalate to Human" button is hidden until the customer has sent at least one message (`messages.length > 1`) | `ChatWindow.jsx` |
+
+### Step R — Code Cleanup & Shared Utilities (Detail)
+
+A code quality pass with no user-visible changes. Found and fixed duplicate helper functions and minor Python inefficiencies.
+
+| Area | Change | Files |
+|------|--------|-------|
+| Shared formatters | Created `ui/src/utils/formatters.js` with `capitalize()`, `formatCategory()`, and `mapSentiment()` — these three functions were each duplicated across 2–3 page/component files | `ui/src/utils/formatters.js` (new) |
+| AgentDashboard cleanup | Removed 3 local helper functions (`capitalize`, `formatCategory`, `mapSentiment`); now imports from shared utils | `AgentDashboard.jsx` |
+| ChatWindow cleanup | Removed 2 local helper functions (`capitalize`, `formatCategory`); now imports from shared utils | `ChatWindow.jsx` |
+| AdminDashboard cleanup | Removed local `formatCategory`; now imports from shared utils (calls `formatCategory(cat, 'Unknown')` to preserve the existing fallback label) | `AdminDashboard.jsx` |
+| Python extend | `generate_suggested_response()` — replaced `for msg in history: messages.append(msg)` with idiomatic `messages.extend(conversation_history)` | `src/orchestrator.py` |
+| Python redundant `or None` | `ticket.get("suggested_response") or None` → `ticket.get("suggested_response")` — `.get()` already returns `None` by default; the suffix was a no-op | `src/api.py` |
 
 ---
 

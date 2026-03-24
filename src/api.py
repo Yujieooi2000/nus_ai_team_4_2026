@@ -313,7 +313,7 @@ def resolve_ticket(ticket_id: str, request: ResolveRequest):
     if request.action == "approved":
         # Human agent approved the AI's suggested response.
         # Store it as agent_reply so the UI can show what was sent to the customer.
-        ticket["agent_reply"] = ticket.get("suggested_response") or None
+        ticket["agent_reply"] = ticket.get("suggested_response")
     elif request.action == "custom_reply":
         ticket["agent_reply"] = request.agent_reply or None
     else:

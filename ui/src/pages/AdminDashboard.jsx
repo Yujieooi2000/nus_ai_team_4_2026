@@ -5,6 +5,7 @@ import {
   PieChart, Pie, Cell, ResponsiveContainer,
 } from 'recharts'
 import { getAnalyticsSummary, getXaiTraces } from '../services/api'
+import { formatCategory } from '../utils/formatters'
 
 const { Title, Text } = Typography
 
@@ -22,12 +23,6 @@ const backgroundAgents = [
 ]
 
 const PIE_COLORS = ['#1677ff', '#52c41a', '#faad14', '#ff4d4f', '#722ed1', '#13c2c2']
-
-// ── Helper: format category labels ("technical_support" → "Technical Support") ─
-function formatCategory(cat) {
-  if (!cat) return 'Unknown'
-  return cat.replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase())
-}
 
 // ── XAI traces table columns ───────────────────────────────────────────────────
 const xaiColumns = [
@@ -104,7 +99,7 @@ function AdminDashboard() {
   // Pie chart: convert { billing: 4, general_inquiry: 5 } → [{ name, value }, ...]
   const categoryData = summary?.category_breakdown
     ? Object.entries(summary.category_breakdown).map(([name, value]) => ({
-        name:  formatCategory(name),
+        name:  formatCategory(name, 'Unknown'),
         value,
       }))
     : []
@@ -123,7 +118,7 @@ function AdminDashboard() {
     key:       String(i),
     traceId:   t.trace_id,
     agentPath: t.agent_path,
-    category:  formatCategory(t.category),
+    category:  formatCategory(t.category, 'Unknown'),
     reason:    t.decision_reason || 'No reason recorded',
     timestamp: t.timestamp
       ? new Date(

@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import { Typography, Tag, Button, Input, Alert, Empty, Space, Divider, Card, Spin } from 'antd'
 import TicketCard from '../components/TicketCard'
 import { getTickets, resolveTicket } from '../services/api'
+import { capitalize, formatCategory, mapSentiment } from '../utils/formatters'
 
 const { Title, Text } = Typography
 const { TextArea } = Input
@@ -46,22 +47,6 @@ function mapTicket(t) {
     _ticketId: t.ticket_id,
   }
 }
-
-function capitalize(str) {
-  if (!str) return ''
-  return str.charAt(0).toUpperCase() + str.slice(1)
-}
-
-function formatCategory(cat) {
-  if (!cat) return 'General'
-  return cat.replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase())
-}
-
-function mapSentiment(sentiment) {
-  const map = { negative: 'Frustrated', neutral: 'Neutral', positive: 'Satisfied' }
-  return map[sentiment] || 'Neutral'
-}
-
 
 // ── Helper: read-only conversation bubbles (same style as CustomerChat) ────────
 function ConversationHistory({ conversation }) {
