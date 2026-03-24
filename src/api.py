@@ -320,6 +320,16 @@ def resolve_ticket(ticket_id: str, request: ResolveRequest):
         # closed — no reply sent
         ticket["agent_reply"] = None
 
+    # Store the approved Q&A in vector DB so the AI can learn from it.
+    # Both "approved" (AI was right) and "custom_reply" (human corrected AI) are
+    # valuable signals — either way, the answer has been validated by a human.
+    if ticket["agent_reply"] and orchestrator.info_agent.vector_db:
+        orchestrator.info_agent.vector_db.add_approved_answer(
+            question=ticket["last_message"],
+            answer=ticket["agent_reply"],
+            category=ticket.get("category", "general_inquiry")
+        )
+
     return ticket
 
 

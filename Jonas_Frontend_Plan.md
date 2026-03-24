@@ -591,8 +591,9 @@ useEffect(() => {
 | P | Dark mode & visual polish (all components) | `index.css`, `App.jsx`, `ChatWindow.jsx`, `TicketCard.jsx`, `AgentDashboard.jsx` |
 | Q | True HITL + UX improvements | `src/orchestrator.py`, `src/api.py`, `AgentDashboard.jsx`, `ChatWindow.jsx` |
 | R | Code cleanup & shared utilities | `ui/src/utils/formatters.js`, `AgentDashboard.jsx`, `ChatWindow.jsx`, `AdminDashboard.jsx`, `src/orchestrator.py`, `src/api.py` |
+| S | Self-learning vector DB (approved answers) | `src/vector_db.py`, `src/api.py` |
 
-> Steps M, N, and O build on each other — do them in order. Step N sets up the `isDark` state and `data-theme` attribute that Step O relies on. Step P is a follow-up polish pass applied after visual testing. Step Q adds true HITL (AI draft generation) and UX polish. Step R is a code quality pass — no user-visible changes.
+> Steps M, N, and O build on each other — do them in order. Step N sets up the `isDark` state and `data-theme` attribute that Step O relies on. Step P is a follow-up polish pass applied after visual testing. Step Q adds true HITL (AI draft generation) and UX polish. Step R is a code quality pass — no user-visible changes. Step S adds a self-learning feedback loop where human-approved ticket replies are stored in ChromaDB to improve future AI responses.
 
 ---
 
@@ -606,6 +607,7 @@ useEffect(() => {
 | P | Dark mode & visual polish | ✅ Done |
 | Q | True HITL + UX improvements | ✅ Done |
 | R | Code cleanup & shared utilities | ✅ Done |
+| S | Self-learning vector DB (approved answers) | ✅ Done |
 
 ### Step P — Dark Mode & Visual Polish (Detail)
 
@@ -651,6 +653,33 @@ A code quality pass with no user-visible changes. Found and fixed duplicate help
 | AdminDashboard cleanup | Removed local `formatCategory`; now imports from shared utils (calls `formatCategory(cat, 'Unknown')` to preserve the existing fallback label) | `AdminDashboard.jsx` |
 | Python extend | `generate_suggested_response()` — replaced `for msg in history: messages.append(msg)` with idiomatic `messages.extend(conversation_history)` | `src/orchestrator.py` |
 | Python redundant `or None` | `ticket.get("suggested_response") or None` → `ticket.get("suggested_response")` — `.get()` already returns `None` by default; the suffix was a no-op | `src/api.py` |
+
+### Step S — Self-Learning Vector DB / Approved Answers (Detail)
+
+Implements a self-improving feedback loop: when a human agent approves or custom-replies to an escalated ticket, the validated Q&A pair is automatically saved to ChromaDB. Future customers asking similar questions will be answered by the AI directly — reducing escalations and closing knowledge gaps over time.
+
+**The feedback loop:**
+```
+Customer asks question
+  → AI can't answer confidently → Escalated
+    → Human agent approves answer → Saved to ChromaDB (approved_answers)
+      → Next customer asks similar question
+        → AI retrieves the approved answer → Resolved without escalation
+          → Escalation rate drops → Knowledge Gap Alert disappears
+```
+
+| Area | Change | Files |
+|------|--------|-------|
+| New ChromaDB collection | Added `self.approved_collection` to `VectorDB.__init__` — a second collection (`approved_answers`) separate from the curated `customer_support_kb` | `src/vector_db.py` |
+| `add_approved_answer()` | New method on `VectorDB` — stores `"Q: {question}\nA: {answer}"` with metadata `{category, source: "human_approved"}`. Uses `upsert` so storing the same Q&A twice is safe | `src/vector_db.py` |
+| Unified `search()` | Updated `VectorDB.search()` to query both `customer_support_kb` and `approved_answers`, merge results, sort by similarity, and return the top-k across both. No change required in `InformationRetrievalAgent` | `src/vector_db.py` |
+| Auto-save on resolve | In `resolve_ticket()`, after `agent_reply` is set (for both `approved` and `custom_reply` actions), calls `add_approved_answer()` via `orchestrator.info_agent.vector_db` — reuses the existing DB connection, no new imports | `src/api.py` |
+
+**Design decisions:**
+- Stored in a **separate collection** (`approved_answers`) — keeps curated KB clean and auditable; learned content can be inspected or cleared independently
+- **Both `approved` and `custom_reply`** trigger a save — `approved` means the AI was correct; `custom_reply` means the human corrected the AI (the most valuable learning signal)
+- **`closed` does NOT trigger a save** — no reply was sent, so there's nothing to learn from
+- `information_retrieval_agent.py` required **zero changes** — the merge happens transparently inside `VectorDB.search()`
 
 ---
 
