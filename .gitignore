@@ -5,3 +5,4 @@ __pycache__/
 *.pyc
 *.pyo
 chroma_data/
+.DS_Store
