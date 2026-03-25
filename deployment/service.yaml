@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: nus-ai-service
+spec:
+  type: NodePort   # change to LoadBalancer if needed
+  selector:
+    app: nus-ai
+  ports:
+    - port: 80
+      targetPort: 8000
+      nodePort: 30007

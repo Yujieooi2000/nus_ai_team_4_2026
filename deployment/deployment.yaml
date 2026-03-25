@@ -1,0 +1,31 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nus-ai
+  labels:
+    app: nus-ai
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: nus-ai
+  template:
+    metadata:
+      labels:
+        app: nus-ai
+    spec:
+      containers:
+        - name: nus-ai
+          image: ghcr.io/MrDOUFY/NUS_AI:latest
+          ports:
+            - containerPort: 8000
+          env:
+            - name: ENV
+              value: "prod"
+          resources:
+            requests:
+              cpu: "100m"
+              memory: "128Mi"
+            limits:
+              cpu: "500m"
+              memory: "512Mi"
