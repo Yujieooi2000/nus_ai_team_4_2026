@@ -1,10 +1,7 @@
 import { Card, Tag, Typography, Space } from 'antd'
+import { PRIORITY_COLORS, SENTIMENT_COLORS, STATUS_COLORS } from '../utils/formatters'
 
 const { Text } = Typography
-
-const PRIORITY_COLORS  = { High: 'red',     Medium: 'orange', Low: 'green'    }
-const SENTIMENT_COLORS = { Frustrated: 'volcano', Neutral: 'default', Satisfied: 'green' }
-const STATUS_COLORS    = { Open: 'blue', 'In Progress': 'orange', Resolved: 'green', Closed: 'default' }
 
 // A single row in the ticket queue (left panel).
 // Props:

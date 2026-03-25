@@ -1,5 +1,9 @@
 from typing import Dict, List
 
+ESCALATE_SCORE_THRESHOLD = 5
+REVISE_SCORE_THRESHOLD   = 2
+
+
 class ResolutionAgent:
 
     def __init__(self):
@@ -91,10 +95,9 @@ class ResolutionAgent:
         result = self.calculate_score(state)
         score = result["score"]
 
-        # Suggested action rules
-        if score >= 5:
+        if score >= ESCALATE_SCORE_THRESHOLD:
             action = "ESCALATE_OR_RETRY"
-        elif score >= 2:
+        elif score >= REVISE_SCORE_THRESHOLD:
             action = "REVISE_REPLY"
         else:
             action = "ACCEPT_REPLY"

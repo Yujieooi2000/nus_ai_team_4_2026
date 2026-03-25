@@ -5,6 +5,7 @@ import {
   PieChart, Pie, Cell, ResponsiveContainer,
 } from 'recharts'
 import { getAnalyticsSummary, getXaiTraces } from '../services/api'
+import { formatCategory, mapSentiment, capitalize, formatTimestamp, PRIORITY_COLORS, SENTIMENT_COLORS } from '../utils/formatters'
 
 const { Title, Text } = Typography
 
@@ -23,20 +24,19 @@ const backgroundAgents = [
 
 const PIE_COLORS = ['#1677ff', '#52c41a', '#faad14', '#ff4d4f', '#722ed1', '#13c2c2']
 
-// ── Helper: format category labels ("technical_support" → "Technical Support") ─
-function formatCategory(cat) {
-  if (!cat) return 'Unknown'
-  return cat.replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase())
-}
-
 // ── XAI traces table columns ───────────────────────────────────────────────────
 const xaiColumns = [
-  { title: 'Trace ID',        dataIndex: 'traceId',   key: 'traceId',   width: 110 },
-  { title: 'Agent Path',      dataIndex: 'agentPath', key: 'agentPath', width: 240 },
-  { title: 'Category',        dataIndex: 'category',  key: 'category',  width: 140,
+  { title: 'Trace ID',        dataIndex: 'traceId',    key: 'traceId',    width: 110 },
+  { title: 'Agent Path',      dataIndex: 'agentPath',  key: 'agentPath',  width: 210 },
+  { title: 'Category',        dataIndex: 'category',   key: 'category',   width: 130,
     render: cat => <Tag>{cat}</Tag> },
-  { title: 'Decision Reason', dataIndex: 'reason',    key: 'reason' },
-  { title: 'Time',            dataIndex: 'timestamp', key: 'timestamp', width: 160 },
+  { title: 'Priority',        dataIndex: 'priority',   key: 'priority',   width: 90,
+    render: p => <Tag color={PRIORITY_COLORS[p] || 'default'}>{p}</Tag> },
+  { title: 'Sentiment',       dataIndex: 'sentiment',  key: 'sentiment',  width: 110,
+    render: s => <Tag color={SENTIMENT_COLORS[s] || 'default'}>{s}</Tag> },
+  { title: 'Confidence',      dataIndex: 'confidence', key: 'confidence', width: 100 },
+  { title: 'Decision Reason', dataIndex: 'reason',     key: 'reason' },
+  { title: 'Time',            dataIndex: 'timestamp',  key: 'timestamp',  width: 175 },
 ]
 
 
@@ -104,7 +104,7 @@ function AdminDashboard() {
   // Pie chart: convert { billing: 4, general_inquiry: 5 } → [{ name, value }, ...]
   const categoryData = summary?.category_breakdown
     ? Object.entries(summary.category_breakdown).map(([name, value]) => ({
-        name:  formatCategory(name),
+        name:  formatCategory(name, 'Unknown'),
         value,
       }))
     : []
@@ -120,19 +120,15 @@ function AdminDashboard() {
 
   // XAI traces: map API format to table rows
   const xaiTableData = traces.map((t, i) => ({
-    key:       String(i),
-    traceId:   t.trace_id,
-    agentPath: t.agent_path,
-    category:  formatCategory(t.category),
-    reason:    t.decision_reason || 'No reason recorded',
-    timestamp: t.timestamp
-      ? new Date(
-          // If the timestamp has no timezone info (no +/Z), treat it as UTC by appending Z
-          t.timestamp.includes('+') || t.timestamp.endsWith('Z')
-            ? t.timestamp
-            : t.timestamp + 'Z'
-        ).toLocaleString('en-SG', { dateStyle: 'short', timeStyle: 'short', timeZone: 'Asia/Singapore' })
-      : '—',
+    key:        String(i),
+    traceId:    t.trace_id,
+    agentPath:  t.agent_path,
+    category:   formatCategory(t.category, 'Unknown'),
+    priority:   capitalize(t.priority || 'low'),
+    sentiment:  mapSentiment(t.sentiment),
+    confidence: t.confidence != null ? `${(t.confidence * 100).toFixed(0)}%` : '—',
+    reason:     t.decision_reason || 'No reason recorded',
+    timestamp:  formatTimestamp(t.timestamp),
   }))
 
   // Show real interaction count in the Analytics Agent health badge

@@ -31,7 +31,14 @@ class VectorDB:
             name="customer_support_kb",
             metadata={"hnsw:space": "cosine"}  # Use cosine similarity for embeddings
         )
-        
+
+        # Separate collection for human-agent-approved Q&A pairs.
+        # Grows automatically as agents approve/custom-reply tickets.
+        self.approved_collection = self.client.get_or_create_collection(
+            name="approved_answers",
+            metadata={"hnsw:space": "cosine"}
+        )
+
         print(f"✓ Vector DB initialized at {persist_dir}")
         print(f"✓ Collection: {self.collection.name}")
         print(f"✓ Current documents in collection: {self.collection.count()}")
@@ -80,14 +87,55 @@ class VectorDB:
         except Exception as e:
             print(f"✗ Error adding documents: {e}")
     
+    def add_approved_answer(self, question: str, answer: str, category: str = "general_inquiry") -> bool:
+        """
+        Store a human-agent-approved Q&A pair in the approved_answers collection.
+        Called automatically when a human agent approves or custom-replies a ticket.
+
+        The answer is stored alongside the curated knowledge base and will be
+        retrieved by future customers asking similar questions, reducing escalations
+        over time and closing knowledge gaps.
+
+        Uses upsert so storing the same Q&A twice is safe (no duplicates).
+
+        Args:
+            question: The customer's original message
+            answer:   The human-agent-approved reply
+            category: The ticket category (e.g. "billing", "technical_support")
+
+        Returns:
+            True if saved successfully, False otherwise
+        """
+        if not question or not answer:
+            return False
+
+        # Combine Q + A so the document is searchable by either side
+        document = f"Q: {question}\nA: {answer}"
+
+        # Hash-based ID so the same Q&A is never stored twice
+        doc_id = f"approved_{abs(hash(document)) % 1_000_000}"
+
+        try:
+            self.approved_collection.upsert(
+                ids=[doc_id],
+                documents=[document],
+                metadatas=[{"category": category, "source": "human_approved"}]
+            )
+            return True
+        except Exception as e:
+            print(f"✗ Error storing approved answer: {e}")
+            return False
+
     def search(self, query: str, top_k: int = 3) -> Dict:
         """
         Search for similar documents using vector similarity.
-        
+        Queries both the curated knowledge base and the human-approved answers
+        collections, then returns the top_k most relevant results across both.
+
         Args:
             query: Search query
             top_k: Number of top results to return
-            
+
         Returns:
             Dict with keys:
                 - documents: List of similar documents
@@ -95,33 +143,52 @@ class VectorDB:
                 - similarities: List of similarity scores (higher = more similar)
                 - metadatas: List of document metadata
         """
-        
+
         try:
+            # Query curated KB collection
             results = self.collection.query(
                 query_texts=[query],
                 n_results=top_k
             )
-            
-            # Convert distance to similarity (for user clarity)
-            distances = results.get("distances", [[]])[0]
-            similarities = [1 - d for d in distances]  # Inverse of distance
-            
+
+            distances    = results.get("distances", [[]])[0]
+            similarities = [1 - d for d in distances]
+
+            docs  = list(results["documents"][0])
+            sims  = list(similarities)
+            metas = list(results["metadatas"][0])
+
+            # Also search approved_answers if any have been stored
+            if self.approved_collection.count() > 0:
+                approved            = self.approved_collection.query(query_texts=[query], n_results=top_k)
+                approved_distances  = approved.get("distances", [[]])[0]
+                approved_sims       = [1 - d for d in approved_distances]
+                docs.extend(approved["documents"][0])
+                sims.extend(approved_sims)
+                metas.extend(approved["metadatas"][0])
+
+            # Sort combined results by similarity (highest first) and take top_k
+            combined    = sorted(zip(sims, docs, metas), key=lambda x: -x[0])[:top_k]
+            final_sims  = [s for s, _, _ in combined]
+            final_docs  = [d for _, d, _ in combined]
+            final_metas = [m for _, _, m in combined]
+
             return {
-                "documents": results["documents"][0],
-                "distances": distances,
-                "similarities": similarities,
-                "metadatas": results["metadatas"][0],
-                "query": query
+                "documents":    final_docs,
+                "distances":    [1 - s for s in final_sims],
+                "similarities": final_sims,
+                "metadatas":    final_metas,
+                "query":        query
             }
-        
+
         except Exception as e:
             print(f"✗ Error searching: {e}")
             return {
-                "documents": [],
-                "distances": [],
+                "documents":    [],
+                "distances":    [],
                 "similarities": [],
-                "metadatas": [],
-                "query": query
+                "metadatas":    [],
+                "query":        query
             }
     
     def get_collection_stats(self) -> Dict:

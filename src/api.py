@@ -22,8 +22,9 @@ import uuid
 from collections import defaultdict
 from datetime import datetime, timezone, timedelta
 
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException, Depends
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.security import APIKeyHeader
 from pydantic import BaseModel
 from dotenv import load_dotenv
 
@@ -41,6 +42,17 @@ from orchestrator import Orchestrator
 
 # Load environment variables from .env file (e.g. OPENAI_API_KEY)
 load_dotenv()
+
+# Auth dependency — protects agent/admin endpoints from unauthenticated access.
+# The key is read from the INTERNAL_API_KEY env var and must be sent by the
+# React UI (and anyone else) as the "X-API-Key" request header.
+_api_key_header = APIKeyHeader(name="X-API-Key", auto_error=False)
+_INTERNAL_API_KEY = os.getenv("INTERNAL_API_KEY", "")
+
+def require_internal_key(key: str = Depends(_api_key_header)):
+    if not _INTERNAL_API_KEY or key != _INTERNAL_API_KEY:
+        raise HTTPException(status_code=401, detail="Invalid or missing API key.")
+
 
 # Create the FastAPI application
 app = FastAPI(
@@ -245,6 +257,12 @@ def chat(request: ChatRequest):
         api_response["ticket_id"] = ticket_id
         api_response["queue"]     = response.get("queue")
 
+        # Append the ticket reference to the stored assistant message so the
+        # conversation history shown to the agent matches what the customer saw.
+        if history and history[-1]["role"] == "assistant":
+            history[-1]["content"] += f" Your reference number is {ticket_id}."
+            sessions[session_id] = history
+
     return api_response
 
 
@@ -253,7 +271,7 @@ def chat(request: ChatRequest):
 # -------------------------------------------------------
 
 @app.get("/api/tickets", tags=["Agent Dashboard"])
-def get_tickets():
+def get_tickets(_=Depends(require_internal_key)):
     """
     Returns the list of all escalated tickets.
     Used by the Agent Dashboard to populate the ticket queue.
@@ -269,7 +287,7 @@ def get_tickets():
 # -------------------------------------------------------
 
 @app.get("/api/tickets/{ticket_id}", tags=["Agent Dashboard"])
-def get_ticket(ticket_id: str):
+def get_ticket(ticket_id: str, _=Depends(require_internal_key)):
     """
     Returns a single ticket by its ID.
     Used when the agent clicks on a ticket to see full details.
@@ -286,7 +304,7 @@ def get_ticket(ticket_id: str):
 # -------------------------------------------------------
 
 @app.post("/api/tickets/{ticket_id}/resolve", tags=["Agent Dashboard"])
-def resolve_ticket(ticket_id: str, request: ResolveRequest):
+def resolve_ticket(ticket_id: str, request: ResolveRequest, _=Depends(require_internal_key)):
     """
     Human agent resolves, replies to, or closes a ticket.
 
@@ -313,12 +331,22 @@ def resolve_ticket(ticket_id: str, request: ResolveRequest):
     if request.action == "approved":
         # Human agent approved the AI's suggested response.
         # Store it as agent_reply so the UI can show what was sent to the customer.
-        ticket["agent_reply"] = ticket.get("suggested_response") or None
+        ticket["agent_reply"] = ticket.get("suggested_response")
     elif request.action == "custom_reply":
         ticket["agent_reply"] = request.agent_reply or None
     else:
         # closed — no reply sent
         ticket["agent_reply"] = None
+
+    # Store the approved Q&A in vector DB so the AI can learn from it.
+    # Both "approved" (AI was right) and "custom_reply" (human corrected AI) are
+    # valuable signals — either way, the answer has been validated by a human.
+    if ticket["agent_reply"] and orchestrator.info_agent.vector_db:
+        orchestrator.info_agent.vector_db.add_approved_answer(
+            question=ticket["last_message"],
+            answer=ticket["agent_reply"],
+            category=ticket.get("category", "general_inquiry")
+        )
 
     return ticket
 
@@ -328,7 +356,7 @@ def resolve_ticket(ticket_id: str, request: ResolveRequest):
 # -------------------------------------------------------
 
 @app.get("/api/analytics/summary", tags=["Admin Dashboard"])
-def analytics_summary():
+def analytics_summary(_=Depends(require_internal_key)):
     """
     Returns system-wide statistics from the Analytics Agent.
     Used by the Admin Dashboard stat cards and charts.
@@ -405,7 +433,7 @@ def analytics_summary():
 # -------------------------------------------------------
 
 @app.get("/api/analytics/xai-traces", tags=["Admin Dashboard"])
-def xai_traces():
+def xai_traces(_=Depends(require_internal_key)):
     """
     Returns the AI decision trace log for all processed requests.
     Each entry shows WHY the AI made a particular routing decision.

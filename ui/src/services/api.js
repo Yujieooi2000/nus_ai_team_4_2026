@@ -14,8 +14,11 @@ import axios from 'axios'
 // Base URL from environment variable, with a fallback for safety
 const BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000'
 
-// Create a reusable axios instance with the base URL pre-configured
-const api = axios.create({ baseURL: BASE_URL })
+// Create a reusable axios instance with the base URL and internal API key pre-configured
+const api = axios.create({
+  baseURL: BASE_URL,
+  headers: { 'X-API-Key': import.meta.env.VITE_INTERNAL_API_KEY || '' },
+})
 
 
 // ─────────────────────────────────────────────────────────────────────────────

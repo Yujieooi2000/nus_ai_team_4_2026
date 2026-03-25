@@ -1,6 +1,8 @@
 import re
 from typing import Dict, List
 
+ESCALATION_THRESHOLD = 5
+
 
 class EscalationAgent:
 
@@ -277,7 +279,7 @@ class EscalationAgent:
 
     def process(self, state: Dict) -> Dict:
         decision = self.calculate_score(state)
-        escalate = decision["score"] >= 5
+        escalate = decision["score"] >= ESCALATION_THRESHOLD
 
         if escalate:
             return {

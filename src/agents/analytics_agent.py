@@ -1,38 +1,23 @@
 from collections import defaultdict
-from datetime import datetime
+from datetime import datetime, timezone
 import statistics
 
 
 class AnalyticsAgent:
     def __init__(self, analytics_database):
-        """
-        Enhanced Enterprise Analytics Agent
-        Maintains backward compatibility while adding:
-        - Drift detection
-        - Hallucination tracking
-        - Retrieval confidence metrics
-        - Knowledge gap detection
-        - Sentiment trend tracking
-        """
         self.analytics_database = analytics_database
 
-    # =================================================
-    # EXISTING FUNCTION (Enhanced Internally)
-    # =================================================
     def log_interaction(self, request, analysis, resolution, conversation_history):
         """
         Logs detailed interaction data.
         """
 
         log_entry = {
-            # Existing fields
-            'timestamp': datetime.utcnow().isoformat(),
+            'timestamp': datetime.now(timezone.utc).isoformat(),
             'request': request,
             'analysis': analysis,
             'resolution': resolution,
             'history': conversation_history,
-
-            # NEW Enterprise Fields
             'category': analysis.get('category'),
             'priority': analysis.get('priority'),
             'sentiment': analysis.get('sentiment'),
@@ -41,7 +26,7 @@ class AnalyticsAgent:
             'retrieval_confidence': resolution.get('retrieval_confidence'),
             'verification_passed': resolution.get('verification_passed'),
             'hallucination_detected': resolution.get('hallucination_detected', False),
-            'escalated': resolution.get('escalated', False),
+            'escalated': resolution.get('status') == 'escalated',
             'conversation_length': len(conversation_history)
         }
 
@@ -66,40 +51,25 @@ class AnalyticsAgent:
 
         total_requests = len(self.analytics_database)
 
-        resolved_count = sum(
-            1 for entry in self.analytics_database
-            if entry.get('resolution', {}).get('status') == 'resolved'
-        )
+        resolved_count    = 0
+        hallucination_count = 0
+        escalation_count  = 0
+        retrieval_scores  = []
+        category_counts   = defaultdict(int)
+
+        for entry in self.analytics_database:
+            if entry.get('resolution', {}).get('status') == 'resolved':
+                resolved_count += 1
+            if entry.get('hallucination_detected'):
+                hallucination_count += 1
+            if entry.get('escalated'):
+                escalation_count += 1
+            if entry.get('retrieval_confidence') is not None:
+                retrieval_scores.append(entry['retrieval_confidence'])
+            category_counts[entry.get('analysis', {}).get('category', 'unknown')] += 1
 
         resolution_rate = (resolved_count / total_requests) * 100
-
-        # Category breakdown
-        category_counts = defaultdict(int)
-        for entry in self.analytics_database:
-            category = entry.get('analysis', {}).get('category', 'unknown')
-            category_counts[category] += 1
-
-        # NEW Metrics
-        hallucination_count = sum(
-            1 for entry in self.analytics_database
-            if entry.get('hallucination_detected')
-        )
-
-        escalation_count = sum(
-            1 for entry in self.analytics_database
-            if entry.get('escalated')
-        )
-
-        retrieval_scores = [
-            entry.get('retrieval_confidence')
-            for entry in self.analytics_database
-            if entry.get('retrieval_confidence') is not None
-        ]
-
-        avg_retrieval_confidence = (
-            statistics.mean(retrieval_scores)
-            if retrieval_scores else 0
-        )
+        avg_retrieval_confidence = statistics.mean(retrieval_scores) if retrieval_scores else 0
 
         insights = {
             'total_requests': total_requests,
@@ -115,9 +85,6 @@ class AnalyticsAgent:
 
         return insights
 
-    # =================================================
-    # NEW FUNCTION: Drift Detection
-    # =================================================
     def detect_drift(self, confidence_threshold=0.6, escalation_threshold=0.3):
         """
         Detects system performance degradation.
@@ -141,9 +108,6 @@ class AnalyticsAgent:
             "issues": drift_flags
         }
 
-    # =================================================
-    # NEW FUNCTION: Knowledge Gap Detection
-    # =================================================
     def detect_knowledge_gaps(self, escalation_threshold=5):
         """
         Identifies categories frequently escalated.
@@ -164,9 +128,6 @@ class AnalyticsAgent:
 
         return gaps
 
-    # =================================================
-    # NEW FUNCTION: Sentiment Trend
-    # =================================================
     def sentiment_trend(self):
         """
         Tracks customer sentiment distribution.
@@ -180,9 +141,6 @@ class AnalyticsAgent:
 
         return dict(sentiment_counts)
 
-    # =================================================
-    # NEW FUNCTION: AI Risk Report
-    # =================================================
     def generate_ai_risk_report(self):
         """
         Generates a Responsible AI compliance summary.
@@ -201,9 +159,6 @@ class AnalyticsAgent:
             )
         }
 
-    # =================================================
-    # NEW FUNCTION: Provide Feedback to Triage Agent
-    # =================================================
     def feedback_to_triage(self):
         """
         Provides improvement signals to the Triage Agent.
@@ -227,9 +182,6 @@ class AnalyticsAgent:
             "suggestion": "Refine urgency keyword detection and sentiment thresholds."
         }
 
-    # =================================================
-    # NEW FUNCTION: Provide Feedback to IR Agent
-    # =================================================
     def feedback_to_information_retrieval(self):
         """
         Provides improvement signals to the Retrieval Agent.
@@ -251,9 +203,6 @@ class AnalyticsAgent:
             "suggestion": "Enhance embedding quality or expand knowledge base coverage."
         }
 
-    # =================================================
-    # NEW FUNCTION: Provide Feedback to Verification Agent
-    # =================================================
     def feedback_to_verification(self):
         """
         Provides improvement signals to Verification Agent.
@@ -275,9 +224,6 @@ class AnalyticsAgent:
             "suggestion": "Enforce stricter grounding validation and reduce creative generation."
         }
 
-    # =================================================
-    # NEW FUNCTION: Provide Feedback to Escalation Agent
-    # =================================================
     def feedback_to_escalation(self):
         """
         Provides optimization signals to Escalation Agent.
@@ -295,9 +241,6 @@ class AnalyticsAgent:
             "suggestion": "Refine escalation threshold to avoid overloading human agents."
         }
 
-    # =================================================
-    # NEW FUNCTION: Global Feedback Summary
-    # =================================================
     def generate_system_feedback(self):
         """
         Generates structured feedback for all agents.

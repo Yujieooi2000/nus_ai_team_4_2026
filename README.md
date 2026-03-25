@@ -29,4 +29,6 @@ This project implements a state-of-the-art multi-agent AI system designed to aut
 
 ## Getting Started
 
-Further instructions on setting up the development environment, running tests, and deploying the system will be provided here as the project progresses.
+See **[QUICKSTART.md](QUICKSTART.md)** for step-by-step local setup instructions (Python environment, vector DB initialisation, backend, frontend).
+
+For cloud deployment, see **[DEPLOYMENT.md](DEPLOYMENT.md)**.

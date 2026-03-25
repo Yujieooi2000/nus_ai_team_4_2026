@@ -44,13 +44,25 @@ You should see:
 
 ---
 
-## Step 3 — Set your OpenAI API key
+## Step 3 — Set your API keys
 
 Create a file called **`.env`** in the project root (this file is git-ignored and must not be committed):
 
 ```
 OPENAI_API_KEY=sk-...your-key-here...
+INTERNAL_API_KEY=your-secret-key-here
 ```
+
+`INTERNAL_API_KEY` protects the agent and admin endpoints (tickets, analytics) from unauthenticated access. You can use any random string — just make sure it matches the value in `ui/.env.development` (see Step 5).
+
+Also create **`ui/.env.development`** inside the `ui/` folder (also git-ignored):
+
+```
+VITE_API_URL=http://localhost:8000
+VITE_INTERNAL_API_KEY=your-secret-key-here
+```
+
+Use the **same value** for `INTERNAL_API_KEY` and `VITE_INTERNAL_API_KEY`.
 
 ---
 

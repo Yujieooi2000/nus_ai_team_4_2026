@@ -1,13 +1,12 @@
 import { useState, useRef, useEffect } from 'react'
 import { Input, Button, Tag, Typography, Space, Spin } from 'antd'
 import { sendChatMessage } from '../services/api'
+import { capitalize, formatCategory, PRIORITY_COLORS } from '../utils/formatters'
 
 const { Text } = Typography
 
-// Colour map for priority tags
-const PRIORITY_COLORS = { High: 'red', Medium: 'orange', Low: 'green' }
-
 // ── Helper: format agent name from API ("ResolutionAgent" → "Resolution Agent") ──
+// capitalize and formatCategory are imported from utils/formatters.js
 const AGENT_DISPLAY_NAMES = {
   ResolutionAgent:            'Resolution Agent',
   InformationRetrievalAgent:  'Information Retrieval Agent',
@@ -16,18 +15,6 @@ const AGENT_DISPLAY_NAMES = {
 }
 function formatAgentName(name) {
   return AGENT_DISPLAY_NAMES[name] || name || 'AI Agent'
-}
-
-// ── Helper: format category from API ("technical_support" → "Technical Support") ──
-function formatCategory(cat) {
-  if (!cat) return 'General'
-  return cat.replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase())
-}
-
-// ── Helper: capitalise first letter ("high" → "High") ──
-function capitalize(str) {
-  if (!str) return ''
-  return str.charAt(0).toUpperCase() + str.slice(1)
 }
 
 
@@ -70,8 +57,10 @@ function ChatWindow() {
       const result = await sendChatMessage(userText, sessionId.current)
 
       const aiMsg = {
-        role:     'ai',
-        text:     result.message || 'I received your message.',
+        role:  'ai',
+        text:  result.status === 'escalated' && result.ticket_id
+          ? `${result.message} Your reference number is ${result.ticket_id}.`
+          : (result.message || 'I received your message.'),
         agent:    formatAgentName(result.agent),
         category: formatCategory(result.analysis?.category),
         priority: capitalize(result.analysis?.priority),
