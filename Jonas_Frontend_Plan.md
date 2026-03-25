@@ -2,6 +2,7 @@
 ## AI-Powered Customer Support Triage and Resolution System
 **Author:** Jonas (UI Lead)
 **Date:** 2026-03-05
+**Last Updated:** 25 Mar 2026
 **Status:** Complete (integration done — see `Jonas_Integration_Plan.md` and `QUICKSTART.md`)
 
 ---
