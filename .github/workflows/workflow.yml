@@ -30,4 +30,4 @@ jobs:
 
       - name: Push image
         run: |
-          docker push ghcr.io/${{ github.repository }}:latest
+          docker push ghcr.io/yujieooi2000/nus_ai_team_4_2026:latest
