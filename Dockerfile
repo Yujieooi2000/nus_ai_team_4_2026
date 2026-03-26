@@ -3,9 +3,7 @@ FROM python:3.11-slim AS backend
 
 WORKDIR /app
 COPY requirements.txt .
-RUN cat requirements.txt
 RUN pip install --no-cache-dir -r requirements.txt
-RUN pip show python-dotenv
 
 COPY src/ src/
 
@@ -24,10 +22,14 @@ FROM python:3.11-slim
 
 WORKDIR /app
 
-# backend
-COPY --from=backend /app /app
+# install deps again (IMPORTANT)
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
 
-# frontend static
+# copy backend code
+COPY src/ src/
+
+# copy frontend build
 COPY --from=frontend /ui/dist /app/ui
 
 EXPOSE 8000
