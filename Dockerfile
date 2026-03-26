@@ -3,7 +3,9 @@ FROM python:3.11-slim AS backend
 
 WORKDIR /app
 COPY requirements.txt .
+RUN cat requirements.txt
 RUN pip install --no-cache-dir -r requirements.txt
+RUN pip show python-dotenv
 
 COPY src/ src/
 
