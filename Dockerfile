@@ -6,7 +6,6 @@ COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
 COPY src/ src/
-COPY agents/ agents/
 
 # ---- Frontend ----
 FROM node:22-alpine AS frontend

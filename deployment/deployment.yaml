@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
         - name: nus-ai
-          image: ghcr.io/MrDOUFY/NUS_AI:latest
+          image: ghcr.io/yujieooi2000/nus_ai_team_4_2026:latest
           ports:
             - containerPort: 8000
           env:
@@ -29,3 +29,4 @@ spec:
             limits:
               cpu: "500m"
               memory: "512Mi"
+          imagePullPolicy: Always
