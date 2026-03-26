@@ -6,7 +6,6 @@ COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
 COPY src/ src/
-COPY agents/ agents/
 
 # ---- Frontend ----
 FROM node:22-alpine AS frontend
@@ -23,10 +22,14 @@ FROM python:3.11-slim
 
 WORKDIR /app
 
-# backend
-COPY --from=backend /app /app
+# install deps again (IMPORTANT)
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
 
-# frontend static
+# copy backend code
+COPY src/ src/
+
+# copy frontend build
 COPY --from=frontend /ui/dist /app/ui
 
 EXPOSE 8000
