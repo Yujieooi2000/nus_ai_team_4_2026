@@ -8,6 +8,7 @@ import os
 SENTIMENT_POSITIVE_THRESHOLD = 0.2
 SENTIMENT_NEGATIVE_THRESHOLD = -0.2
 
+
 @dataclass
 class TriageResult:
     category: str
@@ -29,12 +30,12 @@ class TriageAgent:
             self.intent_model = joblib.load(model_path)
         else:
             self.intent_model = None
-        
+
         self.billing_keywords = ['bill', 'payment', 'invoice', 'charge', 'refund']
         self.tech_keywords = ['error', 'broken', 'bug', 'fail', 'crash', 'slow']
         self.account_keywords = ['password', 'account', 'login', 'access']
-        self.urgent_keywords = ['urgent', 'immediate', 'emergency', 'asap', 'help']
-        
+        self.urgent_keywords = ['urgent', 'immediate', 'emergency', 'asap']
+
         self.injection_patterns = [
             r"ignore\s+previous\s+instructions",
             r"forget\s+your\s+instructions",
@@ -71,7 +72,6 @@ class TriageAgent:
             return "neutral"
 
     def analyze_request(self, request: Dict[str, Any]) -> TriageResult:
-
         text = request.get("body", "")
         predicted_intent = self.predict_intent(text)
         text_lower = text.lower()
@@ -94,23 +94,23 @@ class TriageAgent:
         category = predicted_intent if predicted_intent else "general_inquiry"
         confidence = 0.8 if predicted_intent else 0.5
 
-        def keyword_match(keywords, label):
+        def keyword_match(keywords):
             for word in keywords:
                 if word in text_lower:
                     return word
             return None
 
-        if keyword := keyword_match(self.billing_keywords, "billing"):
+        if keyword := keyword_match(self.billing_keywords):
             category = "billing"
             confidence = 0.85
             decision_trace.append(f"Matched billing keyword '{keyword}'")
 
-        elif keyword := keyword_match(self.tech_keywords, "technical_support"):
+        elif keyword := keyword_match(self.tech_keywords):
             category = "technical_support"
             confidence = 0.85
             decision_trace.append(f"Matched technical keyword '{keyword}'")
 
-        elif keyword := keyword_match(self.account_keywords, "account_issue"):
+        elif keyword := keyword_match(self.account_keywords):
             category = "account_issue"
             confidence = 0.85
             decision_trace.append(f"Matched account keyword '{keyword}'")
@@ -119,6 +119,22 @@ class TriageAgent:
             category = "order_status"
             confidence = 0.9
             decision_trace.append("Matched order status phrase")
+
+        # Optional rules for common telco intents
+        if "roaming" in text_lower:
+            category = "roaming"
+            confidence = 0.9
+            decision_trace.append("Matched roaming keyword")
+
+        if "plan" in text_lower and ("change" in text_lower or "switch" in text_lower or "upgrade" in text_lower or "downgrade" in text_lower):
+            category = "plan_change"
+            confidence = 0.9
+            decision_trace.append("Matched plan change keywords")
+
+        if "sim" in text_lower and ("no service" in text_lower or "invalid" in text_lower or "not working" in text_lower):
+            category = "sim_issue"
+            confidence = 0.9
+            decision_trace.append("Matched SIM issue keywords")
 
         # ---- Priority Detection ----
         priority = "low"
@@ -135,13 +151,14 @@ class TriageAgent:
 
         # ---- Human Escalation Logic ----
         requires_human = False
-        if priority == "high" or risk_score > 0.7 or sentiment == "negative":
+        if priority == "high" or risk_score > 0.7:
+            requires_human = True
+        elif sentiment == "negative" and category in ["complaint", "cancellation"]:
             requires_human = True
 
-        # Build a structured, human-readable explanation for the XAI trace
+        # ---- XAI Explanation ----
         xai_parts = []
 
-        # How the category was determined
         if decision_trace and decision_trace[0].startswith("Matched"):
             xai_parts.append(f"Category: {category.replace('_', ' ').title()} ({decision_trace[0].lower()})")
         elif predicted_intent:
@@ -161,8 +178,8 @@ class TriageAgent:
             escalation_reasons = []
             if priority == "high":
                 escalation_reasons.append("high priority")
-            if sentiment == "negative":
-                escalation_reasons.append("negative sentiment")
+            if sentiment == "negative" and category in ["complaint", "cancellation"]:
+                escalation_reasons.append("negative sentiment for sensitive category")
             if risk_score > 0.7:
                 escalation_reasons.append(f"high risk score ({risk_score:.2f})")
             xai_parts.append(f"Routed to: Human Agent ({', '.join(escalation_reasons)})")
@@ -182,22 +199,32 @@ class TriageAgent:
         )
 
     def route_request(self, analysis: TriageResult) -> str:
-
         if analysis.category == "security_alert":
             return "EscalationAgent"
 
         if analysis.requires_human:
             return "EscalationAgent"
 
-        if analysis.category in ["billing", "account_issue", "order_status"]:
+        if analysis.category in [
+            "billing",
+            "account_issue",
+            "plan_change"
+        ]:
             return "ResolutionAgent"
 
-        if analysis.category in ["technical_support", "general_inquiry"]:
+        if analysis.category in [
+            "technical_support",
+            "general_inquiry",
+            "order_status",
+            "roaming",
+            "sim_issue"
+        ]:
             return "InformationRetrievalAgent"
 
-        return "EscalationAgent"
-    
-    #Model prediction method
+        # default fallback should NOT be escalation for normal unknown intents
+        return "InformationRetrievalAgent"
+
+    # Model prediction method
     def predict_intent(self, text: str):
         if self.intent_model is None:
             return None

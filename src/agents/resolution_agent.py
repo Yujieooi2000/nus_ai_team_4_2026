@@ -1,109 +1,125 @@
 from typing import Dict, List
 
-ESCALATE_SCORE_THRESHOLD = 5
-REVISE_SCORE_THRESHOLD   = 2
-
-
 class ResolutionAgent:
 
     def __init__(self):
-        self.bad_reply_keywords = [
-            "i do not know",
-            "i'm not sure",
-            "cannot help",
-            "unable to help",
-            "no idea",
-            "maybe",
-            "probably",
-            "perhaps"
-        ]
-
-        self.telco_required_action_keywords = [
-            "verify",
-            "verification",
-            "identity",
-            "support",
-            "agent",
-            "billing",
-            "sim",
-            "network",
-            "account"
-        ]
-
-    def detect_low_quality_reply(self, reply: str) -> bool:
-        lowered = reply.lower()
-        return any(keyword in lowered for keyword in self.bad_reply_keywords)
-
-    def detect_too_short_reply(self, reply: str) -> bool:
-        return len(reply.strip()) < 20
-
-    def detect_missing_action_guidance(self, user_input: str, reply: str) -> bool:
-        """
-        Simple rule:
-        if user asks about an operational telco issue,
-        but reply contains no useful action-related wording,
-        mark as weak/incomplete.
-        """
-        telco_issue_words = [
-            "sim", "otp", "billing", "bill", "internet", "network",
-            "signal", "roaming", "esim", "port out", "data", "wifi"
-        ]
-
-        user_lower = user_input.lower()
-        reply_lower = reply.lower()
-
-        user_has_telco_issue = any(word in user_lower for word in telco_issue_words)
-        reply_has_action = any(word in reply_lower for word in self.telco_required_action_keywords)
-
-        return user_has_telco_issue and not reply_has_action
-
-    def calculate_score(self, state: Dict) -> Dict:
-        user_input = state.get("input", "")
-        reply = state.get("reply", "")
-        escalation_result = state.get("escalation_result", {})
-        security_result = state.get("security_result", {})
-
-        score = 0
-        reasons = []
-
-        if self.detect_low_quality_reply(reply):
-            score += 2
-            reasons.append("Reply contains weak or uncertain language")
-
-        if self.detect_too_short_reply(reply):
-            score += 2
-            reasons.append("Reply is too short")
-
-        if self.detect_missing_action_guidance(user_input, reply):
-            score += 2
-            reasons.append("Reply may be missing clear next-step guidance")
-
-        if security_result.get("risk_level") in ["high", "critical"]:
-            score += 3
-            reasons.append("High security risk detected")
-
-        if escalation_result.get("escalate"):
-            score += 3
-            reasons.append("Escalation already recommended by escalation agent")
-
-        return {
-            "score": score,
-            "reasons": reasons
+        self.intent_steps = {
+            "billing": [
+                "Check the latest bill amount and billing date.",
+                "Review whether there are any recent extra charges, add-ons, or overdue payments.",
+                "Confirm whether auto-payment or a failed transaction may have caused the issue.",
+                "If the charge is still unclear, contact billing support for detailed review."
+            ],
+            "technical_support": [
+                "Restart the app or device first.",
+                "Check whether the app is updated to the latest version.",
+                "Try clearing cache or logging out and back in again.",
+                "If the issue continues, contact technical support for further troubleshooting."
+            ],
+            "account_issue": [
+                "Check whether the login details entered are correct.",
+                "Try resetting the password if login is failing.",
+                "Check whether identity verification or multi-factor authentication is causing the issue.",
+                "If access is still blocked, contact account support for manual assistance."
+            ],
+            "sim_issue": [
+                "Reinsert the SIM card properly into the device.",
+                "Restart the phone after reinserting the SIM.",
+                "Check whether the SIM is damaged, inactive, or not provisioned.",
+                "If the SIM still does not work, contact support or visit a service center."
+            ],
+            "roaming": [
+                "Check whether roaming is enabled on the mobile plan.",
+                "Ensure mobile data and data roaming are switched on in phone settings.",
+                "Restart the device after arriving at the destination country.",
+                "If roaming still does not work, contact roaming support for assistance."
+            ],
+            "plan_change": [
+                "Review the user's current mobile plan and requested new plan.",
+                "Check whether the requested plan is eligible for change.",
+                "Explain when the plan change will take effect.",
+                "Advise the user to confirm the change through the app or customer support."
+            ],
+            "cancellation": [
+                "Confirm which service or line the user wants to cancel.",
+                "Check whether any contract period, early termination, or penalty applies.",
+                "Explain the cancellation process clearly.",
+                "If manual confirmation is required, direct the user to customer support."
+            ],
+            "complaint": [
+                "Acknowledge the user's frustration and issue.",
+                "Summarize the problem clearly so it can be handled properly.",
+                "Advise the user that the complaint may be escalated for further review.",
+                "Provide the next step for follow-up with support."
+            ],
+            "general": [
+                "Understand the user's issue clearly.",
+                "Provide the most relevant guidance based on the request.",
+                "Offer the next step if the issue is not resolved.",
+                "Escalate to support if manual intervention is needed."
+            ]
         }
 
-    def process(self, state: Dict) -> Dict:
-        result = self.calculate_score(state)
-        score = result["score"]
+        self.intent_summary = {
+            "billing": "The user needs help understanding or resolving a billing-related issue.",
+            "technical_support": "The user is facing a technical problem and needs troubleshooting guidance.",
+            "account_issue": "The user is having account access, login, or verification issues.",
+            "sim_issue": "The user may be facing a SIM-related problem.",
+            "roaming": "The user needs help with roaming setup or troubleshooting.",
+            "plan_change": "The user wants guidance on changing a mobile plan.",
+            "cancellation": "The user wants to understand or proceed with cancellation.",
+            "complaint": "The user has raised a complaint and needs proper handling and follow-up.",
+            "general": "The user needs general customer support guidance."
+        }
 
-        if score >= ESCALATE_SCORE_THRESHOLD:
-            action = "ESCALATE_OR_RETRY"
-        elif score >= REVISE_SCORE_THRESHOLD:
-            action = "REVISE_REPLY"
-        else:
-            action = "ACCEPT_REPLY"
+        self.escalation_keywords = [
+            "fraud",
+            "legal",
+            "supervisor",
+            "manager",
+            "urgent",
+            "escalate",
+            "cancel immediately"
+        ]
+
+    def detect_intent(self, state: Dict) -> str:
+        triage_result = state.get("triage_result", {})
+        intent = triage_result.get("category", "general")
+        return intent or "general"
+
+    def should_escalate(self, user_input: str, state: Dict) -> bool:
+        lowered = user_input.lower()
+
+        if any(keyword in lowered for keyword in self.escalation_keywords):
+            return True
+
+        security_result = state.get("security_result", {})
+        if security_result.get("risk_level") in ["high", "critical"]:
+            return True
+
+        escalation_result = state.get("escalation_result", {})
+        if escalation_result.get("escalate", False):
+            return True
+
+        return False
+
+    def build_resolution_steps(self, intent: str) -> List[str]:
+        return self.intent_steps.get(intent, self.intent_steps["general"])
+
+    def build_resolution_summary(self, intent: str) -> str:
+        return self.intent_summary.get(intent, self.intent_summary["general"])
+
+    def process(self, state: Dict) -> Dict:
+        user_input = state.get("input", "")
+        intent = self.detect_intent(state)
+        steps = self.build_resolution_steps(intent)
+        summary = self.build_resolution_summary(intent)
+        escalate = self.should_escalate(user_input, state)
 
         return {
-            "reflection_score": score,
-            "reflection_reasons": result["reasons"],
-            "reflection_action": action
+            "intent": intent,
+            "resolution_summary": summary,
+            "resolution_steps": steps,
+            "needs_escalation": escalate,
+            "resolution_status": "ESCALATE" if escalate else "RESOLVED"
         }
