@@ -64,6 +64,13 @@ VITE_INTERNAL_API_KEY=your-secret-key-here
 
 Use the **same value** for `INTERNAL_API_KEY` and `VITE_INTERNAL_API_KEY`.
 
+> **Tip for teammates:** Example files with placeholder values are committed to the repo. Copy them as a starting point:
+> ```bash
+> cp .env.example .env
+> cp ui/.env.development.example ui/.env.development
+> ```
+> Then fill in the real API key and shared secret (get these from your team lead privately — never commit the actual values).
+
 ---
 
 ## Step 4 — Start the backend API server
