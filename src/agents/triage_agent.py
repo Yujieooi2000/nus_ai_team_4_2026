@@ -201,4 +201,7 @@ class TriageAgent:
     def predict_intent(self, text: str):
         if self.intent_model is None:
             return None
-        return self.intent_model.predict([text])[0]
+        try:
+            return self.intent_model.predict([text])[0]
+        except Exception:
+            return None
